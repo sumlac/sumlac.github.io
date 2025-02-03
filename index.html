@@ -2,6 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <!-- Mobile responsiveness meta tag -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Hi, I'm Justin Calmus</title>
   <style>
     body {
@@ -92,7 +94,7 @@
     let threats = [];
     let threatSpawnInterval = 1500; // spawn every 1.5 seconds
     let lastThreatSpawn = Date.now();
-    let threatSpeed = 3; // initial threat speed in pixels per frame
+    let threatSpeed = 3; // initial threat speed (pixels per frame)
 
     let gameOver = false;
     let score = 0;
@@ -115,6 +117,20 @@
       if (player.y < 0) player.y = 0;
       if (player.y + player.height > canvasHeight) player.y = canvasHeight - player.height;
     });
+
+    // Use touch events for mobile compatibility.
+    function handleTouch(e) {
+      e.preventDefault();
+      const rect = canvas.getBoundingClientRect();
+      // Use the first touch point.
+      const touch = e.touches[0];
+      const touchY = touch.clientY - rect.top;
+      player.y = touchY - player.height / 2;
+      if (player.y < 0) player.y = 0;
+      if (player.y + player.height > canvasHeight) player.y = canvasHeight - player.height;
+    }
+    canvas.addEventListener('touchmove', handleTouch, { passive: false });
+    canvas.addEventListener('touchstart', handleTouch, { passive: false });
 
     // Spawn a new threat at a random vertical position on the right edge.
     function spawnThreat() {
