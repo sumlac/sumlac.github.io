@@ -1,7 +1,181 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Side Scroller: Avoid the Threats!</title>
+  <style>
+    body {
+      margin: 0;
+      background: #222;
+      color: #fff;
+      font-family: sans-serif;
+      text-align: center;
+    }
+    canvas {
+      background: #333;
+      display: block;
+      margin: 20px auto;
+      border: 2px solid #fff;
+    }
+    #score {
+      font-size: 1.2em;
+      margin: 10px;
+    }
+    #gameOver {
+      display: none;
+      font-size: 2em;
+      margin-top: 20px;
+    }
+    button {
+      font-size: 1em;
+      padding: 10px 20px;
+      margin-top: 10px;
+    }
+  </style>
+</head>
 <body>
-<h1>...</h1>
-<p>I'm sumlac</p>
+  <h1>Side Scroller: Avoid the Threats!</h1>
+  <div id="score">Score: 0</div>
+  <canvas id="gameCanvas" width="800" height="400"></canvas>
+  <div id="gameOver">
+    Game Over!<br>
+    <button onclick="restartGame()">Restart</button>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    const scoreDiv = document.getElementById('score');
+    const gameOverDiv = document.getElementById('gameOver');
+    const canvasWidth = canvas.width;
+    const canvasHeight = canvas.height;
+
+    // Player settings
+    let player = {
+      x: 50, 
+      y: canvasHeight / 2 - 15,
+      width: 30,
+      height: 30,
+      speed: 5
+    };
+
+    // Threats array (obstacles)
+    let threats = [];
+    let threatSpawnInterval = 1500; // spawn every 1.5 seconds
+    let lastThreatSpawn = Date.now();
+    let threatSpeed = 3; // horizontal speed (leftwards)
+    
+    // Game state and score
+    let gameOver = false;
+    let score = 0;
+    
+    // Threat types represented by emoji:
+    // Virus: 🦠, Malware: 💀, Phishing: 🎣 (a playful pun on "phishing")
+    const threatTypes = ['🦠', '💀', '🎣'];
+
+    // Capture key states (we use Up and Down arrows)
+    let keys = {};
+    document.addEventListener('keydown', (e) => { keys[e.key] = true; });
+    document.addEventListener('keyup', (e) => { keys[e.key] = false; });
+
+    // Function to spawn a new threat at a random vertical position on the right edge
+    function spawnThreat() {
+      const size = 30;
+      const x = canvasWidth; // start at right edge
+      const y = Math.random() * (canvasHeight - size);
+      const type = threatTypes[Math.floor(Math.random() * threatTypes.length)];
+      threats.push({ x, y, size, type });
+    }
+
+    // Update game objects
+    function update(deltaTime) {
+      if (gameOver) return;
+
+      // Move the player with Up/Down arrow keys
+      if (keys['ArrowUp'] && player.y > 0) {
+        player.y -= player.speed;
+      }
+      if (keys['ArrowDown'] && player.y + player.height < canvasHeight) {
+        player.y += player.speed;
+      }
+
+      // Move threats leftward
+      threats.forEach(threat => {
+        threat.x -= threatSpeed;
+      });
+
+      // Remove threats that have left the screen (to the left)
+      threats = threats.filter(threat => threat.x + threat.size > 0);
+
+      // Collision detection
+      threats.forEach(threat => {
+        if (
+          player.x < threat.x + threat.size &&
+          player.x + player.width > threat.x &&
+          player.y < threat.y + threat.size &&
+          player.y + player.height > threat.y
+        ) {
+          gameOver = true;
+        }
+      });
+
+      // Increase score over time
+      score += deltaTime * 0.01;
+      scoreDiv.innerText = 'Score: ' + Math.floor(score);
+
+      // Spawn new threats based on the interval
+      if (Date.now() - lastThreatSpawn > threatSpawnInterval) {
+        spawnThreat();
+        lastThreatSpawn = Date.now();
+      }
+    }
+
+    // Draw game objects
+    function draw() {
+      ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+
+      // Draw player as a white square
+      ctx.fillStyle = '#fff';
+      ctx.fillRect(player.x, player.y, player.width, player.height);
+
+      // Draw threats (emoji) 
+      ctx.font = '30px sans-serif';
+      threats.forEach(threat => {
+        // Draw emoji centered vertically within the threat box
+        ctx.fillText(threat.type, threat.x, threat.y + threat.size);
+      });
+    }
+
+    let lastTime = Date.now();
+    // Main game loop
+    function gameLoop() {
+      const now = Date.now();
+      const deltaTime = now - lastTime;
+      lastTime = now;
+
+      update(deltaTime);
+      draw();
+
+      if (gameOver) {
+        gameOverDiv.style.display = 'block';
+      } else {
+        requestAnimationFrame(gameLoop);
+      }
+    }
+
+    // Restart the game
+    function restartGame() {
+      gameOver = false;
+      threats = [];
+      score = 0;
+      player.y = canvasHeight / 2 - 15;
+      lastTime = Date.now();
+      gameOverDiv.style.display = 'none';
+      requestAnimationFrame(gameLoop);
+    }
+
+    // Start the game loop
+    gameLoop();
+  </script>
 </body>
 </html>
