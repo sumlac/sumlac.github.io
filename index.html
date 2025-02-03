@@ -50,7 +50,7 @@
     const canvasWidth = canvas.width;
     const canvasHeight = canvas.height;
 
-    // Instead of an external image, define the player icon as an emoji.
+    // Use a local emoji for the human character.
     // We'll use the "person standing" emoji.
     const playerIcon = "🧍";
 
@@ -63,29 +63,30 @@
       icon: playerIcon
     };
 
-    // Threats array for obstacles.
+    // Array to hold oncoming threats.
     let threats = [];
-    let threatSpawnInterval = 1500; // spawn every 1.5 seconds
+    let threatSpawnInterval = 1500; // spawn a new threat every 1.5 seconds
     let lastThreatSpawn = Date.now();
-    let threatSpeed = 3;
+    let threatSpeed = 3; // initial speed (in pixels per frame)
 
     let gameOver = false;
     let score = 0;
 
-    // Threat types (local emoji icons)
-    // Virus: 🦠, Malware: 👾, Phishing: 🎣.
-    const threatTypes = ['🦠', '👾', '🎣'];
+    // Define threat types using local emoji.
+    // Virus: use biohazard symbol (☣️), Malware: 👾, Phishing: 🎣.
+    const threatTypes = ['☣️', '👾', '🎣'];
 
     // Use the mouse to control the player's vertical position.
     canvas.addEventListener('mousemove', (e) => {
       const rect = canvas.getBoundingClientRect();
       const mouseY = e.clientY - rect.top;
       player.y = mouseY - player.height / 2;
+      // Clamp player's y position within canvas bounds.
       if (player.y < 0) player.y = 0;
       if (player.y + player.height > canvasHeight) player.y = canvasHeight - player.height;
     });
 
-    // Spawn a new threat at a random vertical position at the right edge.
+    // Function to spawn a new threat at a random vertical position on the right edge.
     function spawnThreat() {
       const size = 30;
       const x = canvasWidth;
@@ -94,10 +95,15 @@
       threats.push({ x, y, size, type });
     }
 
-    // Update game objects.
+    // Increase threat speed by 0.1 every 5 seconds.
+    setInterval(() => {
+      threatSpeed += 0.1;
+    }, 5000);
+
+    // Update game state.
     function update(deltaTime) {
       if (gameOver) return;
-
+      
       // Move threats leftward.
       threats.forEach(threat => {
         threat.x -= threatSpeed;
@@ -117,11 +123,11 @@
         }
       });
 
-      // Increase score over time.
+      // Increase score based on survival time.
       score += deltaTime * 0.01;
       scoreDiv.innerText = 'Score: ' + Math.floor(score);
 
-      // Spawn new threats based on the spawn interval.
+      // Spawn new threats at the defined interval.
       if (Date.now() - lastThreatSpawn > threatSpawnInterval) {
         spawnThreat();
         lastThreatSpawn = Date.now();
@@ -132,9 +138,8 @@
     function draw() {
       ctx.clearRect(0, 0, canvasWidth, canvasHeight);
 
-      // Set font for drawing the player icon.
+      // Set font and draw the player icon.
       ctx.font = "40px sans-serif";
-      // Draw the player icon at its current position.
       ctx.fillText(player.icon, player.x, player.y + player.height);
 
       // Draw threats using their emoji.
