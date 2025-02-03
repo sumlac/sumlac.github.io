@@ -2,13 +2,17 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Avoid the Threats!</title>
+  <title>Hi, I'm Justin Calmus</title>
   <style>
     body {
       margin: 0;
       background: #222;
       color: #fff;
       font-family: sans-serif;
+      line-height: 1.6;
+      padding: 20px;
+    }
+    h1, h2, h3 {
       text-align: center;
     }
     canvas {
@@ -19,10 +23,12 @@
     }
     #score {
       font-size: 1.2em;
+      text-align: center;
       margin: 10px;
     }
     #gameOver {
       display: none;
+      text-align: center;
       font-size: 2em;
       margin-top: 20px;
     }
@@ -30,10 +36,31 @@
       font-size: 1em;
       padding: 10px 20px;
       margin-top: 10px;
+      cursor: pointer;
+    }
+    hr {
+      margin: 40px 0;
+      border: 1px solid #555;
+    }
+    /* Resume section styling */
+    #resume {
+      max-width: 800px;
+      margin: 0 auto 40px auto;
+      padding: 20px;
+      background: #333;
+      border: 2px solid #fff;
+    }
+    #resume p, #resume ul {
+      margin: 10px 0;
+    }
+    #resume ul {
+      list-style-type: disc;
+      margin-left: 20px;
     }
   </style>
 </head>
 <body>
+  <!-- Game Section -->
   <h1>Avoid the Threats!</h1>
   <div id="score">Score: 0</div>
   <canvas id="gameCanvas" width="800" height="400"></canvas>
@@ -50,10 +77,9 @@
     const canvasWidth = canvas.width;
     const canvasHeight = canvas.height;
 
-    // Local emoji for the player (human character)
+    // Local emoji for the player character.
     const playerIcon = "🧍";
-
-    // Player settings with doubled size.
+    // Player settings: doubled size.
     let player = {
       x: 50,
       y: canvasHeight / 2 - 40,
@@ -62,23 +88,26 @@
       icon: playerIcon
     };
 
-    // Array to hold oncoming objects (both threats and bonus items)
-    let objects = [];
-    let objectSpawnInterval = 1500; // spawn every 1.5 seconds
-    let lastObjectSpawn = Date.now();
-    let threatSpeed = 3; // initial speed (in pixels per frame)
+    // Array to hold oncoming threats.
+    let threats = [];
+    let threatSpawnInterval = 1500; // spawn every 1.5 seconds
+    let lastThreatSpawn = Date.now();
+    let threatSpeed = 3; // initial threat speed in pixels per frame
+
     let gameOver = false;
     let score = 0;
 
-    // Define threat types (all cause game over) using local emoji.
-    // Virus: biohazard symbol, Malware: 👾, Phishing: 🎣, Spyware: 👁️, Ransomware: 💰.
-    const threatTypes = ['☣️', '👾', '🎣', '👁️', '💰'];
-    // Bonus type: Shield. Colliding with this gives +500 points.
-    const bonusType = '🛡️';
-    // Chance for a bonus to spawn (20% chance).
-    const bonusChance = 0.2;
+    // Threat types (local emoji):
+    // Virus: biohazard (☣️), Malware: alien monster (👾), Phishing: fishing rod (🎣).
+    const threatTypes = ['☣️', '👾', '🎣'];
 
-    // Control the player's vertical position with the mouse.
+    // Shield power-up: grants +500 points and 5 seconds of invincibility.
+    const shieldIcon = "🛡️";
+    let shield = null;  // { x, y, size, icon } or null.
+    let shieldActive = false;
+    let shieldTimer = 0; // shield active duration in ms
+
+    // Use mouse to control the player's vertical position.
     canvas.addEventListener('mousemove', (e) => {
       const rect = canvas.getBoundingClientRect();
       const mouseY = e.clientY - rect.top;
@@ -87,22 +116,21 @@
       if (player.y + player.height > canvasHeight) player.y = canvasHeight - player.height;
     });
 
-    // Function to spawn a new object (threat or bonus) at a random vertical position on the right edge.
-    function spawnObject() {
+    // Spawn a new threat at a random vertical position on the right edge.
+    function spawnThreat() {
       const size = 30;
       const x = canvasWidth;
       const y = Math.random() * (canvasHeight - size);
-      let type, kind;
-      if (Math.random() < bonusChance) {
-        // Spawn bonus item (shield)
-        type = bonusType;
-        kind = 'bonus';
-      } else {
-        // Spawn threat, randomly chosen from threatTypes
-        type = threatTypes[Math.floor(Math.random() * threatTypes.length)];
-        kind = 'threat';
-      }
-      objects.push({ x, y, size, type, kind });
+      const type = threatTypes[Math.floor(Math.random() * threatTypes.length)];
+      threats.push({ x, y, size, type });
+    }
+
+    // Spawn a shield power-up at a random position.
+    function spawnShield() {
+      const size = 30;
+      const x = canvasWidth;
+      const y = Math.random() * (canvasHeight - size);
+      shield = { x, y, size, icon: shieldIcon };
     }
 
     // Increase threat speed by 20% every 5 seconds.
@@ -110,73 +138,105 @@
       threatSpeed *= 1.2;
     }, 5000);
 
+    // Spawn a shield power-up every 10 seconds if none exists.
+    setInterval(() => {
+      if (!shield) {
+        spawnShield();
+      }
+    }, 10000);
+
     // Update game state.
     function update(deltaTime) {
       if (gameOver) return;
-
-      // Move objects leftward.
-      objects.forEach(obj => {
-        obj.x -= threatSpeed;
+      
+      threats.forEach(threat => {
+        threat.x -= threatSpeed;
       });
-      // Remove objects that have moved off-screen.
-      objects = objects.filter(obj => obj.x + obj.size > 0);
+      threats = threats.filter(threat => threat.x + threat.size > 0);
 
-      // Check for collisions.
-      // We'll iterate over the objects array and remove bonus items when collected.
-      for (let i = objects.length - 1; i >= 0; i--) {
-        const obj = objects[i];
+      if (shield) {
+        shield.x -= threatSpeed;
+        if (shield.x + shield.size < 0) shield = null;
+      }
+
+      // Collision detection for threats.
+      threats.forEach(threat => {
         if (
-          player.x < obj.x + obj.size &&
-          player.x + player.width > obj.x &&
-          player.y < obj.y + obj.size &&
-          player.y + player.height > obj.y
+          player.x < threat.x + threat.size &&
+          player.x + player.width > threat.x &&
+          player.y < threat.y + threat.size &&
+          player.y + player.height > threat.y
         ) {
-          if (obj.kind === 'bonus') {
-            // Bonus: add 500 points and remove the bonus.
-            score += 500;
-            objects.splice(i, 1);
-          } else {
-            // Threat: game over.
-            gameOver = true;
-          }
+          if (!shieldActive) gameOver = true;
+        }
+      });
+
+      // Collision detection for shield power-up.
+      if (shield) {
+        if (
+          player.x < shield.x + shield.size &&
+          player.x + player.width > shield.x &&
+          player.y < shield.y + shield.size &&
+          player.y + player.height > shield.y
+        ) {
+          shieldActive = true;
+          shieldTimer = 5000; // 5 seconds of shield.
+          score += 500; // bonus points.
+          shield = null;
         }
       }
 
-      // Increase score based on survival time.
+      if (shieldActive) {
+        shieldTimer -= deltaTime;
+        if (shieldTimer <= 0) {
+          shieldActive = false;
+          shieldTimer = 0;
+        }
+      }
+
       score += deltaTime * 0.01;
       scoreDiv.innerText = 'Score: ' + Math.floor(score);
 
-      // Spawn new objects.
-      if (Date.now() - lastObjectSpawn > objectSpawnInterval) {
-        spawnObject();
-        lastObjectSpawn = Date.now();
+      if (Date.now() - lastThreatSpawn > threatSpawnInterval) {
+        spawnThreat();
+        lastThreatSpawn = Date.now();
       }
     }
 
     // Draw game objects.
     function draw() {
       ctx.clearRect(0, 0, canvasWidth, canvasHeight);
-      // Draw the player.
+      
       ctx.font = "80px sans-serif";
       ctx.fillText(player.icon, player.x, player.y + player.height);
-
-      // Draw each object.
+      
       ctx.font = "30px sans-serif";
-      objects.forEach(obj => {
-        ctx.fillText(obj.type, obj.x, obj.y + obj.size);
+      threats.forEach(threat => {
+        ctx.fillText(threat.type, threat.x, threat.y + threat.size);
       });
+      
+      if (shield) {
+        ctx.font = "30px sans-serif";
+        ctx.fillText(shield.icon, shield.x, shield.y + shield.size);
+      }
+      
+      if (shieldActive) {
+        ctx.font = "20px sans-serif";
+        ctx.fillStyle = "#0f0";
+        ctx.fillText("Shield Active!", canvasWidth - 150, 30);
+        ctx.fillStyle = "#fff";
+      }
     }
 
     let lastTime = Date.now();
-    // Main game loop.
     function gameLoop() {
       const now = Date.now();
       const deltaTime = now - lastTime;
       lastTime = now;
-
+      
       update(deltaTime);
       draw();
-
+      
       if (gameOver) {
         gameOverDiv.style.display = 'block';
       } else {
@@ -184,20 +244,96 @@
       }
     }
 
-    // Restart the game.
     function restartGame() {
       gameOver = false;
-      objects = [];
+      threats = [];
+      shield = null;
       score = 0;
       player.y = canvasHeight / 2 - player.height / 2;
       lastTime = Date.now();
       gameOverDiv.style.display = 'none';
-      threatSpeed = 3; // reset speed to initial value
+      threatSpeed = 3; // reset speed
+      shieldActive = false;
+      shieldTimer = 0;
       requestAnimationFrame(gameLoop);
     }
 
-    // Start the game loop.
     gameLoop();
   </script>
+
+  <hr>
+
+  <!-- Resume Bio Section -->
+  <section id="resume">
+    <p style="text-align: center; font-size: 1.2em;">
+      <strong>Hi, I'm Justin Calmus, but sumlac is my hacker alias.</strong>
+    </p>
+    <hr>
+    <h2 style="text-align: center;">Professional Experience</h2>
+    <hr>
+    
+    <h3>January 2025 - Present | Silver Lake, SVP of Portfolio Cybersecurity</h3>
+    <ul>
+      <li>Lead portfolio-level cybersecurity strategy across diverse investments.</li>
+      <li>Partner with portfolio companies to implement robust security measures and compliance programs.</li>
+      <li>Drive strategic risk management and ensure value creation.</li>
+    </ul>
+    
+    <h3>April 2023 - December 2024 | Sabbatical</h3>
+    <ul>
+      <li>Focused on research of emerging cybersecurity trends, and contributing to open-source security projects.</li>
+	  <li>Read over 500 books, averaging 10 hours per day!</li>
+	  <li>Started writing a book focused on leadership</li>
+    </ul>
+    
+    <h3>May 2019 - April 2023 | WeWork, CISO / Chief Trust Officer</h3>
+    <ul>
+      <li>Spearheaded global security and compliance strategies for the public offering, establishing a robust security presence.</li>
+      <li>Led cross-functional teams to implement a zero-trust architecture and digital transformation, migrating 90% of on-premise systems to multi-cloud (AWS, Azure) with 99.99% uptime.</li>
+      <li>Designed a cyber resilience program that reduced threat detection/response times by 50% and ensured SOC 2, ISO27001, PCI, and SOX compliance.</li>
+    </ul>
+    
+    <h3>April 2018 - May 2019 | OneLogin, Chief Security Officer</h3>
+    <ul>
+      <li>Redefined security strategy post-breach by launching the "Security First" initiative to restore trust in identity and access management.</li>
+      <li>Integrated Shift Left Security practices to enhance secure SDLC and ensure code integrity.</li>
+      <li>Led compliance efforts for GDPR, CCPA, SOC 2, PCI, and FedRAMP, positioning security as a competitive differentiator.</li>
+    </ul>
+    
+    <h3>October 2016 - April 2018 | HackerOne, VP Security Research</h3>
+    <ul>
+      <li>Directed advanced security research, executing 200+ penetration tests and uncovering 500+ high-severity vulnerabilities.</li>
+      <li>Developed and delivered a "Cyberwar" course at UC Berkeley, mentoring emerging cybersecurity leaders.</li>
+      <li>Enhanced platform capabilities through cross-functional collaboration, driving a 200% revenue increase.</li>
+    </ul>
+    
+    <h3>March 2015 - October 2016 | Zenefits, Chief Security Officer / CIO</h3>
+    <ul>
+      <li>Built and led global security and IT functions during hypergrowth, aligning technical strategy with business objectives.</li>
+      <li>Reduced IT costs by 33% and achieved SOC 2 compliance through effective collaboration.</li>
+      <li>Established a comprehensive security program featuring Red Team operations, CSIRT/CERT, and a secure SDLC.</li>
+    </ul>
+    
+    <h3>March 2014 - March 2015 | Salesforce, Director of Security</h3>
+    <ul>
+      <li>Led enterprise security initiatives and M&A due diligence for acquisitions exceeding $1B, mitigating integration risks.</li>
+      <li>Implemented an advanced threat detection system that reduced MTTD by 60% and MTTR by 50%.</li>
+      <li>Secured critical compliance certifications (SOX, SOC 2, ISO 27001), expanding market opportunities and boosting customer acquisition by 25%.</li>
+    </ul>
+    
+    <h3>May 2012 - March 2014 | LinkedIn, Head of IT Security</h3>
+    <ul>
+      <li>Oversaw comprehensive internal security operations for 200+ million members, safeguarding critical infrastructure and sensitive data.</li>
+      <li>Established and led the incident response team, significantly reducing detection and response times.</li>
+      <li>Engineered robust security measures that enhanced global infrastructure resilience against evolving cyber threats.</li>
+    </ul>
+    
+    <h3>January 2005 - April 2012 | Salesforce, Lead Security Engineer</h3>
+    <ul>
+      <li>Pioneered DevOps practices and architected secure, scalable infrastructures meeting evolving client requirements.</li>
+      <li>Collaborated cross-functionally to implement system enhancements and cost-effective security solutions.</li>
+      <li>Championed Salesforce's inaugural DevOps environment, driving efficiency and technical excellence.</li>
+    </ul>
+  </section>
 </body>
 </html>
