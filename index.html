@@ -50,31 +50,35 @@
     const canvasWidth = canvas.width;
     const canvasHeight = canvas.height;
 
-    // Local emoji for the human character.
+    // Local emoji for the player (human character)
     const playerIcon = "🧍";
 
-    // Player settings: doubled size (width and height now 80)
+    // Player settings with doubled size.
     let player = {
       x: 50,
-      y: canvasHeight / 2 - 40, // adjust to center the larger icon
+      y: canvasHeight / 2 - 40,
       width: 80,
       height: 80,
       icon: playerIcon
     };
 
-    // Array to hold oncoming threats.
-    let threats = [];
-    let threatSpawnInterval = 1500; // spawn a threat every 1.5 seconds
-    let lastThreatSpawn = Date.now();
-    let threatSpeed = 3; // initial speed in pixels per frame
-
+    // Array to hold oncoming objects (both threats and bonus items)
+    let objects = [];
+    let objectSpawnInterval = 1500; // spawn every 1.5 seconds
+    let lastObjectSpawn = Date.now();
+    let threatSpeed = 3; // initial speed (in pixels per frame)
     let gameOver = false;
     let score = 0;
 
-    // Threat types: Virus (biohazard), Malware, and Phishing.
-    const threatTypes = ['☣️', '👾', '🎣'];
+    // Define threat types (all cause game over) using local emoji.
+    // Virus: biohazard symbol, Malware: 👾, Phishing: 🎣, Spyware: 👁️, Ransomware: 💰.
+    const threatTypes = ['☣️', '👾', '🎣', '👁️', '💰'];
+    // Bonus type: Shield. Colliding with this gives +500 points.
+    const bonusType = '🛡️';
+    // Chance for a bonus to spawn (20% chance).
+    const bonusChance = 0.2;
 
-    // Use the mouse to control the player's vertical position.
+    // Control the player's vertical position with the mouse.
     canvas.addEventListener('mousemove', (e) => {
       const rect = canvas.getBoundingClientRect();
       const mouseY = e.clientY - rect.top;
@@ -83,13 +87,22 @@
       if (player.y + player.height > canvasHeight) player.y = canvasHeight - player.height;
     });
 
-    // Spawn a new threat at a random vertical position on the right edge.
-    function spawnThreat() {
+    // Function to spawn a new object (threat or bonus) at a random vertical position on the right edge.
+    function spawnObject() {
       const size = 30;
       const x = canvasWidth;
       const y = Math.random() * (canvasHeight - size);
-      const type = threatTypes[Math.floor(Math.random() * threatTypes.length)];
-      threats.push({ x, y, size, type });
+      let type, kind;
+      if (Math.random() < bonusChance) {
+        // Spawn bonus item (shield)
+        type = bonusType;
+        kind = 'bonus';
+      } else {
+        // Spawn threat, randomly chosen from threatTypes
+        type = threatTypes[Math.floor(Math.random() * threatTypes.length)];
+        kind = 'threat';
+      }
+      objects.push({ x, y, size, type, kind });
     }
 
     // Increase threat speed by 20% every 5 seconds.
@@ -100,45 +113,57 @@
     // Update game state.
     function update(deltaTime) {
       if (gameOver) return;
-      
-      threats.forEach(threat => {
-        threat.x -= threatSpeed;
-      });
-      threats = threats.filter(threat => threat.x + threat.size > 0);
 
-      // Collision detection.
-      threats.forEach(threat => {
+      // Move objects leftward.
+      objects.forEach(obj => {
+        obj.x -= threatSpeed;
+      });
+      // Remove objects that have moved off-screen.
+      objects = objects.filter(obj => obj.x + obj.size > 0);
+
+      // Check for collisions.
+      // We'll iterate over the objects array and remove bonus items when collected.
+      for (let i = objects.length - 1; i >= 0; i--) {
+        const obj = objects[i];
         if (
-          player.x < threat.x + threat.size &&
-          player.x + player.width > threat.x &&
-          player.y < threat.y + threat.size &&
-          player.y + player.height > threat.y
+          player.x < obj.x + obj.size &&
+          player.x + player.width > obj.x &&
+          player.y < obj.y + obj.size &&
+          player.y + player.height > obj.y
         ) {
-          gameOver = true;
+          if (obj.kind === 'bonus') {
+            // Bonus: add 500 points and remove the bonus.
+            score += 500;
+            objects.splice(i, 1);
+          } else {
+            // Threat: game over.
+            gameOver = true;
+          }
         }
-      });
+      }
 
+      // Increase score based on survival time.
       score += deltaTime * 0.01;
       scoreDiv.innerText = 'Score: ' + Math.floor(score);
 
-      if (Date.now() - lastThreatSpawn > threatSpawnInterval) {
-        spawnThreat();
-        lastThreatSpawn = Date.now();
+      // Spawn new objects.
+      if (Date.now() - lastObjectSpawn > objectSpawnInterval) {
+        spawnObject();
+        lastObjectSpawn = Date.now();
       }
     }
 
     // Draw game objects.
     function draw() {
       ctx.clearRect(0, 0, canvasWidth, canvasHeight);
-
-      // Draw the player using the local emoji at doubled size.
+      // Draw the player.
       ctx.font = "80px sans-serif";
       ctx.fillText(player.icon, player.x, player.y + player.height);
-      
-      // Draw threats using emoji.
+
+      // Draw each object.
       ctx.font = "30px sans-serif";
-      threats.forEach(threat => {
-        ctx.fillText(threat.type, threat.x, threat.y + threat.size);
+      objects.forEach(obj => {
+        ctx.fillText(obj.type, obj.x, obj.y + obj.size);
       });
     }
 
@@ -162,12 +187,12 @@
     // Restart the game.
     function restartGame() {
       gameOver = false;
-      threats = [];
+      objects = [];
       score = 0;
       player.y = canvasHeight / 2 - player.height / 2;
       lastTime = Date.now();
       gameOverDiv.style.display = 'none';
-      threatSpeed = 3; // reset threat speed to initial value
+      threatSpeed = 3; // reset speed to initial value
       requestAnimationFrame(gameLoop);
     }
 
