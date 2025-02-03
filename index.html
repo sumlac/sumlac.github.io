@@ -50,20 +50,20 @@
     const canvasWidth = canvas.width;
     const canvasHeight = canvas.height;
 
-    // Load the human character image.
-    const humanImg = new Image();
-    humanImg.src = 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/57/Generic_person_icon.svg/128px-Generic_person_icon.svg.png';
+    // Instead of an external image, define the player icon as an emoji.
+    // We'll use the "person standing" emoji.
+    const playerIcon = "🧍";
 
-    // Player settings using a human character image.
+    // Player settings using the local emoji.
     let player = {
-      x: 50, 
+      x: 50,
       y: canvasHeight / 2 - 20,
       width: 40,
       height: 40,
-      image: humanImg
+      icon: playerIcon
     };
 
-    // Array to hold oncoming threats.
+    // Threats array for obstacles.
     let threats = [];
     let threatSpawnInterval = 1500; // spawn every 1.5 seconds
     let lastThreatSpawn = Date.now();
@@ -72,11 +72,11 @@
     let gameOver = false;
     let score = 0;
 
-    // Threat types are now defined as:
-    // Virus: 🦠, Malware: 👾 (changed from 💀), Phishing: 🎣.
+    // Threat types (local emoji icons)
+    // Virus: 🦠, Malware: 👾, Phishing: 🎣.
     const threatTypes = ['🦠', '👾', '🎣'];
 
-    // Use the mouse to control the player’s vertical position.
+    // Use the mouse to control the player's vertical position.
     canvas.addEventListener('mousemove', (e) => {
       const rect = canvas.getBoundingClientRect();
       const mouseY = e.clientY - rect.top;
@@ -94,16 +94,18 @@
       threats.push({ x, y, size, type });
     }
 
-    // Update the game state.
+    // Update game objects.
     function update(deltaTime) {
       if (gameOver) return;
 
+      // Move threats leftward.
       threats.forEach(threat => {
         threat.x -= threatSpeed;
       });
+      // Remove threats that have moved off-screen.
       threats = threats.filter(threat => threat.x + threat.size > 0);
 
-      // Check for collisions.
+      // Collision detection.
       threats.forEach(threat => {
         if (
           player.x < threat.x + threat.size &&
@@ -115,29 +117,28 @@
         }
       });
 
+      // Increase score over time.
       score += deltaTime * 0.01;
       scoreDiv.innerText = 'Score: ' + Math.floor(score);
 
+      // Spawn new threats based on the spawn interval.
       if (Date.now() - lastThreatSpawn > threatSpawnInterval) {
         spawnThreat();
         lastThreatSpawn = Date.now();
       }
     }
 
-    // Draw everything on the canvas.
+    // Draw game objects.
     function draw() {
       ctx.clearRect(0, 0, canvasWidth, canvasHeight);
 
-      // Draw the player character.
-      if (player.image.complete) {
-        ctx.drawImage(player.image, player.x, player.y, player.width, player.height);
-      } else {
-        ctx.fillStyle = '#fff';
-        ctx.fillRect(player.x, player.y, player.width, player.height);
-      }
+      // Set font for drawing the player icon.
+      ctx.font = "40px sans-serif";
+      // Draw the player icon at its current position.
+      ctx.fillText(player.icon, player.x, player.y + player.height);
 
-      // Draw threats (emoji).
-      ctx.font = '30px sans-serif';
+      // Draw threats using their emoji.
+      ctx.font = "30px sans-serif";
       threats.forEach(threat => {
         ctx.fillText(threat.type, threat.x, threat.y + threat.size);
       });
@@ -171,10 +172,8 @@
       requestAnimationFrame(gameLoop);
     }
 
-    // Start the game when the human image is loaded.
-    humanImg.onload = function() {
-      gameLoop();
-    };
+    // Start the game loop.
+    gameLoop();
   </script>
 </body>
 </html>
