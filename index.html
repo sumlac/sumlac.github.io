@@ -94,7 +94,7 @@
     <canvas id="gameCanvas" width="800" height="400"></canvas>
     <div id="legend">
       <p><strong>Avoid:</strong> ☣️ 👾 🎣</p>
-      <p><strong>Collect:</strong> 🛡️</p>
+      <p><strong>Collect:</strong> 🛡️ &amp; 🧱</p>
     </div>
   </div>
   <div id="gameOver">
@@ -110,6 +110,8 @@
     const gameOverDiv = document.getElementById('gameOver');
     const canvasWidth = canvas.width;
     const canvasHeight = canvas.height;
+    let score = 0;
+    let gameOver = false;
 
     // Player settings
     const playerIcon = "🧍";
@@ -121,16 +123,24 @@
       icon: playerIcon
     };
 
-    // Threats and shield variables
+    // Threats
     let threats = [];
     let threatSpawnInterval = 1500; // spawn every 1.5 seconds
     let lastThreatSpawn = Date.now();
     let threatSpeed = 3; // initial threat speed (pixels per frame)
     const threatTypes = ['☣️', '👾', '🎣']; // threat emoji
+
+    // Shield power-up (existing)
     const shieldIcon = "🛡️";
     let shield = null;
     let shieldActive = false;
     let shieldTimer = 0; // in ms
+
+    // Firewall power-up (new)
+    const firewallIcon = "🧱";
+    let firewallItem = null;
+    let firewallActive = false;
+    let firewallTimer = 0; // in ms
 
     // === Player Control ===
     canvas.addEventListener('mousemove', (e) => {
@@ -166,11 +176,19 @@
       const y = Math.random() * (canvasHeight - size);
       shield = { x, y, size, icon: shieldIcon };
     }
+    function spawnFirewall() {
+      const size = 30;
+      const x = canvasWidth;
+      const y = Math.random() * (canvasHeight - size);
+      firewallItem = { x, y, size, icon: firewallIcon };
+    }
 
     // Increase threat speed every 5 seconds
     setInterval(() => { threatSpeed *= 1.2; }, 5000);
     // Spawn a shield power-up every 10 seconds if none exists.
     setInterval(() => { if (!shield) spawnShield(); }, 10000);
+    // Spawn a firewall power-up every 15 seconds if none exists.
+    setInterval(() => { if (!firewallItem) spawnFirewall(); }, 15000);
 
     // === Game Update & Draw ===
     let lastTime = Date.now();
@@ -199,16 +217,38 @@
         shield.x -= threatSpeed;
         if (shield.x + shield.size < 0) shield = null;
       }
+      
+      // Move firewall power-up if it exists
+      if (firewallItem) {
+        firewallItem.x -= threatSpeed;
+        if (firewallItem.x + firewallItem.size < 0) firewallItem = null;
+      }
 
-      // Collision detection with threats
-      threats.forEach(threat => {
+      // If the firewall is active, remove any threats that have entered its wall region.
+      if (firewallActive) {
+        const brickSize = 30;
+        // The wall is drawn starting at an x-coordinate shifted right from the player.
+        const wallX = player.x + player.width + 10;
+        threats = threats.filter(threat => {
+          // Check if threat's horizontal bounds intersect the wall region.
+          if (threat.x < wallX + brickSize * 2 && threat.x + threat.size > wallX) {
+            return false; // Remove threat.
+          }
+          return true;
+        });
+      }
+
+      // Collision detection for threats with the player.
+      threats.forEach((threat, idx, arr) => {
         if (
           player.x < threat.x + threat.size &&
           player.x + player.width > threat.x &&
           player.y < threat.y + threat.size &&
           player.y + player.height > threat.y
         ) {
-          if (!shieldActive) gameOver = true;
+          if (!shieldActive && !firewallActive) {
+            gameOver = true;
+          }
         }
       });
 
@@ -227,12 +267,34 @@
         }
       }
 
-      // Update shield timer if active
+      // Collision detection for firewall power-up
+      if (firewallItem) {
+        if (
+          player.x < firewallItem.x + firewallItem.size &&
+          player.x + player.width > firewallItem.x &&
+          player.y < firewallItem.y + firewallItem.size &&
+          player.y + player.height > firewallItem.y
+        ) {
+          firewallActive = true;
+          firewallTimer = 15000; // 15 seconds of firewall protection.
+          score += 500; // bonus points.
+          firewallItem = null;
+        }
+      }
+
+      // Update timers for shield and firewall power-ups.
       if (shieldActive) {
         shieldTimer -= deltaTime;
         if (shieldTimer <= 0) {
           shieldActive = false;
           shieldTimer = 0;
+        }
+      }
+      if (firewallActive) {
+        firewallTimer -= deltaTime;
+        if (firewallTimer <= 0) {
+          firewallActive = false;
+          firewallTimer = 0;
         }
       }
 
@@ -248,24 +310,51 @@
     function draw() {
       ctx.clearRect(0, 0, canvasWidth, canvasHeight);
       
-      ctx.font = "80px sans-serif";
-      ctx.fillText(player.icon, player.x, player.y + player.height);
-      
+      // Draw threats
       ctx.font = "30px sans-serif";
       threats.forEach(threat => {
         ctx.fillText(threat.type, threat.x, threat.y + threat.size);
       });
       
+      // Draw shield power-up if it exists
       if (shield) {
         ctx.font = "30px sans-serif";
         ctx.fillText(shield.icon, shield.x, shield.y + shield.size);
       }
       
+      // Draw firewall power-up if it exists
+      if (firewallItem) {
+        ctx.font = "30px sans-serif";
+        ctx.fillText(firewallItem.icon, firewallItem.x, firewallItem.y + firewallItem.size);
+      }
+      
+      // Draw the player
+      ctx.font = "80px sans-serif";
+      ctx.fillStyle = "#fff";
+      ctx.fillText(player.icon, player.x, player.y + player.height);
+      
+      // If shield is active, display an indicator.
       if (shieldActive) {
         ctx.font = "20px sans-serif";
         ctx.fillStyle = "#0f0";
         ctx.fillText("Shield Active!", canvasWidth - 150, 30);
         ctx.fillStyle = "#fff";
+      }
+      
+      // Draw the firewall wall so that it appears in front of the player.
+      if (firewallActive) {
+        const brickSize = 30; // Each brick is 30x30 pixels.
+        ctx.font = brickSize + "px sans-serif";
+        // Calculate wall's x-coordinate (further to the right than the player)
+        const wallX = player.x + player.width + 10;
+        // Draw two columns of bricks from wallX to wallX + brickSize*2 covering the full canvas height.
+        for (let y = 0; y < canvasHeight; y += brickSize) {
+          ctx.fillText(firewallIcon, wallX, y + brickSize);
+          ctx.fillText(firewallIcon, wallX + brickSize, y + brickSize);
+        }
+        ctx.font = "20px sans-serif";
+        ctx.fillStyle = "#fff";
+        ctx.fillText("Firewall Active!", canvasWidth - 170, 60);
       }
     }
 
@@ -273,6 +362,7 @@
       gameOver = false;
       threats = [];
       shield = null;
+      firewallItem = null;
       score = 0;
       player.y = canvasHeight / 2 - player.height / 2;
       lastTime = Date.now();
@@ -280,6 +370,8 @@
       threatSpeed = 3; // reset speed
       shieldActive = false;
       shieldTimer = 0;
+      firewallActive = false;
+      firewallTimer = 0;
       requestAnimationFrame(gameLoop);
     }
 
@@ -302,8 +394,7 @@
       // Resume text split into lines.
       // A special token "[HR]" is used to insert an <hr> element.
       const resumeLines = [
-        "Justin Calmus",
-		"justin at sumlac dot com",
+        "Hi, I'm Justin Calmus, but sumlac is my hacker alias.",
         "",
         "Professional Experience",
         "[HR]",
@@ -368,8 +459,7 @@
         // Conditions: line begins with a month or matches one of the special centered strings.
         const timelineRegex = /^(January|February|March|April|May|June|July|August|September|October|November|December)/;
         const specialCentered = [
-          "Justin Calmus",
-		  "justin at sumlac dot com",
+          "Hi, I'm Justin Calmus, but sumlac is my hacker alias.",
           "Professional Experience"
         ];
         let lineElement;
