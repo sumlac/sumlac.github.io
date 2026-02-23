@@ -1,501 +1,1177 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <!-- Mobile responsiveness meta tag -->
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hi, I'm Justin Calmus</title>
-  <style>
-    body {
-      margin: 0;
-      background: #222;
-      color: #fff;
-      font-family: sans-serif;
-      line-height: 1.6;
-      padding: 20px;
-    }
-    h1, h2, h3, h4 {
-      text-align: center;
-    }
-    /* Game Container and Canvas */
-    #gameContainer {
-      position: relative;
-      width: 800px;
-      margin: 20px auto;
-    }
-    canvas {
-      background: #333;
-      display: block;
-      border: 2px solid #fff;
-    }
-    /* Overlay legend styling */
-    #legend {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      background: rgba(0, 0, 0, 0.6);
-      padding: 5px 10px;
-      font-size: 0.8em;
-      border: 1px solid #888;
-      border-radius: 5px;
-    }
-    #score {
-      font-size: 1.2em;
-      text-align: center;
-      margin: 10px;
-    }
-    #gameOver {
-      display: none;
-      text-align: center;
-      font-size: 2em;
-      margin-top: 20px;
-    }
-    button {
-      font-size: 1em;
-      padding: 10px 20px;
-      margin-top: 10px;
-      cursor: pointer;
-    }
-    hr {
-      margin: 40px 0;
-      border: 1px solid #555;
-    }
-    /* Resume section styling with green terminal hacker effect */
-    #resume {
-      max-width: 800px;
-      margin: 40px auto;
-      padding: 20px;
-      background: #000;           /* Black background */
-      border: 2px solid #0f0;      /* Bright green border */
-      font-family: 'Courier New', Courier, monospace;
-      white-space: pre-wrap;       /* Preserve whitespace and line breaks */
-      line-height: 1.4;
-      font-size: 1.1em;
-      color: #0f0;                /* Green text by default */
-      min-height: 300px;          /* Ensure some height before typing starts */
-    }
-    /* Blinking cursor effect for the typed text */
-    #typedResume::after {
-      content: '|';
-      color: #0f0;
-      animation: blink 0.7s infinite;
-    }
-    @keyframes blink {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0; }
-    }
-  </style>
+<!--
+     ██████╗██╗   ██╗██████╗ ███████╗██████╗ ███████╗███████╗ ██████╗
+    ██╔════╝╚██╗ ██╔╝██╔══██╗██╔════╝██╔══██╗██╔════╝██╔════╝██╔════╝
+    ██║      ╚████╔╝ ██████╔╝█████╗  ██████╔╝███████╗█████╗  ██║
+    ██║       ╚██╔╝  ██╔══██╗██╔══╝  ██╔══██╗╚════██║██╔══╝  ██║
+    ╚██████╗   ██║   ██████╔╝███████╗██║  ██║███████║███████╗╚██████╗
+     ╚═════╝   ╚═╝   ╚═════╝ ╚══════╝╚═╝  ╚═╝╚══════╝╚══════╝ ╚═════╝
+
+    sumlac.com — Justin Calmus
+    Built with 0 frameworks and 0 dependencies.
+    Looking for vulnerabilities? Try the terminal instead.
+-->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Justin Calmus // SVP Portfolio Cybersecurity</title>
+<meta name="description" content="Justin Calmus — 20+ years in cybersecurity leadership. SVP Portfolio Cybersecurity at Silver Lake. Former CISO at WeWork, CSO at OneLogin, Zenefits, VP at HackerOne.">
+<style>
+/* ═══════════════════════════════════════════════════════════════
+   BASE
+   ═══════════════════════════════════════════════════════════════ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --green:#00ff41;--dim:#0a5f1a;--bg:#0a0a0a;--terminal-bg:#000;
+  --text:#e0e0e0;--accent:#00ff41;--glow:0 0 10px rgba(0,255,65,.4);
+  --font:'Courier New','Lucida Console','Monaco','Consolas',monospace;
+}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);color:var(--text);font-family:var(--font);
+  line-height:1.6;overflow-x:hidden;
+}
+a{color:var(--green);text-decoration:none}
+a:hover{text-shadow:var(--glow)}
+::selection{background:var(--green);color:#000}
+::-webkit-scrollbar{width:8px}
+::-webkit-scrollbar-track{background:#111}
+::-webkit-scrollbar-thumb{background:var(--dim);border-radius:4px}
+
+/* CRT scanline overlay */
+body::after{
+  content:'';position:fixed;top:0;left:0;width:100%;height:100%;
+  pointer-events:none;z-index:9998;
+  background:repeating-linear-gradient(
+    0deg,transparent,transparent 2px,rgba(0,0,0,.03) 2px,rgba(0,0,0,.03) 4px
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   BOOT SEQUENCE
+   ═══════════════════════════════════════════════════════════════ */
+#boot-overlay{
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  background:#000;z-index:10000;display:flex;flex-direction:column;
+  justify-content:center;align-items:center;
+}
+#boot-canvas{position:absolute;top:0;left:0;width:100%;height:100%;opacity:.3}
+#boot-text{
+  position:relative;z-index:1;font-size:14px;color:var(--green);
+  max-width:600px;width:90%;white-space:pre-wrap;line-height:1.8;
+}
+#boot-skip{
+  position:absolute;bottom:40px;right:40px;z-index:1;
+  background:transparent;border:1px solid var(--green);color:var(--green);
+  padding:8px 20px;font-family:var(--font);font-size:13px;cursor:pointer;
+  opacity:.6;transition:opacity .2s;
+}
+#boot-skip:hover{opacity:1}
+
+/* Glitch effect */
+@keyframes glitch{
+  0%{clip-path:inset(40% 0 61% 0);transform:translate(-2px,2px)}
+  20%{clip-path:inset(92% 0 1% 0);transform:translate(2px,-2px)}
+  40%{clip-path:inset(43% 0 1% 0);transform:translate(-1px,3px)}
+  60%{clip-path:inset(25% 0 58% 0);transform:translate(3px,1px)}
+  80%{clip-path:inset(54% 0 7% 0);transform:translate(-3px,-2px)}
+  100%{clip-path:inset(58% 0 43% 0);transform:translate(2px,2px)}
+}
+.glitch{animation:glitch .3s linear infinite;text-shadow:2px 0 #ff0040,-2px 0 #00ffff}
+
+/* ═══════════════════════════════════════════════════════════════
+   HERO
+   ═══════════════════════════════════════════════════════════════ */
+#hero{
+  position:relative;height:100vh;display:flex;flex-direction:column;
+  justify-content:center;align-items:center;overflow:hidden;
+}
+#particle-canvas{position:absolute;top:0;left:0;width:100%;height:100%}
+.hero-content{position:relative;z-index:1;text-align:center;padding:0 20px}
+.hero-name{
+  font-size:clamp(2rem,6vw,4.5rem);font-weight:bold;color:var(--green);
+  letter-spacing:8px;margin-bottom:12px;
+  text-shadow:0 0 20px rgba(0,255,65,.5),0 0 40px rgba(0,255,65,.2);
+}
+.hero-title{
+  font-size:clamp(.9rem,2vw,1.3rem);color:var(--text);opacity:0;
+  min-height:1.6em;
+}
+.hero-title .cursor{animation:blink .7s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+.scroll-hint{
+  position:absolute;bottom:30px;left:50%;transform:translateX(-50%);
+  color:var(--dim);font-size:12px;animation:bob 2s ease-in-out infinite;
+}
+@keyframes bob{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-8px)}}
+
+/* ═══════════════════════════════════════════════════════════════
+   SECTIONS (shared)
+   ═══════════════════════════════════════════════════════════════ */
+.section{
+  max-width:1000px;margin:0 auto;padding:80px 20px;
+}
+.section-header{
+  font-size:clamp(1.1rem,2.5vw,1.4rem);color:var(--green);
+  margin-bottom:40px;padding-bottom:10px;
+  border-bottom:1px solid rgba(0,255,65,.2);
+}
+.section-header span{color:var(--dim)}
+
+/* ═══════════════════════════════════════════════════════════════
+   TERMINAL
+   ═══════════════════════════════════════════════════════════════ */
+#terminal-section{padding-top:40px}
+.terminal-window{
+  background:var(--terminal-bg);border:1px solid #333;border-radius:6px;
+  max-width:800px;margin:0 auto;overflow:hidden;
+}
+.terminal-bar{
+  background:#1a1a1a;padding:8px 14px;display:flex;align-items:center;gap:8px;
+  border-bottom:1px solid #333;
+}
+.terminal-dot{width:12px;height:12px;border-radius:50%}
+.terminal-dot.r{background:#ff5f57}.terminal-dot.y{background:#ffbd2e}.terminal-dot.g{background:#28c840}
+.terminal-title{color:#888;font-size:12px;margin-left:8px}
+.terminal-body{
+  padding:16px;height:400px;overflow-y:auto;font-size:14px;line-height:1.7;
+}
+.terminal-body::-webkit-scrollbar{width:6px}
+.terminal-body::-webkit-scrollbar-thumb{background:#333;border-radius:3px}
+.terminal-line{margin-bottom:2px;word-wrap:break-word}
+.terminal-line .prompt{color:var(--green)}
+.terminal-line .cmd{color:#fff}
+.terminal-line .output{color:var(--text);opacity:.85}
+.terminal-line .accent{color:var(--green)}
+.terminal-line .info{color:#5599ff}
+.terminal-line .warn{color:#ffbd2e}
+.terminal-line .err{color:#ff5f57}
+.input-line{display:flex;align-items:center;gap:0}
+.input-line .prompt{color:var(--green);white-space:nowrap}
+#terminal-input{
+  background:transparent;border:none;color:#fff;font-family:var(--font);
+  font-size:14px;outline:none;flex:1;caret-color:var(--green);
+  min-width:0;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   CAREER TIMELINE
+   ═══════════════════════════════════════════════════════════════ */
+.timeline{position:relative;padding:20px 0}
+.timeline::before{
+  content:'';position:absolute;left:50%;top:0;bottom:0;width:2px;
+  background:linear-gradient(to bottom,transparent,var(--green),transparent);
+  transform:translateX(-50%);
+}
+.timeline-item{
+  position:relative;width:45%;padding:20px;margin-bottom:40px;
+  background:rgba(0,255,65,.03);border:1px solid rgba(0,255,65,.15);
+  border-radius:4px;opacity:0;transform:translateY(20px);
+  transition:opacity .5s,transform .5s;
+}
+.timeline-item.visible{opacity:1;transform:translateY(0)}
+.timeline-item:nth-child(odd){margin-left:5%}
+.timeline-item:nth-child(even){margin-left:50%}
+.timeline-item::before{
+  content:'';position:absolute;top:28px;width:12px;height:12px;
+  background:var(--green);border-radius:50%;
+  box-shadow:0 0 10px rgba(0,255,65,.5);
+}
+.timeline-item:nth-child(odd)::before{right:-31px}
+.timeline-item:nth-child(even)::before{left:-31px}
+.timeline-date{color:var(--green);font-size:13px;margin-bottom:6px}
+.timeline-role{color:#fff;font-size:15px;font-weight:bold;margin-bottom:4px}
+.timeline-company{color:var(--dim);font-size:13px;margin-bottom:8px}
+.timeline-desc{color:var(--text);font-size:13px;opacity:.8;line-height:1.5}
+
+/* ═══════════════════════════════════════════════════════════════
+   SKILLS MATRIX
+   ═══════════════════════════════════════════════════════════════ */
+.skills-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:12px;
+}
+.skill-card{
+  background:rgba(0,255,65,.04);border:1px solid rgba(0,255,65,.15);
+  padding:14px 12px;border-radius:4px;font-size:13px;text-align:center;
+  transition:all .2s;cursor:default;
+}
+.skill-card:hover{
+  border-color:var(--green);box-shadow:0 0 15px rgba(0,255,65,.2);
+  transform:translateY(-2px);
+}
+.skill-category{
+  grid-column:1/-1;color:var(--green);font-size:14px;font-weight:bold;
+  padding:10px 0 4px;border-bottom:1px solid rgba(0,255,65,.15);
+  margin-top:10px;
+}
+.skill-category:first-child{margin-top:0}
+
+/* ═══════════════════════════════════════════════════════════════
+   ARSENAL
+   ═══════════════════════════════════════════════════════════════ */
+.arsenal-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:16px;
+}
+.arsenal-card{
+  background:rgba(0,255,65,.03);border:1px solid rgba(0,255,65,.12);
+  padding:18px;border-radius:4px;transition:all .2s;
+}
+.arsenal-card:hover{
+  border-color:var(--green);box-shadow:0 0 15px rgba(0,255,65,.15);
+  transform:translateY(-2px);
+}
+.arsenal-name{color:var(--green);font-size:14px;font-weight:bold;margin-bottom:6px}
+.arsenal-desc{color:var(--text);font-size:12px;opacity:.75;margin-bottom:10px;line-height:1.4}
+.arsenal-meta{display:flex;gap:8px;flex-wrap:wrap}
+.arsenal-tag{
+  font-size:11px;padding:2px 8px;border-radius:3px;
+  border:1px solid rgba(0,255,65,.2);color:var(--dim);
+}
+.arsenal-tag.lang{color:var(--green);border-color:var(--green)}
+
+/* ═══════════════════════════════════════════════════════════════
+   CONTACT
+   ═══════════════════════════════════════════════════════════════ */
+.contact-block{
+  background:var(--terminal-bg);border:1px solid #333;border-radius:4px;
+  padding:30px;max-width:500px;margin:0 auto;font-size:14px;line-height:2;
+}
+.contact-block .label{color:var(--dim);display:inline-block;min-width:110px}
+.contact-block .value{color:var(--green)}
+
+/* ═══════════════════════════════════════════════════════════════
+   FOOTER
+   ═══════════════════════════════════════════════════════════════ */
+footer{
+  text-align:center;padding:40px 20px 30px;color:#444;font-size:12px;
+  border-top:1px solid #1a1a1a;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SCROLL REVEAL
+   ═══════════════════════════════════════════════════════════════ */
+.reveal{opacity:0;transform:translateY(20px);transition:opacity .6s,transform .6s}
+.reveal.visible{opacity:1;transform:translateY(0)}
+
+/* ═══════════════════════════════════════════════════════════════
+   REDUCED MOTION
+   ═══════════════════════════════════════════════════════════════ */
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{
+    animation-duration:0.01ms!important;animation-iteration-count:1!important;
+    transition-duration:0.01ms!important;
+  }
+  #boot-overlay{display:none!important}
+  .hero-title{opacity:1!important}
+  .timeline-item,.reveal{opacity:1!important;transform:none!important}
+  body::after{display:none}
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════════════════════════ */
+@media(max-width:768px){
+  .timeline::before{left:20px}
+  .timeline-item{width:calc(100% - 50px);margin-left:50px!important}
+  .timeline-item:nth-child(odd)::before,
+  .timeline-item:nth-child(even)::before{left:-31px;right:auto}
+  .skills-grid{grid-template-columns:repeat(2,1fr)}
+  .arsenal-grid{grid-template-columns:1fr}
+  .terminal-body{height:300px;font-size:13px}
+  #boot-skip{bottom:20px;right:20px}
+}
+@media(max-width:480px){
+  .skills-grid{grid-template-columns:repeat(2,1fr)}
+  .hero-name{letter-spacing:4px}
+  .section{padding:60px 16px}
+}
+</style>
 </head>
 <body>
-  <!-- Game Section -->
-  <h1>Avoid the Threats!</h1>
-  <div id="score">Score: 0</div>
-  <div id="gameContainer">
-    <canvas id="gameCanvas" width="800" height="400"></canvas>
-    <div id="legend">
-      <p><strong>Avoid:</strong> ☣️ 👾 🎣</p>
-      <p><strong>Collect:</strong> 🛡️ &amp; 🧱</p>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     BOOT SEQUENCE OVERLAY
+     ═══════════════════════════════════════════════════════════════ -->
+<div id="boot-overlay">
+  <canvas id="boot-canvas"></canvas>
+  <div id="boot-text"></div>
+  <button id="boot-skip" onclick="skipBoot()">SKIP [ESC]</button>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     HERO SECTION
+     ═══════════════════════════════════════════════════════════════ -->
+<section id="hero">
+  <canvas id="particle-canvas"></canvas>
+  <div class="hero-content">
+    <div class="hero-name" id="hero-name"></div>
+    <div class="hero-title" id="hero-title"></div>
+  </div>
+  <div class="scroll-hint">[ scroll down ]</div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     INTERACTIVE TERMINAL
+     ═══════════════════════════════════════════════════════════════ -->
+<section id="terminal-section" class="section">
+  <div class="section-header"><span>// </span>root@sumlac:~#</div>
+  <div class="terminal-window">
+    <div class="terminal-bar">
+      <div class="terminal-dot r"></div>
+      <div class="terminal-dot y"></div>
+      <div class="terminal-dot g"></div>
+      <span class="terminal-title">sumlac — bash — 80x24</span>
+    </div>
+    <div class="terminal-body" id="terminal-body">
+      <div class="terminal-line"><span class="output">Welcome to sumlac.com // Type <span class="accent">help</span> for available commands.</span></div>
+      <div class="terminal-line"><span class="output">&nbsp;</span></div>
+      <div class="input-line">
+        <span class="prompt">visitor@sumlac:~$&nbsp;</span>
+        <input type="text" id="terminal-input" autofocus autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+      </div>
     </div>
   </div>
-  <div id="gameOver">
-    Game Over!<br>
-    <button onclick="restartGame()">Restart</button>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     CAREER TIMELINE
+     ═══════════════════════════════════════════════════════════════ -->
+<section class="section">
+  <div class="section-header"><span>// </span>cat career.log</div>
+  <div class="timeline" id="timeline">
+    <div class="timeline-item">
+      <div class="timeline-date">[2025-01 — PRESENT]</div>
+      <div class="timeline-role">SVP Portfolio Cybersecurity</div>
+      <div class="timeline-company">Silver Lake</div>
+      <div class="timeline-desc">Lead portfolio-level cybersecurity strategy across diverse investments. Partner with portfolio companies to implement robust security measures and compliance programs. Drive strategic risk management and value creation.</div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-date">[2019-05 — 2023-04]</div>
+      <div class="timeline-role">CISO / Chief Trust Officer</div>
+      <div class="timeline-company">WeWork</div>
+      <div class="timeline-desc">Spearheaded global security and compliance strategies for the public offering. Led zero-trust architecture implementation and digital transformation. Reduced threat detection/response times by 50%. SOC 2, ISO27001, PCI, SOX compliance.</div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-date">[2018-04 — 2019-05]</div>
+      <div class="timeline-role">Chief Security Officer</div>
+      <div class="timeline-company">OneLogin</div>
+      <div class="timeline-desc">Redefined security strategy post-breach with "Security First" initiative. Integrated Shift Left Security into SDLC. Led compliance for GDPR, CCPA, SOC 2, PCI, and FedRAMP.</div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-date">[2016-10 — 2018-04]</div>
+      <div class="timeline-role">VP Security Research</div>
+      <div class="timeline-company">HackerOne</div>
+      <div class="timeline-desc">Directed advanced security research. Executed 200+ penetration tests, uncovering 500+ high-severity vulnerabilities. Developed "Cyberwar" course at UC Berkeley. Drove 200% revenue increase.</div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-date">[2015-03 — 2016-10]</div>
+      <div class="timeline-role">Chief Security Officer / CIO</div>
+      <div class="timeline-company">Zenefits</div>
+      <div class="timeline-desc">Built global security and IT functions during hypergrowth. Reduced IT costs by 33%, achieved SOC 2 compliance. Established Red Team operations, CSIRT/CERT, and secure SDLC.</div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-date">[2014-03 — 2015-03]</div>
+      <div class="timeline-role">Director of Security</div>
+      <div class="timeline-company">Salesforce</div>
+      <div class="timeline-desc">Led enterprise security and M&A due diligence for $1B+ acquisitions. Reduced MTTD by 60% and MTTR by 50% with advanced threat detection. SOX, SOC 2, ISO 27001 certified.</div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-date">[2012-05 — 2014-03]</div>
+      <div class="timeline-role">Head of IT Security</div>
+      <div class="timeline-company">LinkedIn</div>
+      <div class="timeline-desc">Oversaw internal security operations for 200M+ members. Established incident response team, significantly reducing detection and response times. Enhanced global infrastructure resilience.</div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-date">[2005-01 — 2012-04]</div>
+      <div class="timeline-role">Lead Security Engineer</div>
+      <div class="timeline-company">Salesforce</div>
+      <div class="timeline-desc">Pioneered DevOps practices, architected secure scalable infrastructures. Championed Salesforce's inaugural DevOps environment, driving efficiency and technical excellence.</div>
+    </div>
   </div>
+</section>
 
-  <script>
-    // === Game Variables & Setup ===
-    const canvas = document.getElementById('gameCanvas');
-    const ctx = canvas.getContext('2d');
-    const scoreDiv = document.getElementById('score');
-    const gameOverDiv = document.getElementById('gameOver');
-    const canvasWidth = canvas.width;
-    const canvasHeight = canvas.height;
-    let score = 0;
-    let gameOver = false;
+<!-- ═══════════════════════════════════════════════════════════════
+     SKILLS MATRIX
+     ═══════════════════════════════════════════════════════════════ -->
+<section class="section">
+  <div class="section-header"><span>// </span>cat skills.dat</div>
+  <div class="skills-grid reveal" id="skills">
+    <div class="skill-category">Offensive Security</div>
+    <div class="skill-card">Penetration Testing</div>
+    <div class="skill-card">Red Teaming</div>
+    <div class="skill-card">Threat Modeling</div>
+    <div class="skill-card">Vulnerability Research</div>
+    <div class="skill-card">Exploit Development</div>
+    <div class="skill-card">Reverse Engineering</div>
+    <div class="skill-card">Bug Bounty</div>
+    <div class="skill-card">Social Engineering</div>
 
-    // Player settings
-    const playerIcon = "🧍";
-    let player = {
-      x: 50,
-      y: canvasHeight / 2 - 40,
-      width: 80,
-      height: 80,
-      icon: playerIcon
-    };
+    <div class="skill-category">GRC & Compliance</div>
+    <div class="skill-card">SOC 2</div>
+    <div class="skill-card">ISO 27001</div>
+    <div class="skill-card">PCI DSS</div>
+    <div class="skill-card">SOX</div>
+    <div class="skill-card">GDPR / CCPA</div>
+    <div class="skill-card">FedRAMP</div>
+    <div class="skill-card">NIST CSF</div>
+    <div class="skill-card">Risk Management</div>
 
-    // Threats
-    let threats = [];
-    let threatSpawnInterval = 1500; // spawn every 1.5 seconds
-    let lastThreatSpawn = Date.now();
-    let threatSpeed = 3; // initial threat speed (pixels per frame)
-    const threatTypes = ['☣️', '👾', '🎣']; // threat emoji
+    <div class="skill-category">Security Engineering</div>
+    <div class="skill-card">Zero Trust Architecture</div>
+    <div class="skill-card">SIEM / SOAR</div>
+    <div class="skill-card">IAM / SSO</div>
+    <div class="skill-card">Cloud Security (AWS/GCP)</div>
+    <div class="skill-card">Container Security</div>
+    <div class="skill-card">DevSecOps</div>
+    <div class="skill-card">Incident Response</div>
+    <div class="skill-card">Secure SDLC</div>
 
-    // Shield power-up (existing)
-    const shieldIcon = "🛡️";
-    let shield = null;
-    let shieldActive = false;
-    let shieldTimer = 0; // in ms
+    <div class="skill-category">Leadership</div>
+    <div class="skill-card">CISO Strategy</div>
+    <div class="skill-card">Board Reporting</div>
+    <div class="skill-card">M&A Due Diligence</div>
+    <div class="skill-card">Team Building</div>
+    <div class="skill-card">Security Culture</div>
+    <div class="skill-card">Vendor Risk Mgmt</div>
+    <div class="skill-card">Cyber Insurance</div>
+    <div class="skill-card">IPO Readiness</div>
+  </div>
+</section>
 
-    // Firewall power-up (new)
-    const firewallIcon = "🧱";
-    let firewallItem = null;
-    let firewallActive = false;
-    let firewallTimer = 0; // in ms
+<!-- ═══════════════════════════════════════════════════════════════
+     ARSENAL (GitHub repos)
+     ═══════════════════════════════════════════════════════════════ -->
+<section class="section">
+  <div class="section-header"><span>// </span>ls -la ~/arsenal/</div>
+  <div class="arsenal-grid reveal" id="arsenal">
+    <a class="arsenal-card" href="https://github.com/sumlac/sherlock" target="_blank" rel="noopener">
+      <div class="arsenal-name">sherlock</div>
+      <div class="arsenal-desc">Hunt down social media accounts by username across social networks</div>
+      <div class="arsenal-meta"><span class="arsenal-tag lang">Python</span><span class="arsenal-tag">OSINT</span></div>
+    </a>
+    <a class="arsenal-card" href="https://github.com/sumlac/nmap-vulners" target="_blank" rel="noopener">
+      <div class="arsenal-name">nmap-vulners</div>
+      <div class="arsenal-desc">NSE script using Vulners API for vulnerability scanning</div>
+      <div class="arsenal-meta"><span class="arsenal-tag lang">Lua</span><span class="arsenal-tag">Scanning</span></div>
+    </a>
+    <a class="arsenal-card" href="https://github.com/sumlac/CloudGoat" target="_blank" rel="noopener">
+      <div class="arsenal-name">CloudGoat</div>
+      <div class="arsenal-desc">"Vulnerable by Design" AWS deployment tool for cloud security CTFs</div>
+      <div class="arsenal-meta"><span class="arsenal-tag lang">Python</span><span class="arsenal-tag">Cloud</span></div>
+    </a>
+    <a class="arsenal-card" href="https://github.com/sumlac/ScoutSuite" target="_blank" rel="noopener">
+      <div class="arsenal-name">ScoutSuite</div>
+      <div class="arsenal-desc">Multi-cloud security auditing tool for AWS, GCP, and Azure</div>
+      <div class="arsenal-meta"><span class="arsenal-tag lang">Python</span><span class="arsenal-tag">Cloud Audit</span></div>
+    </a>
+    <a class="arsenal-card" href="https://github.com/sumlac/prowler" target="_blank" rel="noopener">
+      <div class="arsenal-name">prowler</div>
+      <div class="arsenal-desc">AWS & Azure security best practices assessment and auditing</div>
+      <div class="arsenal-meta"><span class="arsenal-tag lang">Python</span><span class="arsenal-tag">Compliance</span></div>
+    </a>
+    <a class="arsenal-card" href="https://github.com/sumlac/pacu" target="_blank" rel="noopener">
+      <div class="arsenal-name">pacu</div>
+      <div class="arsenal-desc">Open-source AWS exploitation framework for offensive security</div>
+      <div class="arsenal-meta"><span class="arsenal-tag lang">Python</span><span class="arsenal-tag">Offensive</span></div>
+    </a>
+    <a class="arsenal-card" href="https://github.com/sumlac/Amass" target="_blank" rel="noopener">
+      <div class="arsenal-name">Amass</div>
+      <div class="arsenal-desc">In-depth attack surface mapping and asset discovery</div>
+      <div class="arsenal-meta"><span class="arsenal-tag lang">Go</span><span class="arsenal-tag">Recon</span></div>
+    </a>
+    <a class="arsenal-card" href="https://github.com/sumlac/ffuf" target="_blank" rel="noopener">
+      <div class="arsenal-name">ffuf</div>
+      <div class="arsenal-desc">Fast web fuzzer written in Go for content discovery and brute-forcing</div>
+      <div class="arsenal-meta"><span class="arsenal-tag lang">Go</span><span class="arsenal-tag">Fuzzing</span></div>
+    </a>
+    <a class="arsenal-card" href="https://github.com/sumlac/nuclei" target="_blank" rel="noopener">
+      <div class="arsenal-name">nuclei</div>
+      <div class="arsenal-desc">Fast vulnerability scanner based on customizable templates</div>
+      <div class="arsenal-meta"><span class="arsenal-tag lang">Go</span><span class="arsenal-tag">Scanning</span></div>
+    </a>
+    <a class="arsenal-card" href="https://github.com/sumlac/trufflehog" target="_blank" rel="noopener">
+      <div class="arsenal-name">trufflehog</div>
+      <div class="arsenal-desc">Find leaked credentials in git repos, S3, and more</div>
+      <div class="arsenal-meta"><span class="arsenal-tag lang">Go</span><span class="arsenal-tag">Secrets</span></div>
+    </a>
+    <a class="arsenal-card" href="https://github.com/sumlac/trivy" target="_blank" rel="noopener">
+      <div class="arsenal-name">trivy</div>
+      <div class="arsenal-desc">Comprehensive vulnerability scanner for containers and IaC</div>
+      <div class="arsenal-meta"><span class="arsenal-tag lang">Go</span><span class="arsenal-tag">Container</span></div>
+    </a>
+    <a class="arsenal-card" href="https://github.com/sumlac/bloodhound" target="_blank" rel="noopener">
+      <div class="arsenal-name">bloodhound</div>
+      <div class="arsenal-desc">Active Directory attack path analysis and visualization</div>
+      <div class="arsenal-meta"><span class="arsenal-tag lang">JavaScript</span><span class="arsenal-tag">AD</span></div>
+    </a>
+    <a class="arsenal-card" href="https://github.com/sumlac/CyberChef" target="_blank" rel="noopener">
+      <div class="arsenal-name">CyberChef</div>
+      <div class="arsenal-desc">The Cyber Swiss Army Knife for encoding, encryption, and analysis</div>
+      <div class="arsenal-meta"><span class="arsenal-tag lang">JavaScript</span><span class="arsenal-tag">Utils</span></div>
+    </a>
+    <a class="arsenal-card" href="https://github.com/sumlac/responder" target="_blank" rel="noopener">
+      <div class="arsenal-name">responder</div>
+      <div class="arsenal-desc">LLMNR/NBT-NS/MDNS poisoner and credential harvesting</div>
+      <div class="arsenal-meta"><span class="arsenal-tag lang">Python</span><span class="arsenal-tag">Network</span></div>
+    </a>
+    <a class="arsenal-card" href="https://github.com/sumlac/sigma" target="_blank" rel="noopener">
+      <div class="arsenal-name">sigma</div>
+      <div class="arsenal-desc">Generic signature format for SIEM detection rules</div>
+      <div class="arsenal-meta"><span class="arsenal-tag lang">YAML</span><span class="arsenal-tag">Detection</span></div>
+    </a>
+  </div>
+</section>
 
-    // === Player Control ===
-    canvas.addEventListener('mousemove', (e) => {
-      const rect = canvas.getBoundingClientRect();
-      const mouseY = e.clientY - rect.top;
-      player.y = mouseY - player.height / 2;
-      if (player.y < 0) player.y = 0;
-      if (player.y + player.height > canvasHeight) player.y = canvasHeight - player.height;
+<!-- ═══════════════════════════════════════════════════════════════
+     CONTACT
+     ═══════════════════════════════════════════════════════════════ -->
+<section class="section">
+  <div class="section-header"><span>// </span>cat contact.txt</div>
+  <div class="contact-block reveal">
+    <div><span class="label">email</span> : <span class="value">justin [at] sumlac [dot] com</span></div>
+    <div><span class="label">github</span> : <a class="value" href="https://github.com/sumlac" target="_blank" rel="noopener">github.com/sumlac</a></div>
+    <div><span class="label">linkedin</span> : <a class="value" href="https://linkedin.com/in/justincalmus" target="_blank" rel="noopener">linkedin.com/in/justincalmus</a></div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     FOOTER
+     ═══════════════════════════════════════════════════════════════ -->
+<footer>
+  Built with 0 frameworks and 0 dependencies. &copy; <span id="year"></span> sumlac.com
+</footer>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SCRIPTS
+     ═══════════════════════════════════════════════════════════════ -->
+<script>
+(function(){
+'use strict';
+
+/* Console easter egg */
+console.log('%cLooking for vulnerabilities? Try the terminal instead.','color:#00ff41;font-size:16px;font-family:monospace');
+
+document.getElementById('year').textContent=new Date().getFullYear();
+
+const reducedMotion=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+const isMobile=window.innerWidth<768;
+
+/* ═══════════════════════════════════════════════════════════════
+   MATRIX RAIN (boot + konami)
+   ═══════════════════════════════════════════════════════════════ */
+function createMatrixRain(canvas){
+  const ctx=canvas.getContext('2d');
+  canvas.width=canvas.offsetWidth;
+  canvas.height=canvas.offsetHeight;
+  const cols=Math.floor(canvas.width/14);
+  const drops=Array(cols).fill(1);
+  const chars='アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789ABCDEF';
+  let running=true;
+  function draw(){
+    if(!running)return;
+    ctx.fillStyle='rgba(0,0,0,0.05)';
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+    ctx.fillStyle='#00ff41';
+    ctx.font='14px monospace';
+    for(let i=0;i<drops.length;i++){
+      const c=chars[Math.floor(Math.random()*chars.length)];
+      ctx.fillText(c,i*14,drops[i]*14);
+      if(drops[i]*14>canvas.height&&Math.random()>.975)drops[i]=0;
+      drops[i]++;
+    }
+    requestAnimationFrame(draw);
+  }
+  draw();
+  return{stop(){running=false},canvas};
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   BOOT SEQUENCE
+   ═══════════════════════════════════════════════════════════════ */
+const bootOverlay=document.getElementById('boot-overlay');
+const bootText=document.getElementById('boot-text');
+const bootCanvas=document.getElementById('boot-canvas');
+let bootDone=false;
+let matrixRain;
+
+const bootLines=[
+  {text:'[BIOS] SECURE BOOT v4.2.1 .......... OK',delay:60},
+  {text:'[BIOS] Memory Test: 32768 MB ........ OK',delay:40},
+  {text:'[INIT] Loading kernel modules ........ OK',delay:50},
+  {text:'[NET]  Establishing secure tunnel .... OK',delay:70},
+  {text:'[AUTH] Verifying clearance level ..... TOP SECRET',delay:80},
+  {text:'[CRYPT] AES-256-GCM initialized ..... OK',delay:40},
+  {text:'[SYS]  Loading sumlac.com ........... OK',delay:50},
+  {text:'',delay:200},
+  {text:'ACCESS GRANTED',delay:0,glitch:true},
+];
+
+function endBoot(){
+  if(bootDone)return;
+  bootDone=true;
+  bootOverlay.style.transition='opacity .5s';
+  bootOverlay.style.opacity='0';
+  setTimeout(()=>{
+    bootOverlay.remove();
+    if(matrixRain)matrixRain.stop();
+    startHero();
+  },500);
+}
+
+window.skipBoot=endBoot;
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape'&&!bootDone)endBoot();
+});
+
+if(reducedMotion){
+  bootOverlay.remove();
+  startHero();
+}else{
+  matrixRain=createMatrixRain(bootCanvas);
+  (async function(){
+    for(const line of bootLines){
+      if(bootDone)return;
+      const el=document.createElement('div');
+      bootText.appendChild(el);
+      if(line.glitch){
+        el.textContent=line.text;
+        el.classList.add('glitch');
+        el.style.fontSize='24px';
+        el.style.fontWeight='bold';
+        el.style.marginTop='10px';
+        await sleep(1200);
+        endBoot();
+        return;
+      }
+      for(let i=0;i<line.text.length;i++){
+        if(bootDone)return;
+        el.textContent+=line.text[i];
+        await sleep(isMobile?8:15);
+      }
+      await sleep(line.delay);
+    }
+  })();
+}
+
+function sleep(ms){return new Promise(r=>setTimeout(r,ms))}
+
+/* ═══════════════════════════════════════════════════════════════
+   PARTICLE NETWORK
+   ═══════════════════════════════════════════════════════════════ */
+const particleCanvas=document.getElementById('particle-canvas');
+const pCtx=particleCanvas.getContext('2d');
+let particles=[];
+let particleCount=isMobile?40:70;
+let pWidth,pHeight;
+let particleRunning=true;
+
+function resizeParticles(){
+  pWidth=particleCanvas.width=particleCanvas.offsetWidth;
+  pHeight=particleCanvas.height=particleCanvas.offsetHeight;
+}
+
+function initParticles(){
+  particles=[];
+  for(let i=0;i<particleCount;i++){
+    particles.push({
+      x:Math.random()*pWidth,
+      y:Math.random()*pHeight,
+      vx:(Math.random()-.5)*.5,
+      vy:(Math.random()-.5)*.5,
+      r:Math.random()*2+1
     });
-    function handleTouch(e) {
-      e.preventDefault();
-      const rect = canvas.getBoundingClientRect();
-      const touch = e.touches[0];
-      const touchY = touch.clientY - rect.top;
-      player.y = touchY - player.height / 2;
-      if (player.y < 0) player.y = 0;
-      if (player.y + player.height > canvasHeight) player.y = canvasHeight - player.height;
+  }
+}
+
+/* Spatial grid for efficient edge detection */
+const CELL_SIZE=150;
+let grid={};
+
+function getGridKey(x,y){
+  return Math.floor(x/CELL_SIZE)+','+Math.floor(y/CELL_SIZE);
+}
+
+function buildGrid(){
+  grid={};
+  for(let i=0;i<particles.length;i++){
+    const key=getGridKey(particles[i].x,particles[i].y);
+    if(!grid[key])grid[key]=[];
+    grid[key].push(i);
+  }
+}
+
+function getNeighborCells(x,y){
+  const cx=Math.floor(x/CELL_SIZE),cy=Math.floor(y/CELL_SIZE);
+  const indices=[];
+  for(let dx=-1;dx<=1;dx++){
+    for(let dy=-1;dy<=1;dy++){
+      const key=(cx+dx)+','+(cy+dy);
+      if(grid[key])for(const idx of grid[key])indices.push(idx);
     }
-    canvas.addEventListener('touchmove', handleTouch, { passive: false });
-    canvas.addEventListener('touchstart', handleTouch, { passive: false });
+  }
+  return indices;
+}
 
-    // === Spawning Functions ===
-    function spawnThreat() {
-      const size = 30;
-      const x = canvasWidth;
-      const y = Math.random() * (canvasHeight - size);
-      const type = threatTypes[Math.floor(Math.random() * threatTypes.length)];
-      threats.push({ x, y, size, type });
-    }
-    function spawnShield() {
-      const size = 30;
-      const x = canvasWidth;
-      const y = Math.random() * (canvasHeight - size);
-      shield = { x, y, size, icon: shieldIcon };
-    }
-    function spawnFirewall() {
-      const size = 30;
-      const x = canvasWidth;
-      const y = Math.random() * (canvasHeight - size);
-      firewallItem = { x, y, size, icon: firewallIcon };
-    }
+function drawParticles(){
+  if(!particleRunning)return;
+  pCtx.clearRect(0,0,pWidth,pHeight);
 
-    // Increase threat speed every 5 seconds
-    setInterval(() => { threatSpeed *= 1.2; }, 5000);
-    // Spawn a shield power-up every 10 seconds if none exists.
-    setInterval(() => { if (!shield) spawnShield(); }, 10000);
-    // Spawn a firewall power-up every 15 seconds if none exists.
-    setInterval(() => { if (!firewallItem) spawnFirewall(); }, 15000);
+  /* Update positions */
+  for(const p of particles){
+    p.x+=p.vx;p.y+=p.vy;
+    if(p.x<0||p.x>pWidth)p.vx*=-1;
+    if(p.y<0||p.y>pHeight)p.vy*=-1;
+  }
 
-    // === Game Update & Draw ===
-    let lastTime = Date.now();
-    function gameLoop() {
-      const now = Date.now();
-      const deltaTime = now - lastTime;
-      lastTime = now;
-      update(deltaTime);
-      draw();
-      if (gameOver) {
-        gameOverDiv.style.display = 'block';
-      } else {
-        requestAnimationFrame(gameLoop);
-      }
-    }
+  buildGrid();
 
-    function update(deltaTime) {
-      if (gameOver) return;
-
-      // Move threats
-      threats.forEach(threat => { threat.x -= threatSpeed; });
-      threats = threats.filter(threat => threat.x + threat.size > 0);
-
-      // Move shield if it exists
-      if (shield) {
-        shield.x -= threatSpeed;
-        if (shield.x + shield.size < 0) shield = null;
-      }
-      
-      // Move firewall power-up if it exists
-      if (firewallItem) {
-        firewallItem.x -= threatSpeed;
-        if (firewallItem.x + firewallItem.size < 0) firewallItem = null;
-      }
-
-      // If the firewall is active, remove any threats that have entered its wall region.
-      if (firewallActive) {
-        const brickSize = 30;
-        // The wall is drawn starting at an x-coordinate shifted right from the player.
-        const wallX = player.x + player.width + 10;
-        threats = threats.filter(threat => {
-          // Check if threat's horizontal bounds intersect the wall region.
-          if (threat.x < wallX + brickSize * 2 && threat.x + threat.size > wallX) {
-            return false; // Remove threat.
-          }
-          return true;
-        });
-      }
-
-      // Collision detection for threats with the player.
-      threats.forEach((threat, idx, arr) => {
-        if (
-          player.x < threat.x + threat.size &&
-          player.x + player.width > threat.x &&
-          player.y < threat.y + threat.size &&
-          player.y + player.height > threat.y
-        ) {
-          if (!shieldActive && !firewallActive) {
-            gameOver = true;
-          }
-        }
-      });
-
-      // Collision detection for shield power-up
-      if (shield) {
-        if (
-          player.x < shield.x + shield.size &&
-          player.x + player.width > shield.x &&
-          player.y < shield.y + shield.size &&
-          player.y + player.height > shield.y
-        ) {
-          shieldActive = true;
-          shieldTimer = 5000; // 5 seconds of shield.
-          score += 500; // bonus points.
-          shield = null;
-        }
-      }
-
-      // Collision detection for firewall power-up
-      if (firewallItem) {
-        if (
-          player.x < firewallItem.x + firewallItem.size &&
-          player.x + player.width > firewallItem.x &&
-          player.y < firewallItem.y + firewallItem.size &&
-          player.y + player.height > firewallItem.y
-        ) {
-          firewallActive = true;
-          firewallTimer = 15000; // 15 seconds of firewall protection.
-          score += 500; // bonus points.
-          firewallItem = null;
-        }
-      }
-
-      // Update timers for shield and firewall power-ups.
-      if (shieldActive) {
-        shieldTimer -= deltaTime;
-        if (shieldTimer <= 0) {
-          shieldActive = false;
-          shieldTimer = 0;
-        }
-      }
-      if (firewallActive) {
-        firewallTimer -= deltaTime;
-        if (firewallTimer <= 0) {
-          firewallActive = false;
-          firewallTimer = 0;
-        }
-      }
-
-      score += deltaTime * 0.01;
-      scoreDiv.innerText = 'Score: ' + Math.floor(score);
-
-      if (Date.now() - lastThreatSpawn > threatSpawnInterval) {
-        spawnThreat();
-        lastThreatSpawn = Date.now();
+  /* Draw edges */
+  pCtx.strokeStyle='rgba(0,255,65,0.12)';
+  pCtx.lineWidth=.5;
+  const drawn=new Set();
+  for(let i=0;i<particles.length;i++){
+    const neighbors=getNeighborCells(particles[i].x,particles[i].y);
+    for(const j of neighbors){
+      if(j<=i)continue;
+      const key=i<j?i+'-'+j:j+'-'+i;
+      if(drawn.has(key))continue;
+      drawn.add(key);
+      const dx=particles[i].x-particles[j].x;
+      const dy=particles[i].y-particles[j].y;
+      const dist=dx*dx+dy*dy;
+      if(dist<CELL_SIZE*CELL_SIZE){
+        const alpha=1-Math.sqrt(dist)/CELL_SIZE;
+        pCtx.globalAlpha=alpha*.15;
+        pCtx.beginPath();
+        pCtx.moveTo(particles[i].x,particles[i].y);
+        pCtx.lineTo(particles[j].x,particles[j].y);
+        pCtx.stroke();
       }
     }
+  }
 
-    function draw() {
-      ctx.clearRect(0, 0, canvasWidth, canvasHeight);
-      
-      // Draw threats
-      ctx.font = "30px sans-serif";
-      threats.forEach(threat => {
-        ctx.fillText(threat.type, threat.x, threat.y + threat.size);
-      });
-      
-      // Draw shield power-up if it exists
-      if (shield) {
-        ctx.font = "30px sans-serif";
-        ctx.fillText(shield.icon, shield.x, shield.y + shield.size);
-      }
-      
-      // Draw firewall power-up if it exists
-      if (firewallItem) {
-        ctx.font = "30px sans-serif";
-        ctx.fillText(firewallItem.icon, firewallItem.x, firewallItem.y + firewallItem.size);
-      }
-      
-      // Draw the player
-      ctx.font = "80px sans-serif";
-      ctx.fillStyle = "#fff";
-      ctx.fillText(player.icon, player.x, player.y + player.height);
-      
-      // If shield is active, display an indicator.
-      if (shieldActive) {
-        ctx.font = "20px sans-serif";
-        ctx.fillStyle = "#0f0";
-        ctx.fillText("Shield Active!", canvasWidth - 150, 30);
-        ctx.fillStyle = "#fff";
-      }
-      
-      // Draw the firewall wall so that it appears in front of the player.
-      if (firewallActive) {
-        const brickSize = 30; // Each brick is 30x30 pixels.
-        ctx.font = brickSize + "px sans-serif";
-        // Calculate wall's x-coordinate (further to the right than the player)
-        const wallX = player.x + player.width + 10;
-        // Draw two columns of bricks from wallX to wallX + brickSize*2 covering the full canvas height.
-        for (let y = 0; y < canvasHeight; y += brickSize) {
-          ctx.fillText(firewallIcon, wallX, y + brickSize);
-          ctx.fillText(firewallIcon, wallX + brickSize, y + brickSize);
-        }
-        ctx.font = "20px sans-serif";
-        ctx.fillStyle = "#fff";
-        ctx.fillText("Firewall Active!", canvasWidth - 170, 60);
-      }
+  /* Draw nodes */
+  pCtx.globalAlpha=1;
+  for(const p of particles){
+    pCtx.beginPath();
+    pCtx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    pCtx.fillStyle='rgba(0,255,65,0.6)';
+    pCtx.fill();
+  }
+
+  requestAnimationFrame(drawParticles);
+}
+
+function startHero(){
+  if(!reducedMotion){
+    resizeParticles();
+    initParticles();
+    drawParticles();
+    window.addEventListener('resize',()=>{resizeParticles();initParticles()});
+  }
+  animateHeroName();
+}
+
+/* Pause particles when off-screen */
+const heroEl=document.getElementById('hero');
+if(!reducedMotion){
+  const pObserver=new IntersectionObserver(([e])=>{
+    particleRunning=e.isIntersecting;
+    if(particleRunning)drawParticles();
+  },{threshold:0});
+  pObserver.observe(heroEl);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   HERO NAME SCRAMBLE + SUBTITLE TYPING
+   ═══════════════════════════════════════════════════════════════ */
+function animateHeroName(){
+  const target='JUSTIN CALMUS';
+  const el=document.getElementById('hero-name');
+  if(reducedMotion){
+    el.textContent=target;
+    document.getElementById('hero-title').textContent='SVP Portfolio Cybersecurity // Silver Lake';
+    document.getElementById('hero-title').style.opacity='1';
+    return;
+  }
+  const chars='!@#$%^&*()_+-=[]{}|;:,.<>?/~`0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  let iterations=0;
+  const interval=setInterval(()=>{
+    el.textContent=target.split('').map((c,i)=>{
+      if(c===' ')return ' ';
+      if(i<iterations)return target[i];
+      return chars[Math.floor(Math.random()*chars.length)];
+    }).join('');
+    if(iterations>=target.length){
+      clearInterval(interval);
+      typeSubtitle();
     }
+    iterations+=1/2;
+  },30);
+}
 
-    function restartGame() {
-      gameOver = false;
-      threats = [];
-      shield = null;
-      firewallItem = null;
-      score = 0;
-      player.y = canvasHeight / 2 - player.height / 2;
-      lastTime = Date.now();
-      gameOverDiv.style.display = 'none';
-      threatSpeed = 3; // reset speed
-      shieldActive = false;
-      shieldTimer = 0;
-      firewallActive = false;
-      firewallTimer = 0;
-      requestAnimationFrame(gameLoop);
+function typeSubtitle(){
+  const text='SVP Portfolio Cybersecurity // Silver Lake';
+  const el=document.getElementById('hero-title');
+  el.style.opacity='1';
+  let i=0;
+  function tick(){
+    el.innerHTML=text.substring(0,i)+'<span class="cursor">_</span>';
+    if(i<text.length){i++;setTimeout(tick,35);}
+  }
+  tick();
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   INTERACTIVE TERMINAL
+   ═══════════════════════════════════════════════════════════════ */
+const termBody=document.getElementById('terminal-body');
+const termInput=document.getElementById('terminal-input');
+let history=[];
+let historyIdx=-1;
+let tabState={partial:'',matches:[],idx:0};
+
+const COMMANDS={
+  help(){
+    return[
+      {t:'accent',v:'Available commands:'},
+      {t:'output',v:'  help          — Show this help message'},
+      {t:'output',v:'  whoami        — Who is Justin Calmus?'},
+      {t:'output',v:'  cat resume.txt— Full career timeline'},
+      {t:'output',v:'  cat skills.dat— Technical skills'},
+      {t:'output',v:'  cat contact.txt— Contact information'},
+      {t:'output',v:'  ls            — List directory'},
+      {t:'output',v:'  ls arsenal/   — Security tool arsenal'},
+      {t:'output',v:'  ping linkedin — Open LinkedIn profile'},
+      {t:'output',v:'  ping github   — Open GitHub profile'},
+      {t:'output',v:'  nmap sumlac.com— Port scan'},
+      {t:'output',v:'  history       — Command history'},
+      {t:'output',v:'  clear         — Clear terminal'},
+      {t:'output',v:'  date          — Current date'},
+      {t:'output',v:'  uname -a      — System info'},
+    ];
+  },
+  whoami(){
+    return[
+      {t:'accent',v:'╔══════════════════════════════════════════════════╗'},
+      {t:'accent',v:'║  JUSTIN CALMUS                                  ║'},
+      {t:'accent',v:'╚══════════════════════════════════════════════════╝'},
+      {t:'output',v:''},
+      {t:'output',v:'  SVP Portfolio Cybersecurity @ Silver Lake'},
+      {t:'output',v:'  20+ years defending the digital frontier.'},
+      {t:'output',v:''},
+      {t:'output',v:'  Former CISO @ WeWork | CSO @ OneLogin, Zenefits'},
+      {t:'output',v:'  VP Security Research @ HackerOne'},
+      {t:'output',v:'  Director of Security & Lead Engineer @ Salesforce'},
+      {t:'output',v:'  Head of IT Security @ LinkedIn'},
+      {t:'output',v:''},
+      {t:'info',v:'  "Break it to protect it."'},
+    ];
+  },
+  'cat resume.txt'(){
+    return[
+      {t:'accent',v:'--- resume.txt ---'},
+      {t:'output',v:''},
+      {t:'warn',v:'[2025-01 — PRESENT]  Silver Lake'},
+      {t:'output',v:'  SVP Portfolio Cybersecurity'},
+      {t:'output',v:'  Portfolio-level cyber strategy across investments.'},
+      {t:'output',v:''},
+      {t:'warn',v:'[2019-05 — 2023-04]  WeWork'},
+      {t:'output',v:'  CISO / Chief Trust Officer'},
+      {t:'output',v:'  Zero-trust. IPO security. 50% faster threat response.'},
+      {t:'output',v:''},
+      {t:'warn',v:'[2018-04 — 2019-05]  OneLogin'},
+      {t:'output',v:'  Chief Security Officer'},
+      {t:'output',v:'  Post-breach "Security First" initiative. FedRAMP.'},
+      {t:'output',v:''},
+      {t:'warn',v:'[2016-10 — 2018-04]  HackerOne'},
+      {t:'output',v:'  VP Security Research'},
+      {t:'output',v:'  200+ pentests. 500+ critical vulns. UC Berkeley.'},
+      {t:'output',v:''},
+      {t:'warn',v:'[2015-03 — 2016-10]  Zenefits'},
+      {t:'output',v:'  CSO / CIO'},
+      {t:'output',v:'  Built security from zero during hypergrowth.'},
+      {t:'output',v:''},
+      {t:'warn',v:'[2014-03 — 2015-03]  Salesforce'},
+      {t:'output',v:'  Director of Security'},
+      {t:'output',v:'  $1B+ M&A due diligence. MTTD -60%. MTTR -50%.'},
+      {t:'output',v:''},
+      {t:'warn',v:'[2012-05 — 2014-03]  LinkedIn'},
+      {t:'output',v:'  Head of IT Security'},
+      {t:'output',v:'  Security ops for 200M+ members.'},
+      {t:'output',v:''},
+      {t:'warn',v:'[2005-01 — 2012-04]  Salesforce'},
+      {t:'output',v:'  Lead Security Engineer'},
+      {t:'output',v:'  Pioneered DevOps. Built secure infrastructure.'},
+    ];
+  },
+  'cat skills.dat'(){
+    return[
+      {t:'accent',v:'--- skills.dat ---'},
+      {t:'output',v:''},
+      {t:'warn',v:'[OFFENSIVE SECURITY]'},
+      {t:'output',v:'  Penetration Testing, Red Teaming, Threat Modeling'},
+      {t:'output',v:'  Vulnerability Research, Exploit Dev, Bug Bounty'},
+      {t:'output',v:''},
+      {t:'warn',v:'[GRC & COMPLIANCE]'},
+      {t:'output',v:'  SOC 2, ISO 27001, PCI DSS, SOX, GDPR, FedRAMP'},
+      {t:'output',v:''},
+      {t:'warn',v:'[SECURITY ENGINEERING]'},
+      {t:'output',v:'  Zero Trust, SIEM/SOAR, IAM, Cloud Security'},
+      {t:'output',v:'  DevSecOps, Container Security, Incident Response'},
+      {t:'output',v:''},
+      {t:'warn',v:'[LEADERSHIP]'},
+      {t:'output',v:'  CISO Strategy, Board Reporting, M&A Due Diligence'},
+      {t:'output',v:'  IPO Readiness, Vendor Risk, Cyber Insurance'},
+    ];
+  },
+  'cat contact.txt'(){
+    return[
+      {t:'accent',v:'--- contact.txt ---'},
+      {t:'output',v:''},
+      {t:'output',v:'  email     : justin [at] sumlac [dot] com'},
+      {t:'output',v:'  github    : github.com/sumlac'},
+      {t:'output',v:'  linkedin  : linkedin.com/in/justincalmus'},
+    ];
+  },
+  ls(){
+    return[
+      {t:'accent',v:'drwxr-xr-x  resume.txt'},
+      {t:'accent',v:'drwxr-xr-x  skills.dat'},
+      {t:'accent',v:'drwxr-xr-x  contact.txt'},
+      {t:'accent',v:'drwxr-xr-x  arsenal/'},
+      {t:'output',v:'-rw-r--r--  .bash_history'},
+      {t:'output',v:'-rw-------  .pgp_keys (CLASSIFIED)'},
+    ];
+  },
+  'ls arsenal/'(){
+    return[
+      {t:'accent',v:'--- ~/arsenal/ ---'},
+      {t:'output',v:'  sherlock          Python   OSINT'},
+      {t:'output',v:'  nmap-vulners      Lua      Scanning'},
+      {t:'output',v:'  CloudGoat         Python   Cloud CTF'},
+      {t:'output',v:'  ScoutSuite        Python   Cloud Audit'},
+      {t:'output',v:'  prowler           Python   Compliance'},
+      {t:'output',v:'  pacu              Python   Offensive'},
+      {t:'output',v:'  Amass             Go       Recon'},
+      {t:'output',v:'  ffuf              Go       Fuzzing'},
+      {t:'output',v:'  nuclei            Go       Scanning'},
+      {t:'output',v:'  trufflehog        Go       Secrets'},
+      {t:'output',v:'  trivy             Go       Container'},
+      {t:'output',v:'  bloodhound        JS       Active Dir'},
+      {t:'output',v:'  CyberChef         JS       Utils'},
+      {t:'output',v:'  responder         Python   Network'},
+      {t:'output',v:'  sigma             YAML     Detection'},
+    ];
+  },
+  'ping linkedin'(){
+    window.open('https://linkedin.com/in/justincalmus','_blank');
+    return[{t:'info',v:'PING linkedin.com — Opening profile...'}];
+  },
+  'ping github'(){
+    window.open('https://github.com/sumlac','_blank');
+    return[{t:'info',v:'PING github.com — Opening profile...'}];
+  },
+  'nmap sumlac.com'(){
+    return[
+      {t:'output',v:'Starting Nmap 7.94 ( https://nmap.org )'},
+      {t:'output',v:'Nmap scan report for sumlac.com'},
+      {t:'output',v:'Host is up (0.001s latency).'},
+      {t:'output',v:'All 65535 scanned ports are filtered.'},
+      {t:'output',v:''},
+      {t:'warn',v:'All ports filtered — nice try.'},
+    ];
+  },
+  history(){
+    if(history.length===0)return[{t:'output',v:'No commands in history.'}];
+    return history.map((h,i)=>({t:'output',v:'  '+(i+1)+'  '+h}));
+  },
+  clear(){
+    /* handled specially */
+    return[];
+  },
+  date(){
+    return[{t:'output',v:'  '+new Date().toString()}];
+  },
+  'uname -a'(){
+    return[{t:'output',v:'  sumlac-OS 6.6.6-hardened x86_64 GNU/Linux (kernel: paranoid)'}];
+  },
+};
+
+/* Easter egg commands */
+const easterEggs={
+  'exit':()=>[{t:'err',v:'Logout denied. You know too much.'}],
+  'rm -rf /':()=>[{t:'err',v:'Permission denied. This incident has been reported.'}],
+  'sudo rm -rf /':()=>[{t:'err',v:'[ALERT] This incident has been reported to the SOC.'}],
+  'hack':()=>[{t:'warn',v:'You\'re already on a hacker\'s site. Mission accomplished.'}],
+  'matrix':()=>{konamiActivate();return[{t:'accent',v:'Entering the Matrix...'}]},
+  'cd ..':()=>[{t:'err',v:'Permission denied. Chroot jail active.'}],
+  'cat /etc/passwd':()=>[{t:'err',v:'Access denied. Nice try though.'}],
+  'cat /etc/shadow':()=>[{t:'err',v:'[CRITICAL] Unauthorized access attempt logged.'}],
+  'pwd':()=>[{t:'output',v:'/home/visitor (restricted shell)'}],
+  'id':()=>[{t:'output',v:'uid=1337(visitor) gid=1337(visitor) groups=1337(visitor)'}],
+  'man':()=>[{t:'output',v:'No manual entry. RTFM elsewhere.'}],
+};
+
+const cmdNames=Object.keys(COMMANDS).concat(Object.keys(easterEggs));
+
+function execCommand(raw){
+  const cmd=raw.trim();
+  if(!cmd)return;
+  history.push(cmd);
+  historyIdx=history.length;
+
+  /* Add the typed command to output */
+  addLine('prompt','visitor@sumlac:~$ ','cmd',cmd);
+
+  if(cmd==='clear'){
+    termBody.innerHTML='';
+    addInputLine();
+    return;
+  }
+
+  /* Check for sudo prefix */
+  if(cmd.startsWith('sudo ')&&!COMMANDS[cmd]&&!easterEggs[cmd]){
+    addLines([{t:'err',v:'[ALERT] This incident has been reported to the SOC.'}]);
+    addInputLine();
+    return;
+  }
+
+  let result=null;
+  if(COMMANDS[cmd])result=COMMANDS[cmd]();
+  else if(easterEggs[cmd])result=easterEggs[cmd]();
+  else result=[{t:'err',v:'Command not found: '+cmd+'. Type "help" for available commands.'}];
+
+  addLines(result);
+  addInputLine();
+}
+
+function addLine(){
+  const div=document.createElement('div');
+  div.className='terminal-line';
+  let html='';
+  for(let i=0;i<arguments.length;i+=2){
+    html+='<span class="'+arguments[i]+'">'+escapeHTML(arguments[i+1])+'</span>';
+  }
+  div.innerHTML=html;
+  /* Insert before the input line */
+  const inputLine=termBody.querySelector('.input-line');
+  if(inputLine)termBody.insertBefore(div,inputLine);
+  else termBody.appendChild(div);
+}
+
+function addLines(lines){
+  for(const l of lines)addLine(l.t,l.v);
+}
+
+function addInputLine(){
+  /* Remove existing input line */
+  const old=termBody.querySelector('.input-line');
+  if(old)old.remove();
+  const div=document.createElement('div');
+  div.className='input-line';
+  div.innerHTML='<span class="prompt">visitor@sumlac:~$&nbsp;</span><input type="text" id="terminal-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">';
+  termBody.appendChild(div);
+  const newInput=document.getElementById('terminal-input');
+  newInput.addEventListener('keydown',handleTermKey);
+  newInput.focus();
+  termBody.scrollTop=termBody.scrollHeight;
+}
+
+function handleTermKey(e){
+  const input=e.target;
+  if(e.key==='Enter'){
+    e.preventDefault();
+    const val=input.value;
+    /* Remove this input line before processing */
+    const line=input.closest('.input-line');
+    if(line)line.remove();
+    execCommand(val);
+  }else if(e.key==='ArrowUp'){
+    e.preventDefault();
+    if(historyIdx>0){historyIdx--;input.value=history[historyIdx]||'';}
+  }else if(e.key==='ArrowDown'){
+    e.preventDefault();
+    if(historyIdx<history.length-1){historyIdx++;input.value=history[historyIdx]||'';}
+    else{historyIdx=history.length;input.value='';}
+  }else if(e.key==='Tab'){
+    e.preventDefault();
+    const partial=input.value.trim();
+    if(!partial)return;
+    const matches=cmdNames.filter(c=>c.startsWith(partial)&&c!==partial);
+    if(matches.length===1)input.value=matches[0];
+    else if(matches.length>1){
+      /* Show options */
+      const line=input.closest('.input-line');
+      if(line)line.remove();
+      addLine('prompt','visitor@sumlac:~$ ','cmd',partial);
+      addLine('output',matches.join('  '));
+      addInputLine();
+      document.getElementById('terminal-input').value=partial;
     }
+  }else if(e.key==='l'&&e.ctrlKey){
+    e.preventDefault();
+    termBody.innerHTML='';
+    addInputLine();
+  }
+}
 
-    gameLoop();
-  </script>
+function escapeHTML(s){
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
 
-  <hr>
+/* Click terminal body to focus input */
+termBody.addEventListener('click',()=>{
+  const input=document.getElementById('terminal-input');
+  if(input)input.focus();
+});
 
-  <!-- Resume Section -->
-  <section id="resume">
-    <div id="typedResume"></div>
-  </section>
+/* Initial input setup */
+termInput.addEventListener('keydown',handleTermKey);
 
-  <script>
-    // --- Resume Typewriter Effect with Formatting ---
-    document.addEventListener("DOMContentLoaded", function() {
-      const speed = 1; // milliseconds per character
-      const resumeContainer = document.getElementById('typedResume');
-      
-      // Resume text split into lines.
-      // A special token "[HR]" is used to insert an <hr> element.
-      const resumeLines = [
-        "justin at sumlac dot com",
-        "",
-        "Professional Experience",
-        "[HR]",
-        "January 2025 - Present | Silver Lake, SVP of Portfolio Cybersecurity",
-        "- Lead portfolio-level cybersecurity strategy across diverse investments.",
-        "- Partner with portfolio companies to implement robust security measures and compliance programs.",
-        "- Drive strategic risk management and ensure value creation across the portfolio.",
-        "",
-        "April 2023 - December 2024 | Sabbatical",
-        "- Dedicated time to researching emerging cybersecurity trends and contributing to open-source projects.",
-        "- Immersed in personal development by reading over 500 books and averaging 10 hours of reading daily.",
-        "- Embarked on extensive travel and creative pursuits, enriching my personal perspective and inspiring innovation.",
-        "",
-        "May 2019 - April 2023 | WeWork, CISO / Chief Trust Officer",
-        "- Spearheaded global security and compliance strategies for the public offering, establishing a robust security presence.",
-        "- Led cross-functional teams to implement a zero-trust architecture and digital transformation.",
-        "- Designed a cyber resilience program that reduced threat detection/response times by 50% and ensured SOC 2, ISO27001, PCI, and SOX compliance.",
-        "",
-        "April 2018 - May 2019 | OneLogin, Chief Security Officer",
-        "- Redefined security strategy post-breach by launching the \"Security First\" initiative to restore trust in identity and access management.",
-        "- Integrated Shift Left Security practices to enhance secure SDLC and ensure code integrity.",
-        "- Led compliance efforts for GDPR, CCPA, SOC 2, PCI, and FedRAMP, positioning security as a competitive differentiator.",
-        "",
-        "October 2016 - April 2018 | HackerOne, VP Security Research",
-        "- Directed advanced security research, executing 200+ penetration tests and uncovering 500+ high-severity vulnerabilities.",
-        "- Developed and delivered a \"Cyberwar\" course at UC Berkeley, mentoring emerging cybersecurity leaders.",
-        "- Enhanced platform capabilities through cross-functional collaboration, driving a 200% revenue increase.",
-        "",
-        "March 2015 - October 2016 | Zenefits, Chief Security Officer / CIO",
-        "- Built and led global security and IT functions during hypergrowth, aligning technical strategy with business objectives.",
-        "- Reduced IT costs by 33% and achieved SOC 2 compliance through effective collaboration.",
-        "- Established a comprehensive security program featuring Red Team operations, CSIRT/CERT, and a secure SDLC.",
-        "",
-        "March 2014 - March 2015 | Salesforce, Director of Security",
-        "- Led enterprise security initiatives and M&A due diligence for acquisitions exceeding $1B, mitigating integration risks.",
-        "- Implemented an advanced threat detection system that reduced MTTD by 60% and MTTR by 50%.",
-        "- Secured critical compliance certifications (SOX, SOC 2, ISO 27001), expanding market opportunities and boosting customer acquisition by 25%.",
-        "",
-        "May 2012 - March 2014 | LinkedIn, Head of IT Security",
-        "- Oversaw comprehensive internal security operations for 200+ million members, safeguarding critical infrastructure and sensitive data.",
-        "- Established and led the incident response team, significantly reducing detection and response times.",
-        "- Engineered robust security measures that enhanced global infrastructure resilience against evolving cyber threats.",
-        "",
-        "January 2005 - April 2012 | Salesforce, Lead Security Engineer",
-        "- Pioneered DevOps practices and architected secure, scalable infrastructures meeting evolving client requirements.",
-        "- Collaborated cross-functionally to implement system enhancements and cost-effective security solutions.",
-        "- Championed Salesforce's inaugural DevOps environment, driving efficiency and technical excellence."
-      ];
-      
-      // Function to type a single line.
-      function typeLine(line, callback) {
-        // If the special token "[HR]" is encountered, insert an <hr> element.
-        if (line.trim() === "[HR]") {
-          let hrElement = document.createElement("hr");
-          resumeContainer.appendChild(hrElement);
-          callback();
-          return;
-        }
-      
-        let i = 0;
-        // Check if the line should be centered.
-        // Conditions: line begins with a month or matches one of the special centered strings.
-        const timelineRegex = /^(January|February|March|April|May|June|July|August|September|October|November|December)/;
-        const specialCentered = [
-          "justin at sumlac dot com",
-          "Professional Experience"
-        ];
-        let lineElement;
-        if (timelineRegex.test(line.trim()) || specialCentered.includes(line.trim())) {
-          lineElement = document.createElement("div");
-          lineElement.style.textAlign = "center";
-          lineElement.style.fontWeight = "bold";
-          lineElement.style.color = "#fff"; // White text for special lines
-        } else {
-          lineElement = document.createElement("div");
-        }
-        resumeContainer.appendChild(lineElement);
-        
-        function typeChar() {
-          if (i < line.length) {
-            lineElement.innerHTML += line.charAt(i);
-            i++;
-            setTimeout(typeChar, speed);
-          } else {
-            callback();
-          }
-        }
-        typeChar();
-      }
-      
-      // Function to type all lines sequentially.
-      function typeResumeLines(lines, index) {
-        if (index < lines.length) {
-          typeLine(lines[index], function() {
-            typeResumeLines(lines, index + 1);
-          });
-        }
-      }
-      
-      typeResumeLines(resumeLines, 0);
-    });
-  </script>
+/* ═══════════════════════════════════════════════════════════════
+   SCROLL REVEAL (IntersectionObserver)
+   ═══════════════════════════════════════════════════════════════ */
+if(!reducedMotion){
+  const revealObs=new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');revealObs.unobserve(e.target)}});
+  },{threshold:.15});
+
+  document.querySelectorAll('.reveal').forEach(el=>revealObs.observe(el));
+  document.querySelectorAll('.timeline-item').forEach(el=>revealObs.observe(el));
+}else{
+  document.querySelectorAll('.reveal,.timeline-item').forEach(el=>el.classList.add('visible'));
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   KONAMI CODE → Full-screen Matrix
+   ═══════════════════════════════════════════════════════════════ */
+const konamiCode=['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
+let konamiIdx=0;
+
+document.addEventListener('keydown',function(e){
+  if(e.key===konamiCode[konamiIdx]){
+    konamiIdx++;
+    if(konamiIdx===konamiCode.length){konamiIdx=0;konamiActivate();}
+  }else{
+    konamiIdx=0;
+  }
+});
+
+function konamiActivate(){
+  const overlay=document.createElement('div');
+  overlay.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;z-index:99999;cursor:pointer';
+  const c=document.createElement('canvas');
+  c.style.cssText='width:100%;height:100%';
+  overlay.appendChild(c);
+  document.body.appendChild(overlay);
+  const rain=createMatrixRain(c);
+  overlay.addEventListener('click',()=>{rain.stop();overlay.remove()});
+  setTimeout(()=>{rain.stop();overlay.remove()},10000);
+}
+
+})();
+</script>
 </body>
 </html>
