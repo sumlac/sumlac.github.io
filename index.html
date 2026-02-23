@@ -1681,6 +1681,7 @@ function addInputLine(){
 
 function handleTermKey(e){
   const input=e.target;
+  trackKonami(e.key);
   if(e.key==='Enter'){
     e.preventDefault();
     const val=input.value;
@@ -1750,13 +1751,17 @@ if(!reducedMotion){
 const konamiCode=['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
 let konamiIdx=0;
 
-document.addEventListener('keydown',function(e){
-  if(e.key===konamiCode[konamiIdx]){
+function trackKonami(key){
+  if(key===konamiCode[konamiIdx]){
     konamiIdx++;
     if(konamiIdx===konamiCode.length){konamiIdx=0;konamiActivate();}
   }else{
     konamiIdx=0;
   }
+}
+
+document.addEventListener('keydown',function(e){
+  if(e.target.id!=='terminal-input')trackKonami(e.key);
 });
 
 function konamiActivate(){
