@@ -907,210 +907,703 @@ let history=[];
 let historyIdx=-1;
 let tabState={partial:'',matches:[],idx:0};
 
-const COMMANDS={
-  help(){
-    return[
-      {t:'accent',v:'Available commands:'},
-      {t:'output',v:'  help          — Show this help message'},
-      {t:'output',v:'  whoami        — Who is Justin Calmus?'},
-      {t:'output',v:'  cat resume.txt— Full career timeline'},
-      {t:'output',v:'  cat skills.dat— Technical skills'},
-      {t:'output',v:'  cat contact.txt— Contact information'},
-      {t:'output',v:'  ls            — List directory'},
-      {t:'output',v:'  ls arsenal/   — Security tool arsenal'},
-      {t:'output',v:'  ping linkedin — Open LinkedIn profile'},
-      {t:'output',v:'  ping github   — Open GitHub profile'},
-      {t:'output',v:'  nmap sumlac.com— Port scan'},
-      {t:'output',v:'  history       — Command history'},
-      {t:'output',v:'  clear         — Clear terminal'},
-      {t:'output',v:'  date          — Current date'},
-      {t:'output',v:'  uname -a      — System info'},
+/* ── File system data ── */
+const FS_FILES={
+  'resume.txt':{perm:'-rw-r--r--',owner:'jcalmus',group:'staff',size:'4096',date:'Jan 15 2025'},
+  'skills.dat':{perm:'-rw-r--r--',owner:'jcalmus',group:'staff',size:'2048',date:'Feb  1 2025'},
+  'contact.txt':{perm:'-rw-r--r--',owner:'jcalmus',group:'staff',size:'512',date:'Jan  1 2025'},
+  'arsenal/':{perm:'drwxr-xr-x',owner:'jcalmus',group:'staff',size:'4096',date:'Feb 20 2026'},
+  '.bash_history':{perm:'-rw-------',owner:'jcalmus',group:'staff',size:'8192',date:'Feb 23 2026'},
+  '.bashrc':{perm:'-rw-r--r--',owner:'jcalmus',group:'staff',size:'1024',date:'Dec 10 2024'},
+  '.ssh/':{perm:'drwx------',owner:'jcalmus',group:'staff',size:'4096',date:'Mar  5 2024'},
+  '.pgp_keys':{perm:'-rw-------',owner:'jcalmus',group:'staff',size:'CLASSIFIED',date:'REDACTED'},
+  '.vimrc':{perm:'-rw-r--r--',owner:'jcalmus',group:'staff',size:'768',date:'Jun 12 2023'},
+  '.tmux.conf':{perm:'-rw-r--r--',owner:'jcalmus',group:'staff',size:'512',date:'Jun 12 2023'},
+  '.gitconfig':{perm:'-rw-r--r--',owner:'jcalmus',group:'staff',size:'256',date:'Jan  3 2025'},
+};
+
+/* ── Static command outputs ── */
+const STATIC={
+  resume:[
+    {t:'accent',v:'--- resume.txt ---'},{t:'output',v:''},
+    {t:'warn',v:'[2025-01 — PRESENT]  Silver Lake'},
+    {t:'output',v:'  SVP Portfolio Cybersecurity'},
+    {t:'output',v:'  Portfolio-level cyber strategy across investments.'},{t:'output',v:''},
+    {t:'warn',v:'[2019-05 — 2023-04]  WeWork'},
+    {t:'output',v:'  CISO / Chief Trust Officer'},
+    {t:'output',v:'  Zero-trust. IPO security. 50% faster threat response.'},{t:'output',v:''},
+    {t:'warn',v:'[2018-04 — 2019-05]  OneLogin'},
+    {t:'output',v:'  Chief Security Officer'},
+    {t:'output',v:'  Post-breach "Security First" initiative. FedRAMP.'},{t:'output',v:''},
+    {t:'warn',v:'[2016-10 — 2018-04]  HackerOne'},
+    {t:'output',v:'  VP Security Research'},
+    {t:'output',v:'  200+ pentests. 500+ critical vulns. UC Berkeley.'},{t:'output',v:''},
+    {t:'warn',v:'[2015-03 — 2016-10]  Zenefits'},
+    {t:'output',v:'  CSO / CIO'},
+    {t:'output',v:'  Built security from zero during hypergrowth.'},{t:'output',v:''},
+    {t:'warn',v:'[2014-03 — 2015-03]  Salesforce'},
+    {t:'output',v:'  Director of Security'},
+    {t:'output',v:'  $1B+ M&A due diligence. MTTD -60%. MTTR -50%.'},{t:'output',v:''},
+    {t:'warn',v:'[2012-05 — 2014-03]  LinkedIn'},
+    {t:'output',v:'  Head of IT Security'},
+    {t:'output',v:'  Security ops for 200M+ members.'},{t:'output',v:''},
+    {t:'warn',v:'[2005-01 — 2012-04]  Salesforce'},
+    {t:'output',v:'  Lead Security Engineer'},
+    {t:'output',v:'  Pioneered DevOps. Built secure infrastructure.'},
+  ],
+  skills:[
+    {t:'accent',v:'--- skills.dat ---'},{t:'output',v:''},
+    {t:'warn',v:'[OFFENSIVE SECURITY]'},
+    {t:'output',v:'  Penetration Testing, Red Teaming, Threat Modeling'},
+    {t:'output',v:'  Vulnerability Research, Exploit Dev, Bug Bounty'},{t:'output',v:''},
+    {t:'warn',v:'[GRC & COMPLIANCE]'},
+    {t:'output',v:'  SOC 2, ISO 27001, PCI DSS, SOX, GDPR, FedRAMP'},{t:'output',v:''},
+    {t:'warn',v:'[SECURITY ENGINEERING]'},
+    {t:'output',v:'  Zero Trust, SIEM/SOAR, IAM, Cloud Security'},
+    {t:'output',v:'  DevSecOps, Container Security, Incident Response'},{t:'output',v:''},
+    {t:'warn',v:'[LEADERSHIP]'},
+    {t:'output',v:'  CISO Strategy, Board Reporting, M&A Due Diligence'},
+    {t:'output',v:'  IPO Readiness, Vendor Risk, Security Transformation'},
+  ],
+  contact:[
+    {t:'accent',v:'--- contact.txt ---'},{t:'output',v:''},
+    {t:'output',v:'  email     : justin [at] sumlac [dot] com'},
+    {t:'output',v:'  github    : github.com/sumlac'},
+    {t:'output',v:'  linkedin  : linkedin.com/in/jcalmus'},
+  ],
+  whoami:[
+    {t:'accent',v:'╔══════════════════════════════════════════════════╗'},
+    {t:'accent',v:'║  JUSTIN CALMUS                                  ║'},
+    {t:'accent',v:'╚══════════════════════════════════════════════════╝'},
+    {t:'output',v:''},{t:'output',v:'  SVP Portfolio Cybersecurity @ Silver Lake'},
+    {t:'output',v:'  20+ years defending the digital frontier.'},{t:'output',v:''},
+    {t:'output',v:'  Former CISO @ WeWork | CSO @ OneLogin, Zenefits'},
+    {t:'output',v:'  VP Security Research @ HackerOne'},
+    {t:'output',v:'  Director of Security & Lead Engineer @ Salesforce'},
+    {t:'output',v:'  Head of IT Security @ LinkedIn'},{t:'output',v:''},
+    {t:'info',v:'  "Break it to protect it."'},
+  ],
+  arsenal:[
+    {t:'accent',v:'--- ~/arsenal/ai-lab/ ---'},
+    {t:'output',v:'  CLUSTER           4x Mac Studio (M2 Ultra)'},
+    {t:'output',v:'  RUNTIME           exo (distributed inference)'},
+    {t:'output',v:'  RAM               2TB unified across cluster'},
+    {t:'output',v:'  MODEL             Kimi K2.5 ~23 tok/s'},
+    {t:'output',v:'  LOCAL_CODING      various models, fast iteration'},{t:'output',v:''},
+    {t:'accent',v:'--- ~/arsenal/ai-pipeline/ ---'},
+    {t:'output',v:'  STRATEGY          OpenAI + Anthropic (cloud)'},
+    {t:'output',v:'  OUTPUT            PRDs → Kanban board'},
+    {t:'output',v:'  EXECUTION         Claude Code / Codex / Custom Bots'},
+    {t:'output',v:'  TRIGGER           board state change → agent starts'},{t:'output',v:''},
+    {t:'accent',v:'--- ~/arsenal/ai-security/ ---'},
+    {t:'output',v:'  promptfoo         TS       LLM Security'},
+    {t:'output',v:'  garak             Python   LLM Security'},
+    {t:'output',v:'  PyRIT             Python   AI Red Team'},
+    {t:'output',v:'  NeMo-Guardrails   Python   Guardrails'},
+    {t:'output',v:'  presidio          Python   Data Privacy'},
+    {t:'output',v:'  deepteam          Python   AI Red Team'},{t:'output',v:''},
+    {t:'accent',v:'--- ~/arsenal/bug-bounty/ ---'},
+    {t:'output',v:'  nuclei            Go       Scanning'},
+    {t:'output',v:'  subfinder         Go       Recon'},
+    {t:'output',v:'  httpx             Go       Recon'},
+    {t:'output',v:'  katana            Go       Recon'},
+    {t:'output',v:'  ffuf              Go       Fuzzing'},
+    {t:'output',v:'  feroxbuster       Rust     Fuzzing'},
+    {t:'output',v:'  sqlmap            Python   Web Exploit'},
+    {t:'output',v:'  dalfox            Go       XSS'},
+    {t:'output',v:'  amass             Go       Recon'},
+    {t:'output',v:'  sliver            Go       Red Team'},
+    {t:'output',v:'  trufflehog        Go       Secrets'},
+    {t:'output',v:'  gitleaks          Go       Secrets'},
+    {t:'output',v:'  trivy             Go       Container'},
+    {t:'output',v:'  prowler           Python   Cloud'},
+    {t:'output',v:'  semgrep           OCaml    SAST'},
+  ],
+};
+
+/* ── ls output builders ── */
+function lsSimple(){
+  return[
+    {t:'accent',v:'resume.txt    skills.dat    contact.txt   arsenal/'},
+    {t:'output',v:'.bash_history .bashrc        .ssh/         .pgp_keys'},
+    {t:'output',v:'.vimrc        .tmux.conf    .gitconfig'},
+  ];
+}
+function lsDetailed(){
+  const lines=[{t:'output',v:'total 48'}];
+  for(const[name,f]of Object.entries(FS_FILES)){
+    lines.push({t:name.endsWith('/')?'accent':'output',
+      v:f.perm+' 1 '+f.owner+' '+f.group+' '+String(f.size).padStart(10)+' '+f.date+' '+name});
+  }
+  return lines;
+}
+function lsDotfiles(){
+  return[{t:'output',v:'.  ..  .bash_history  .bashrc  .ssh/  .pgp_keys  .vimrc  .tmux.conf  .gitconfig'}];
+}
+
+/* ── Pattern-based command resolver ── */
+function resolveCommand(cmd){
+  const lo=cmd.toLowerCase();
+  const parts=cmd.split(/\s+/);
+  const base=parts[0];
+  const args=parts.slice(1).join(' ');
+
+  /* ── clear (handled in caller) ── */
+  if(lo==='clear'||lo==='reset')return[];
+
+  /* ── help ── */
+  if(lo==='help'||lo==='?'||lo==='--help')return[
+    {t:'accent',v:'Available commands:'},
+    {t:'output',v:'  help              Show this help message'},
+    {t:'output',v:'  whoami            Who is Justin Calmus?'},
+    {t:'output',v:'  cat resume.txt    Full career timeline'},
+    {t:'output',v:'  cat skills.dat    Technical skills'},
+    {t:'output',v:'  cat contact.txt   Contact information'},
+    {t:'output',v:'  ls [-la]          List directory'},
+    {t:'output',v:'  ls arsenal/       Security tool arsenal'},
+    {t:'output',v:'  cd, pwd, tree     Filesystem navigation'},
+    {t:'output',v:'  ping linkedin     Open LinkedIn profile'},
+    {t:'output',v:'  ping github       Open GitHub profile'},
+    {t:'output',v:'  nmap, curl, dig   Network recon'},
+    {t:'output',v:'  ps, top, uptime   System info'},
+    {t:'output',v:'  neofetch          System specs'},
+    {t:'output',v:'  history           Command history'},
+    {t:'output',v:'  date, uname -a    Date & kernel info'},
+    {t:'output',v:'  clear             Clear terminal'},
+    {t:'output',v:''},{t:'info',v:'  ...and many more. Try anything.'},
+  ];
+
+  /* ── whoami ── */
+  if(lo==='whoami')return STATIC.whoami;
+
+  /* ── id ── */
+  if(lo==='id')return[{t:'output',v:'uid=1337(visitor) gid=1337(visitor) groups=1337(visitor)'}];
+
+  /* ── hostname ── */
+  if(lo==='hostname'||lo==='hostname -f')return[{t:'output',v:'sumlac.com'}];
+
+  /* ── pwd ── */
+  if(lo==='pwd')return[{t:'output',v:'/home/visitor'}];
+
+  /* ── echo ── */
+  if(base==='echo'){
+    const text=cmd.slice(5);
+    if(text.includes('$HOME'))return[{t:'output',v:'/home/visitor'}];
+    if(text.includes('$USER')||text.includes('$LOGNAME'))return[{t:'output',v:'visitor'}];
+    if(text.includes('$SHELL'))return[{t:'output',v:'/bin/bash'}];
+    if(text.includes('$PATH'))return[{t:'output',v:'/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games'}];
+    if(text.includes('$TERM'))return[{t:'output',v:'xterm-256color'}];
+    if(text.includes('$HOSTNAME'))return[{t:'output',v:'sumlac.com'}];
+    if(text.includes('$RANDOM'))return[{t:'output',v:String(Math.floor(Math.random()*32768))}];
+    if(text.includes('$?'))return[{t:'output',v:'0'}];
+    if(text.includes('$$'))return[{t:'output',v:'1337'}];
+    return[{t:'output',v:text.replace(/^["']|["']$/g,'')}];
+  }
+
+  /* ── cat ── */
+  if(base==='cat'||base==='less'||base==='more'||base==='bat'||base==='head'||base==='tail'){
+    const file=args.replace(/^-[^\s]*\s*/,'');
+    if(file.includes('resume'))return STATIC.resume;
+    if(file.includes('skills'))return STATIC.skills;
+    if(file.includes('contact'))return STATIC.contact;
+    if(file.includes('.bash_history')){
+      if(history.length===0)return[{t:'output',v:'(empty)'}];
+      return history.slice(-20).map(h=>({t:'output',v:h}));
+    }
+    if(file.includes('.bashrc'))return[
+      {t:'output',v:'# ~/.bashrc — sumlac.com'},
+      {t:'output',v:'export PS1="\\[\\033[32m\\]\\u@sumlac:\\w\\$\\[\\033[0m\\] "'},
+      {t:'output',v:'export EDITOR=vim'},
+      {t:'output',v:'alias ll="ls -la"'},
+      {t:'output',v:'alias gs="git status"'},
+      {t:'output',v:'alias k="kubectl"'},
+      {t:'output',v:'alias tf="terraform"'},
+      {t:'output',v:'# -- security aliases --'},
+      {t:'output',v:'alias scan="nuclei -t ~/templates/"'},
+      {t:'output',v:'alias recon="subfinder -d $1 | httpx"'},
     ];
-  },
-  whoami(){
-    return[
-      {t:'accent',v:'╔══════════════════════════════════════════════════╗'},
-      {t:'accent',v:'║  JUSTIN CALMUS                                  ║'},
-      {t:'accent',v:'╚══════════════════════════════════════════════════╝'},
-      {t:'output',v:''},
-      {t:'output',v:'  SVP Portfolio Cybersecurity @ Silver Lake'},
-      {t:'output',v:'  20+ years defending the digital frontier.'},
-      {t:'output',v:''},
-      {t:'output',v:'  Former CISO @ WeWork | CSO @ OneLogin, Zenefits'},
-      {t:'output',v:'  VP Security Research @ HackerOne'},
-      {t:'output',v:'  Director of Security & Lead Engineer @ Salesforce'},
-      {t:'output',v:'  Head of IT Security @ LinkedIn'},
-      {t:'output',v:''},
-      {t:'info',v:'  "Break it to protect it."'},
+    if(file.includes('.vimrc'))return[
+      {t:'output',v:'" ~/.vimrc'},{t:'output',v:'set number relativenumber'},
+      {t:'output',v:'set tabstop=2 shiftwidth=2 expandtab'},
+      {t:'output',v:'set hlsearch incsearch ignorecase smartcase'},
+      {t:'output',v:'syntax on'},{t:'output',v:'colorscheme desert'},
     ];
-  },
-  'cat resume.txt'(){
-    return[
-      {t:'accent',v:'--- resume.txt ---'},
-      {t:'output',v:''},
-      {t:'warn',v:'[2025-01 — PRESENT]  Silver Lake'},
-      {t:'output',v:'  SVP Portfolio Cybersecurity'},
-      {t:'output',v:'  Portfolio-level cyber strategy across investments.'},
-      {t:'output',v:''},
-      {t:'warn',v:'[2019-05 — 2023-04]  WeWork'},
-      {t:'output',v:'  CISO / Chief Trust Officer'},
-      {t:'output',v:'  Zero-trust. IPO security. 50% faster threat response.'},
-      {t:'output',v:''},
-      {t:'warn',v:'[2018-04 — 2019-05]  OneLogin'},
-      {t:'output',v:'  Chief Security Officer'},
-      {t:'output',v:'  Post-breach "Security First" initiative. FedRAMP.'},
-      {t:'output',v:''},
-      {t:'warn',v:'[2016-10 — 2018-04]  HackerOne'},
-      {t:'output',v:'  VP Security Research'},
-      {t:'output',v:'  200+ pentests. 500+ critical vulns. UC Berkeley.'},
-      {t:'output',v:''},
-      {t:'warn',v:'[2015-03 — 2016-10]  Zenefits'},
-      {t:'output',v:'  CSO / CIO'},
-      {t:'output',v:'  Built security from zero during hypergrowth.'},
-      {t:'output',v:''},
-      {t:'warn',v:'[2014-03 — 2015-03]  Salesforce'},
-      {t:'output',v:'  Director of Security'},
-      {t:'output',v:'  $1B+ M&A due diligence. MTTD -60%. MTTR -50%.'},
-      {t:'output',v:''},
-      {t:'warn',v:'[2012-05 — 2014-03]  LinkedIn'},
-      {t:'output',v:'  Head of IT Security'},
-      {t:'output',v:'  Security ops for 200M+ members.'},
-      {t:'output',v:''},
-      {t:'warn',v:'[2005-01 — 2012-04]  Salesforce'},
-      {t:'output',v:'  Lead Security Engineer'},
-      {t:'output',v:'  Pioneered DevOps. Built secure infrastructure.'},
+    if(file.includes('.tmux.conf'))return[
+      {t:'output',v:'# prefix: Ctrl-a'},
+      {t:'output',v:'unbind C-b'},{t:'output',v:'set -g prefix C-a'},
+      {t:'output',v:'set -g mouse on'},{t:'output',v:'set -g base-index 1'},
+      {t:'output',v:'set -g default-terminal "screen-256color"'},
     ];
-  },
-  'cat skills.dat'(){
-    return[
-      {t:'accent',v:'--- skills.dat ---'},
-      {t:'output',v:''},
-      {t:'warn',v:'[OFFENSIVE SECURITY]'},
-      {t:'output',v:'  Penetration Testing, Red Teaming, Threat Modeling'},
-      {t:'output',v:'  Vulnerability Research, Exploit Dev, Bug Bounty'},
-      {t:'output',v:''},
-      {t:'warn',v:'[GRC & COMPLIANCE]'},
-      {t:'output',v:'  SOC 2, ISO 27001, PCI DSS, SOX, GDPR, FedRAMP'},
-      {t:'output',v:''},
-      {t:'warn',v:'[SECURITY ENGINEERING]'},
-      {t:'output',v:'  Zero Trust, SIEM/SOAR, IAM, Cloud Security'},
-      {t:'output',v:'  DevSecOps, Container Security, Incident Response'},
-      {t:'output',v:''},
-      {t:'warn',v:'[LEADERSHIP]'},
-      {t:'output',v:'  CISO Strategy, Board Reporting, M&A Due Diligence'},
-      {t:'output',v:'  IPO Readiness, Vendor Risk, Cyber Insurance'},
+    if(file.includes('.gitconfig'))return[
+      {t:'output',v:'[user]'},{t:'output',v:'    name = Justin Calmus'},
+      {t:'output',v:'    email = justin@sumlac.com'},
+      {t:'output',v:'[core]'},{t:'output',v:'    editor = vim'},
+      {t:'output',v:'[alias]'},{t:'output',v:'    lg = log --oneline --graph'},
     ];
-  },
-  'cat contact.txt'(){
-    return[
-      {t:'accent',v:'--- contact.txt ---'},
-      {t:'output',v:''},
-      {t:'output',v:'  email     : justin [at] sumlac [dot] com'},
-      {t:'output',v:'  github    : github.com/sumlac'},
-      {t:'output',v:'  linkedin  : linkedin.com/in/jcalmus'},
+    if(file.includes('.pgp')||file.includes('.ssh')||file.includes('id_rsa')||file.includes('id_ed25519'))
+      return[{t:'err',v:'Permission denied. CLASSIFIED material.'}];
+    if(file.includes('/etc/passwd'))return[{t:'err',v:'Access denied. Nice try though.'}];
+    if(file.includes('/etc/shadow'))return[{t:'err',v:'[CRITICAL] Unauthorized access attempt logged.'}];
+    if(file.includes('/etc/hosts'))return[
+      {t:'output',v:'127.0.0.1       localhost'},
+      {t:'output',v:'::1             localhost'},
+      {t:'output',v:'127.0.0.1       sumlac.com'},
+      {t:'output',v:'# 10.0.0.0/8   internal.silverlake.net  # VPN required'},
     ];
-  },
-  ls(){
-    return[
-      {t:'accent',v:'drwxr-xr-x  resume.txt'},
-      {t:'accent',v:'drwxr-xr-x  skills.dat'},
-      {t:'accent',v:'drwxr-xr-x  contact.txt'},
-      {t:'accent',v:'drwxr-xr-x  arsenal/'},
-      {t:'output',v:'-rw-r--r--  .bash_history'},
-      {t:'output',v:'-rw-------  .pgp_keys (CLASSIFIED)'},
-    ];
-  },
-  'ls arsenal/'(){
-    return[
-      {t:'accent',v:'--- ~/arsenal/ai-lab/ ---'},
-      {t:'output',v:'  CLUSTER           4x Mac Studio (M2 Ultra)'},
-      {t:'output',v:'  RUNTIME           exo (distributed inference)'},
-      {t:'output',v:'  RAM               2TB unified across cluster'},
-      {t:'output',v:'  MODEL             Kimi K2.5 ~23 tok/s'},
-      {t:'output',v:'  LOCAL_CODING      various models, fast iteration'},
-      {t:'output',v:''},
-      {t:'accent',v:'--- ~/arsenal/ai-pipeline/ ---'},
-      {t:'output',v:'  STRATEGY          OpenAI + Anthropic (cloud)'},
-      {t:'output',v:'  OUTPUT            PRDs → Kanban board'},
-      {t:'output',v:'  EXECUTION         Claude Code / Codex / Custom Bots'},
-      {t:'output',v:'  TRIGGER           board state change → agent starts'},
-      {t:'output',v:''},
-      {t:'accent',v:'--- ~/arsenal/ai-security/ ---'},
-      {t:'output',v:'  promptfoo         TS       LLM Security'},
-      {t:'output',v:'  garak             Python   LLM Security'},
-      {t:'output',v:'  PyRIT             Python   AI Red Team'},
-      {t:'output',v:'  NeMo-Guardrails   Python   Guardrails'},
-      {t:'output',v:'  presidio          Python   Data Privacy'},
-      {t:'output',v:'  deepteam          Python   AI Red Team'},
-      {t:'output',v:''},
-      {t:'accent',v:'--- ~/arsenal/bug-bounty/ ---'},
-      {t:'output',v:'  nuclei            Go       Scanning'},
-      {t:'output',v:'  subfinder         Go       Recon'},
-      {t:'output',v:'  httpx             Go       Recon'},
-      {t:'output',v:'  katana            Go       Recon'},
-      {t:'output',v:'  ffuf              Go       Fuzzing'},
-      {t:'output',v:'  feroxbuster       Rust     Fuzzing'},
-      {t:'output',v:'  sqlmap            Python   Web Exploit'},
-      {t:'output',v:'  dalfox            Go       XSS'},
-      {t:'output',v:'  amass             Go       Recon'},
-      {t:'output',v:'  sliver            Go       Red Team'},
-      {t:'output',v:'  trufflehog        Go       Secrets'},
-      {t:'output',v:'  gitleaks          Go       Secrets'},
-      {t:'output',v:'  trivy             Go       Container'},
-      {t:'output',v:'  prowler           Python   Cloud'},
-      {t:'output',v:'  semgrep           OCaml    SAST'},
-    ];
-  },
-  'ping linkedin'(){
-    window.open('https://www.linkedin.com/in/jcalmus','_blank');
-    return[{t:'info',v:'PING linkedin.com — Opening profile...'}];
-  },
-  'ping github'(){
-    window.open('https://github.com/sumlac','_blank');
-    return[{t:'info',v:'PING github.com — Opening profile...'}];
-  },
-  'nmap sumlac.com'(){
+    if(file.includes('/proc')||file.includes('/sys'))return[{t:'err',v:'Permission denied.'}];
+    if(file.includes('/dev/null'))return[];
+    if(file.includes('/dev/urandom')||file.includes('/dev/random'))return[{t:'output',v:'ÿ÷¤²«ÐœñÃ±¹¿ÖêÅ×ëÞ...^C'}];
+    if(!file)return[{t:'err',v:base+': missing file operand'}];
+    return[{t:'err',v:base+': '+file+': No such file or directory'}];
+  }
+
+  /* ── ls ── */
+  if(base==='ls'||base==='ll'||base==='la'||base==='dir'){
+    const hasL=base==='ll'||base==='dir'||/-(l|la|al|lah|lha)/.test(args);
+    const hasA=base==='la'||/-(a|la|al|lah|lha|A)/.test(args);
+    const path=args.replace(/^-[^\s]*\s*/,'').trim();
+    if(path.includes('arsenal')||path.includes('~/arsenal'))return STATIC.arsenal;
+    if(path.includes('.ssh'))return[{t:'err',v:'ls: cannot open directory \'.ssh/\': Permission denied'}];
+    if(path&&!Object.keys(FS_FILES).some(f=>path.includes(f.replace('/',''))||path==='~'||path==='.'||path==='..'||path==='/'))
+      return[{t:'err',v:'ls: cannot access \''+path+'\': No such file or directory'}];
+    if(hasL)return lsDetailed();
+    if(hasA)return lsDotfiles().concat(lsSimple());
+    return lsSimple();
+  }
+
+  /* ── tree ── */
+  if(lo==='tree'||lo.startsWith('tree '))return[
+    {t:'accent',v:'.'},{t:'output',v:'├── resume.txt'},{t:'output',v:'├── skills.dat'},
+    {t:'output',v:'├── contact.txt'},{t:'output',v:'├── arsenal/'},
+    {t:'output',v:'│   ├── ai-lab/'},{t:'output',v:'│   ├── ai-pipeline/'},
+    {t:'output',v:'│   ├── ai-security/'},{t:'output',v:'│   └── bug-bounty/'},
+    {t:'output',v:'├── .bashrc'},{t:'output',v:'├── .vimrc'},
+    {t:'output',v:'├── .tmux.conf'},{t:'output',v:'├── .gitconfig'},
+    {t:'output',v:'├── .ssh/ (LOCKED)'},{t:'output',v:'└── .pgp_keys (CLASSIFIED)'},
+    {t:'output',v:''},{t:'output',v:'4 directories, 8 files'},
+  ];
+
+  /* ── cd ── */
+  if(base==='cd'){
+    if(!args||args==='~'||args==='$HOME'||args==='.')return[{t:'output',v:'(already at /home/visitor)'}];
+    if(args==='..'||args==='/')return[{t:'err',v:'Permission denied. Chroot jail active.'}];
+    if(args.includes('arsenal'))return[{t:'output',v:'(use "ls arsenal/" to browse the arsenal)'}];
+    return[{t:'err',v:'cd: '+args+': No such file or directory'}];
+  }
+
+  /* ── file / stat / wc ── */
+  if(base==='file'){
+    if(args.includes('resume'))return[{t:'output',v:'resume.txt: UTF-8 Unicode text'}];
+    if(args.includes('skills'))return[{t:'output',v:'skills.dat: data'}];
+    if(args.includes('pgp'))return[{t:'output',v:'.pgp_keys: PGP armored keyring (CLASSIFIED)'}];
+    if(!args)return[{t:'err',v:'file: missing file operand'}];
+    return[{t:'err',v:'file: '+args+': No such file or directory'}];
+  }
+  if(base==='stat'){
+    if(!args)return[{t:'err',v:'stat: missing operand'}];
+    const f=FS_FILES[args]||FS_FILES[args+'/'];
+    if(f)return[{t:'output',v:'  File: '+args},{t:'output',v:'  Size: '+f.size},{t:'output',v:'Access: '+f.perm},{t:'output',v:'Modify: '+f.date}];
+    return[{t:'err',v:'stat: \''+args+'\': No such file or directory'}];
+  }
+  if(base==='wc'){
+    if(args.includes('resume'))return[{t:'output',v:'  42  256  4096 resume.txt'}];
+    if(args.includes('skills'))return[{t:'output',v:'  18  96  2048 skills.dat'}];
+    if(!args)return[{t:'err',v:'wc: missing file operand'}];
+    return[{t:'err',v:'wc: '+args+': No such file or directory'}];
+  }
+
+  /* ── grep ── */
+  if(base==='grep'||base==='rg'||base==='ack'){
+    if(!args)return[{t:'err',v:base+': missing pattern'}];
+    if(args.includes('password')||args.includes('secret')||args.includes('key'))
+      return[{t:'err',v:'[ALERT] Suspicious search pattern detected.'}];
+    return[{t:'output',v:'(no matches in restricted shell)'}];
+  }
+
+  /* ── find / locate / which / whereis / type / command ── */
+  if(base==='find')return[{t:'err',v:'find: restricted — use "ls" or "tree"'}];
+  if(base==='locate')return[{t:'output',v:'mlocate: database not found. Run "updatedb" first.'}];
+  if(base==='which'||base==='whereis'||base==='type'||base==='command'){
+    if(args.includes('vim'))return[{t:'output',v:'/usr/bin/vim'}];
+    if(args.includes('python'))return[{t:'output',v:'/usr/bin/python3'}];
+    if(args.includes('node'))return[{t:'output',v:'/usr/local/bin/node'}];
+    if(args.includes('go'))return[{t:'output',v:'/usr/local/go/bin/go'}];
+    if(args.includes('nmap'))return[{t:'output',v:'/usr/bin/nmap'}];
+    if(args.includes('nuclei'))return[{t:'output',v:'/home/visitor/.local/bin/nuclei'}];
+    if(!args)return[{t:'err',v:base+': missing argument'}];
+    return[{t:'output',v:args+' not found'}];
+  }
+
+  /* ── mkdir / touch / cp / mv / rm / chmod / chown ── */
+  if(base==='mkdir'||base==='touch'||base==='cp'||base==='mv')
+    return[{t:'err',v:base+': Read-only file system'}];
+  if(base==='rm'){
+    if(args.includes('-rf')||args.includes('-fr'))return[{t:'err',v:'[ALERT] This incident has been reported to the SOC.'}];
+    return[{t:'err',v:'rm: Read-only file system'}];
+  }
+  if(base==='chmod'||base==='chown'||base==='chgrp')return[{t:'err',v:base+': Operation not permitted'}];
+
+  /* ── ping ── */
+  if(base==='ping'){
+    if(lo.includes('linkedin')){window.open('https://www.linkedin.com/in/jcalmus','_blank');return[{t:'info',v:'PING linkedin.com (13.107.42.14): 56 bytes — Opening profile...'}];}
+    if(lo.includes('github')){window.open('https://github.com/sumlac','_blank');return[{t:'info',v:'PING github.com (140.82.121.4): 56 bytes — Opening profile...'}];}
+    if(lo.includes('google'))return[{t:'output',v:'PING google.com (142.250.80.46): 64 bytes, time=12ms'},{t:'output',v:'--- google.com ping statistics --- 1 packets transmitted, 1 received'}];
+    if(lo.includes('localhost')||lo.includes('127.0'))return[{t:'output',v:'PING 127.0.0.1: 64 bytes, time=0.042ms'}];
+    if(lo.includes('sumlac'))return[{t:'output',v:'PING sumlac.com (185.199.108.153): 64 bytes, time=8ms'}];
+    if(!args)return[{t:'err',v:'ping: missing host operand'}];
+    return[{t:'output',v:'PING '+args+': 64 bytes, time='+Math.floor(Math.random()*200)+'ms'}];
+  }
+
+  /* ── nmap ── */
+  if(base==='nmap'){
+    if(!args)return[{t:'err',v:'Nmap: no targets specified'}];
     return[
       {t:'output',v:'Starting Nmap 7.94 ( https://nmap.org )'},
-      {t:'output',v:'Nmap scan report for sumlac.com'},
+      {t:'output',v:'Nmap scan report for '+(args||'unknown')},
       {t:'output',v:'Host is up (0.001s latency).'},
-      {t:'output',v:'All 65535 scanned ports are filtered.'},
-      {t:'output',v:''},
+      {t:'output',v:'All 65535 scanned ports are filtered.'},{t:'output',v:''},
       {t:'warn',v:'All ports filtered — nice try.'},
     ];
-  },
-  history(){
+  }
+
+  /* ── curl / wget / nc / netcat ── */
+  if(base==='curl'){
+    if(!args)return[{t:'err',v:'curl: missing URL'}];
+    if(lo.includes('sumlac'))return[{t:'output',v:'HTTP/1.1 200 OK'},{t:'output',v:'Server: GitHub.com'},{t:'output',v:'Content-Type: text/html; charset=utf-8'},{t:'output',v:''},{t:'accent',v:'<!-- You found the source. Try the terminal. -->'}];
+    if(lo.includes('ifconfig.me')||lo.includes('icanhazip'))return[{t:'output',v:'[REDACTED] — nice try'}];
+    return[{t:'output',v:'HTTP/1.1 200 OK'},{t:'output',v:'(response body omitted in restricted shell)'}];
+  }
+  if(base==='wget')return[{t:'err',v:'wget: outgoing connections restricted'}];
+  if(base==='nc'||base==='netcat'||base==='ncat')return[{t:'err',v:base+': Operation not permitted — outbound sockets disabled'}];
+
+  /* ── dig / nslookup / host ── */
+  if(base==='dig'||base==='nslookup'||base==='host'){
+    const target=args.replace(/^[^\s]*\s/,'').trim()||args;
+    if(!target)return[{t:'err',v:base+': missing domain'}];
+    if(lo.includes('sumlac'))return[{t:'output',v:'sumlac.com.        300 IN A     185.199.108.153'},{t:'output',v:'sumlac.com.        300 IN A     185.199.109.153'}];
+    return[{t:'output',v:(target||'unknown')+'.   300 IN A     '+[1,2,3,4].map(()=>Math.floor(Math.random()*255)).join('.')}];
+  }
+
+  /* ── traceroute / mtr ── */
+  if(base==='traceroute'||base==='mtr'){
+    if(!args)return[{t:'err',v:base+': missing host'}];
+    return[{t:'output',v:' 1  gateway (10.0.0.1)  1.2ms'},{t:'output',v:' 2  * * *'},{t:'output',v:' 3  * * *'},{t:'warn',v:' (filtered — ICMP blocked)'}];
+  }
+
+  /* ── ssh / scp ── */
+  if(base==='ssh')return[{t:'err',v:'ssh: connect to host '+(args||'...')+': Connection refused (outbound SSH disabled)'}];
+  if(base==='scp'||base==='rsync')return[{t:'err',v:base+': outbound connections disabled'}];
+
+  /* ── ifconfig / ip ── */
+  if(lo==='ifconfig'||lo==='ip addr'||lo==='ip a'||lo==='ip address')return[
+    {t:'output',v:'eth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500'},
+    {t:'output',v:'    inet 10.13.37.2  netmask 255.255.255.0  broadcast 10.13.37.255'},
+    {t:'output',v:'    inet6 fe80::1  prefixlen 64  scopeid 0x20<link>'},
+    {t:'output',v:'    ether de:ad:be:ef:ca:fe  txqueuelen 1000'},
+  ];
+
+  /* ── netstat / ss ── */
+  if(base==='netstat'||base==='ss')return[
+    {t:'output',v:'Proto  Local Address          Foreign Address        State'},
+    {t:'output',v:'tcp    10.13.37.2:443         *:*                    LISTEN'},
+    {t:'output',v:'tcp    10.13.37.2:22          *:*                    LISTEN (filtered)'},
+    {t:'output',v:'tcp    10.13.37.2:51234       185.199.108.153:443    ESTABLISHED'},
+  ];
+
+  /* ── ps / top / htop ── */
+  if(base==='ps')return[
+    {t:'output',v:'  PID TTY          TIME CMD'},
+    {t:'output',v:'    1 ?        00:00:03 systemd'},
+    {t:'output',v:' 1337 pts/0    00:00:00 bash'},
+    {t:'output',v:' 1338 pts/0    00:00:00 sumlac-web'},
+    {t:'output',v:' 1339 pts/0    00:00:01 exo-cluster'},
+    {t:'output',v:' 1340 pts/0    00:00:00 kimi-k2.5'},
+    {t:'output',v:' 1341 pts/0    00:00:00 nuclei --watch'},
+    {t:'output',v:' 1342 pts/0    00:00:00 ps'},
+  ];
+  if(base==='top'||base==='htop')return[
+    {t:'output',v:'top - '+new Date().toLocaleTimeString()+' up 337 days, load average: 0.13, 0.37, 0.42'},
+    {t:'output',v:'Tasks:   7 total,   2 running,   5 sleeping'},
+    {t:'output',v:'%Cpu(s):  4.2 us,  1.1 sy,  0.0 ni, 94.7 id'},
+    {t:'output',v:'MiB Mem : 2097152 total, 1048576 free, 524288 used, 524288 buff/cache'},
+    {t:'output',v:''},{t:'output',v:'  PID USER      %CPU %MEM    COMMAND'},
+    {t:'output',v:' 1340 jcalmus   12.3  25.0  kimi-k2.5'},
+    {t:'output',v:' 1339 jcalmus    8.1  12.0  exo-cluster'},
+    {t:'output',v:' 1341 jcalmus    2.4   1.2  nuclei --watch'},
+    {t:'output',v:' 1338 jcalmus    0.3   0.5  sumlac-web'},
+  ];
+  if(base==='kill'||base==='killall'||base==='pkill')return[{t:'err',v:base+': Operation not permitted'}];
+
+  /* ── uptime ── */
+  if(lo==='uptime')return[{t:'output',v:' '+new Date().toLocaleTimeString()+' up 337 days, 12:42, 1 user, load average: 0.13, 0.37, 0.42'}];
+
+  /* ── free / df / du ── */
+  if(base==='free')return[
+    {t:'output',v:'              total        used        free'},
+    {t:'output',v:'Mem:       2097152      524288     1048576'},
+    {t:'output',v:'Swap:       262144           0      262144'},
+  ];
+  if(base==='df')return[
+    {t:'output',v:'Filesystem     Size  Used Avail Use% Mounted on'},
+    {t:'output',v:'/dev/nvme0n1   4.0T  1.2T  2.8T  30% /'},
+    {t:'output',v:'tmpfs          1.0T     0  1.0T   0% /dev/shm'},
+  ];
+  if(base==='du')return[{t:'output',v:'48K\t.'}];
+
+  /* ── env / printenv / export / set ── */
+  if(lo==='env'||lo==='printenv')return[
+    {t:'output',v:'USER=visitor'},{t:'output',v:'HOME=/home/visitor'},
+    {t:'output',v:'SHELL=/bin/bash'},{t:'output',v:'TERM=xterm-256color'},
+    {t:'output',v:'HOSTNAME=sumlac.com'},{t:'output',v:'LANG=en_US.UTF-8'},
+    {t:'output',v:'PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin'},
+    {t:'output',v:'EDITOR=vim'},{t:'output',v:'GPG_TTY=/dev/pts/0'},
+    {t:'output',v:'CLUSTER_NODES=4'},{t:'output',v:'CLUSTER_RAM=2TB'},
+    {t:'output',v:'AI_MODEL=kimi-k2.5'},{t:'output',v:'SECURITY_LEVEL=paranoid'},
+  ];
+  if(base==='export'||base==='set'||base==='unset')return[{t:'err',v:base+': Read-only shell environment'}];
+
+  /* ── uname ── */
+  if(base==='uname'){
+    if(args.includes('-a')||args.includes('--all'))return[{t:'output',v:'sumlac-OS 6.6.6-hardened #1337 SMP x86_64 GNU/Linux (kernel: paranoid)'}];
+    if(args.includes('-r'))return[{t:'output',v:'6.6.6-hardened'}];
+    if(args.includes('-n'))return[{t:'output',v:'sumlac.com'}];
+    if(args.includes('-m'))return[{t:'output',v:'x86_64'}];
+    return[{t:'output',v:'sumlac-OS'}];
+  }
+
+  /* ── date / cal ── */
+  if(lo==='date')return[{t:'output',v:new Date().toString()}];
+  if(lo==='cal'||lo==='ncal'){
+    const d=new Date();const mo=d.toLocaleString('en',{month:'long'});const yr=d.getFullYear();
+    return[{t:'output',v:'     '+mo+' '+yr},{t:'output',v:'Su Mo Tu We Th Fr Sa'},{t:'output',v:'(calendar rendering omitted in restricted shell)'}];
+  }
+
+  /* ── neofetch / screenfetch ── */
+  if(lo==='neofetch'||lo==='screenfetch'||lo==='fastfetch')return[
+    {t:'accent',v:'       _____'},
+    {t:'accent',v:'      / ____|'},
+    {t:'accent',v:'     | (___  _   _ _ __ ___'},
+    {t:'accent',v:'      \\___ \\| | | | \'_ ` _ \\'},
+    {t:'accent',v:'      ____) | |_| | | | | | |'},
+    {t:'accent',v:'     |_____/ \\__,_|_| |_| |_|'},
+    {t:'output',v:''},{t:'output',v:'  visitor@sumlac.com'},
+    {t:'output',v:'  OS:       sumlac-OS 6.6.6-hardened'},
+    {t:'output',v:'  Host:     4x Mac Studio M2 Ultra (exo cluster)'},
+    {t:'output',v:'  Kernel:   6.6.6-paranoid'},
+    {t:'output',v:'  Uptime:   337 days'},
+    {t:'output',v:'  Shell:    bash 5.2.21'},
+    {t:'output',v:'  Memory:   524288 MiB / 2097152 MiB (25%)'},
+    {t:'output',v:'  CPU:      Apple M2 Ultra x4'},
+    {t:'output',v:'  GPU:      76-core x4 (304 total)'},
+    {t:'output',v:'  AI Model: Kimi K2.5 (~23 tok/s)'},
+  ];
+
+  /* ── history ── */
+  if(lo==='history'){
     if(history.length===0)return[{t:'output',v:'No commands in history.'}];
     return history.map((h,i)=>({t:'output',v:'  '+(i+1)+'  '+h}));
-  },
-  clear(){
-    /* handled specially */
-    return[];
-  },
-  date(){
-    return[{t:'output',v:'  '+new Date().toString()}];
-  },
-  'uname -a'(){
-    return[{t:'output',v:'  sumlac-OS 6.6.6-hardened x86_64 GNU/Linux (kernel: paranoid)'}];
-  },
-};
+  }
 
-/* Easter egg commands */
-const easterEggs={
-  'exit':()=>[{t:'err',v:'Logout denied. You know too much.'}],
-  'rm -rf /':()=>[{t:'err',v:'Permission denied. This incident has been reported.'}],
-  'sudo rm -rf /':()=>[{t:'err',v:'[ALERT] This incident has been reported to the SOC.'}],
-  'hack':()=>[{t:'warn',v:'You\'re already on a hacker\'s site. Mission accomplished.'}],
-  'matrix':()=>{konamiActivate();return[{t:'accent',v:'Entering the Matrix...'}]},
-  'cd ..':()=>[{t:'err',v:'Permission denied. Chroot jail active.'}],
-  'cat /etc/passwd':()=>[{t:'err',v:'Access denied. Nice try though.'}],
-  'cat /etc/shadow':()=>[{t:'err',v:'[CRITICAL] Unauthorized access attempt logged.'}],
-  'pwd':()=>[{t:'output',v:'/home/visitor (restricted shell)'}],
-  'id':()=>[{t:'output',v:'uid=1337(visitor) gid=1337(visitor) groups=1337(visitor)'}],
-  'man':()=>[{t:'output',v:'No manual entry. RTFM elsewhere.'}],
-};
+  /* ── alias ── */
+  if(lo==='alias')return[
+    {t:'output',v:'alias ll=\'ls -la\''},{t:'output',v:'alias gs=\'git status\''},
+    {t:'output',v:'alias k=\'kubectl\''},{t:'output',v:'alias tf=\'terraform\''},
+    {t:'output',v:'alias scan=\'nuclei -t ~/templates/\''},
+    {t:'output',v:'alias recon=\'subfinder -d $1 | httpx\''},
+  ];
 
-const cmdNames=Object.keys(COMMANDS).concat(Object.keys(easterEggs));
+  /* ── man ── */
+  if(base==='man'){
+    if(!args)return[{t:'output',v:'What manual page do you want?'}];
+    return[{t:'output',v:'No manual entry for '+args+'. RTFM elsewhere.'}];
+  }
+
+  /* ── editors ── */
+  if(base==='vim'||base==='vi'||base==='nvim')return[{t:'output',v:'(vim opens...)'},{t:'warn',v:'How do you exit vim? That\'s the real security challenge.'},{t:'output',v:'(use :q! if you ever figure it out)'}];
+  if(base==='nano')return[{t:'output',v:'nano: Permission denied (read-only filesystem)'}];
+  if(base==='emacs')return[{t:'warn',v:'This is a vim household.'}];
+  if(base==='code'||base==='cursor')return[{t:'output',v:'Visual editors not available in restricted shell. Use vim.'}];
+
+  /* ── git ── */
+  if(base==='git'){
+    if(args==='status')return[{t:'output',v:'On branch main'},{t:'output',v:'nothing to commit, working tree clean'}];
+    if(args==='log'||args.startsWith('log'))return[
+      {t:'warn',v:'commit a1b2c3d (HEAD -> main)'},{t:'output',v:'Author: Justin Calmus <justin@sumlac.com>'},
+      {t:'output',v:'Date:   Feb 23 2026'},{t:'output',v:''},{t:'output',v:'    Updated arsenal with latest AI security tools'},
+    ];
+    if(args==='branch'||args==='branch -a')return[{t:'accent',v:'* main'}];
+    if(args==='remote -v')return[{t:'output',v:'origin\thttps://github.com/sumlac/sumlac.github.io.git (fetch)'},{t:'output',v:'origin\thttps://github.com/sumlac/sumlac.github.io.git (push)'}];
+    if(args==='diff')return[{t:'output',v:'(no changes)'}];
+    if(!args)return[{t:'output',v:'usage: git <command> [<args>]'}];
+    return[{t:'output',v:'git: \''+args+'\' is not a git command.'}];
+  }
+
+  /* ── docker / kubectl ── */
+  if(base==='docker'){
+    if(args==='ps')return[
+      {t:'output',v:'CONTAINER ID   IMAGE              STATUS          NAMES'},
+      {t:'output',v:'a1b2c3d4e5f6   exo-cluster:latest Up 337 days     ai-lab'},
+      {t:'output',v:'f6e5d4c3b2a1   nuclei:latest      Up 337 days     scanner'},
+    ];
+    if(args==='images')return[{t:'output',v:'REPOSITORY         TAG       SIZE'},{t:'output',v:'exo-cluster        latest    2.1GB'},{t:'output',v:'nuclei             latest    156MB'}];
+    if(!args)return[{t:'output',v:'Usage: docker [OPTIONS] COMMAND'}];
+    return[{t:'output',v:'docker: command not available in restricted shell'}];
+  }
+  if(base==='kubectl'||base==='k'){
+    if(lo.includes('get pods'))return[{t:'output',v:'NAME                    READY   STATUS    RESTARTS   AGE'},{t:'output',v:'exo-node-0              1/1     Running   0          337d'},{t:'output',v:'exo-node-1              1/1     Running   0          337d'},{t:'output',v:'exo-node-2              1/1     Running   0          337d'},{t:'output',v:'exo-node-3              1/1     Running   0          337d'}];
+    return[{t:'output',v:'kubectl: cluster not reachable from restricted shell'}];
+  }
+
+  /* ── python / node / go ── */
+  if(base==='python'||base==='python3'){
+    if(args==='-c "import this"'||args==="-c 'import this'")return[{t:'output',v:'Beautiful is better than ugly.'},{t:'output',v:'Explicit is better than implicit.'},{t:'output',v:'Simple is better than complex.'}];
+    if(args.startsWith('-c'))return[{t:'output',v:'(python3 output)'},{t:'output',v:'(restricted shell — no interactive python)'}];
+    if(!args)return[{t:'output',v:'Python 3.12.2 (restricted — no interactive mode)'},{t:'output',v:'Use python3 -c "expression" instead.'}];
+    return[{t:'output',v:'python3: can\'t open file \''+args+'\''}];
+  }
+  if(base==='node')return[{t:'output',v:'Node.js v22.0.0 (restricted — no interactive mode)'}];
+  if(base==='go')return[{t:'output',v:'go version go1.24.1 sumlac-OS/amd64'}];
+  if(base==='gcc'||base==='make'||base==='cargo'||base==='rustc')return[{t:'output',v:base+': compilation disabled in restricted shell'}];
+
+  /* ── package managers ── */
+  if(base==='apt'||base==='apt-get'||base==='brew'||base==='yum'||base==='dnf'||base==='pacman')
+    return[{t:'err',v:base+': package management disabled in restricted shell'}];
+  if(base==='pip'||base==='pip3'||base==='npm'||base==='yarn'||base==='pnpm')
+    return[{t:'err',v:base+': package installation disabled in restricted shell'}];
+
+  /* ── systemctl / service ── */
+  if(base==='systemctl'||base==='service'){
+    if(lo.includes('status'))return[{t:'output',v:'● sumlac-web.service - sumlac web server'},{t:'output',v:'   Active: active (running) since 337 days ago'},{t:'output',v:'   PID: 1338'}];
+    return[{t:'err',v:base+': Operation not permitted'}];
+  }
+
+  /* ── cron / at ── */
+  if(base==='crontab')return[{t:'output',v:'# m h dom mon dow command'},{t:'output',v:'*/30 * * * * /usr/local/bin/nuclei -update-templates'},{t:'output',v:'0 */6 * * * /opt/exo/healthcheck.sh'}];
+
+  /* ── openssl / gpg ── */
+  if(base==='openssl')return[{t:'output',v:'OpenSSL 3.2.0 (restricted — key operations disabled)'}];
+  if(base==='gpg'||base==='gpg2')return[{t:'err',v:'gpg: keyring access denied in restricted shell'}];
+
+  /* ── hacker tools ── */
+  if(base==='msfconsole'||base==='metasploit')return[{t:'warn',v:'       =[ metasploit v6.4.0 ]'},{t:'warn',v:'+ -- --=[ 2400 exploits - 1240 auxiliary ]'},{t:'warn',v:'+ -- --=[ ...nice try, but not from here ]'}];
+  if(base==='burpsuite'||base==='burp')return[{t:'output',v:'Burp Suite requires a GUI. Use the terminal tools instead.'}];
+  if(base==='nikto')return[{t:'output',v:'Nikto v2.5.0 — target required. Try: nikto -h sumlac.com'},{t:'output',v:'(hint: all ports are filtered)'}];
+  if(base==='gobuster'||base==='dirb'||base==='dirbuster')return[{t:'output',v:base+': outbound scanning disabled in restricted shell'}];
+  if(base==='john'||base==='hashcat')return[{t:'err',v:base+': cracking operations not permitted'}];
+  if(base==='hydra')return[{t:'err',v:'[ALERT] Brute-force tool detected. This incident has been reported.'}];
+  if(base==='aircrack-ng'||base==='airmon-ng')return[{t:'err',v:base+': no wireless interfaces found (this is a web terminal)'}];
+  if(base==='sqlmap')return[{t:'output',v:'sqlmap v1.8 — SQL injection detection'},{t:'output',v:'(restricted shell — run locally instead)'}];
+  if(base==='nuclei')return[{t:'output',v:'nuclei v3.2.0 — fast vulnerability scanner'},{t:'output',v:'[INF] Templates loaded: 8,432'},{t:'output',v:'(scanning disabled in restricted shell)'}];
+
+  /* ── terraform / ansible ── */
+  if(base==='terraform'||base==='tf')return[{t:'output',v:'Terraform v1.9.0'},{t:'output',v:'(infrastructure operations disabled in restricted shell)'}];
+  if(base==='ansible')return[{t:'output',v:'ansible [core 2.17.0] (restricted)'}];
+
+  /* ── date/time ── */
+  if(lo==='time')return[{t:'output',v:'real\t0m0.001s'},{t:'output',v:'user\t0m0.001s'},{t:'output',v:'sys\t0m0.000s'}];
+
+  /* ── xdg-open / open ── */
+  if(base==='open'||base==='xdg-open'){
+    if(lo.includes('linkedin')){window.open('https://www.linkedin.com/in/jcalmus','_blank');return[{t:'info',v:'Opening LinkedIn...'}];}
+    if(lo.includes('github')){window.open('https://github.com/sumlac','_blank');return[{t:'info',v:'Opening GitHub...'}];}
+    return[{t:'err',v:base+': cannot open — restricted shell'}];
+  }
+
+  /* ── fun stuff ── */
+  if(lo==='cowsay'||lo.startsWith('cowsay '))return[
+    {t:'output',v:' ___________________'},{t:'output',v:'< moo. hack the planet >'},
+    {t:'output',v:' -------------------'},{t:'output',v:'        \\   ^__^'},
+    {t:'output',v:'         \\  (oo)\\_______'},{t:'output',v:'            (__)\\       )\\/\\'},
+    {t:'output',v:'                ||----w |'},{t:'output',v:'                ||     ||'},
+  ];
+  if(lo==='fortune')return[
+    [
+      {t:'info',v:'"The only truly secure system is one that is powered off, cast in a block of'},
+      {t:'info',v:' concrete, and sealed in a lead-lined room with armed guards." — Gene Spafford'},
+    ],[
+      {t:'info',v:'"Security is always excessive until it\'s not enough." — Robbie Sinclair'},
+    ],[
+      {t:'info',v:'"There are two types of companies: those that have been hacked,'},
+      {t:'info',v:' and those that don\'t know they have been hacked." — John Chambers'},
+    ],[
+      {t:'info',v:'"Amateurs hack systems, professionals hack people." — Bruce Schneier'},
+    ]
+  ][Math.floor(Math.random()*4)];
+  if(lo==='sl'){return[{t:'warn',v:'       ====        ________                ___________'},
+    {t:'warn',v:'   _D _|  |_______/        \\__I_I_____===__|_________| '},
+    {t:'warn',v:'    |(_)---  |   H\\________/ |   |        =|___ ___|'},
+    {t:'warn',v:'    /     |  |   H  |  |     |   |         ||_| |_||'},
+    {t:'warn',v:'   |      |  |   H  |__--------------------| [___] |'},
+    {t:'warn',v:'   | ________|___H__/__|_____/[][]~\\_______|       |'},
+    {t:'warn',v:'   |/ |   |-----------I_____I [][] []  D   |=======|'},
+    {t:'output',v:'(You meant "ls", didn\'t you?)'}];}
+  if(lo==='cmatrix'||lo==='matrix'){konamiActivate();return[{t:'accent',v:'Entering the Matrix...'}];}
+  if(lo==='figlet'||lo.startsWith('figlet '))return[
+    {t:'accent',v:'  ____  _   _ __  __ _        _    ____'},
+    {t:'accent',v:' / ___|| | | |  \\/  | |      / \\  / ___|'},
+    {t:'accent',v:' \\___ \\| | | | |\\/| | |     / _ \\| |'},
+    {t:'accent',v:'  ___) | |_| | |  | | |___ / ___ \\ |___'},
+    {t:'accent',v:' |____/ \\___/|_|  |_|_____/_/   \\_\\____|'},
+  ];
+  if(lo==='lolcat')return[{t:'warn',v:'🌈 e v e r y t h i n g   i s   a   r a i n b o w 🌈'}];
+  if(lo==='yes')return[{t:'output',v:'y'},{t:'output',v:'y'},{t:'output',v:'y'},{t:'output',v:'^C (stopped after 3 — you\'re welcome)'}];
+  if(lo==='true')return[];
+  if(lo==='false')return[{t:'err',v:'(exit code 1)'}];
+
+  /* ── exit / logout / quit ── */
+  if(lo==='exit'||lo==='logout'||lo==='quit')return[{t:'err',v:'Logout denied. You know too much.'}];
+
+  /* ── hack / sudo catch-all ── */
+  if(lo==='hack'||lo==='hack '||lo==='hacks')return[{t:'warn',v:'You\'re already on a hacker\'s site. Mission accomplished.'}];
+
+  /* ── bash / sh / zsh ── */
+  if(base==='bash'||base==='sh'||base==='zsh'||base==='fish')return[{t:'err',v:'Cannot spawn nested shell in restricted environment.'}];
+  if(base==='source'||base==='.')return[{t:'err',v:'source: restricted operation'}];
+  if(base==='exec')return[{t:'err',v:'exec: restricted'}];
+
+  /* ── sleep / wait ── */
+  if(base==='sleep')return[{t:'output',v:'(ain\'t nobody got time for that)'}];
+  if(lo==='wait')return[{t:'output',v:'(nothing to wait for)'}];
+
+  /* ── misc ── */
+  if(lo==='lsof')return[{t:'output',v:'COMMAND  PID    USER   FD   TYPE DEVICE SIZE NODE NAME'},{t:'output',v:'bash     1337   visitor cwd  DIR  /home/visitor'},{t:'output',v:'sumlac   1338   jcalmus 3u   IPv4 TCP *:443 (LISTEN)'}];
+  if(lo==='dmesg')return[{t:'output',v:'[    0.000000] sumlac-OS 6.6.6-hardened booting...'},{t:'output',v:'[    0.137420] Security: SELinux enforcing'},{t:'output',v:'[    1.337000] exo-cluster: 4 nodes detected (2TB total)'}];
+  if(lo==='last')return[{t:'output',v:'visitor  pts/0  web           '+new Date().toDateString()+'   still logged in'},{t:'output',v:'jcalmus  pts/1  10.13.37.1    '+new Date().toDateString()+'   still logged in'}];
+  if(lo==='w'||lo==='who')return[{t:'output',v:'USER     TTY      FROM             IDLE'},{t:'output',v:'visitor  pts/0    web              0:00'},{t:'output',v:'jcalmus  pts/1    10.13.37.1       2:15'}];
+  if(lo==='groups')return[{t:'output',v:'visitor'}];
+  if(lo==='umask')return[{t:'output',v:'0022'}];
+  if(base==='tee'||base==='sort'||base==='uniq'||base==='cut'||base==='tr'||base==='awk'||base==='sed'||base==='xargs')
+    return[{t:'output',v:base+': (no stdin in web terminal)'}];
+  if(lo==='jobs')return[{t:'output',v:'(no background jobs)'}];
+  if(lo==='fg'||lo==='bg')return[{t:'err',v:base+': no current job'}];
+  if(base==='wget'||base==='aria2c')return[{t:'err',v:base+': outgoing connections restricted'}];
+
+  /* ── nothing matched ── */
+  return null;
+}
+
+/* Tab-completion list */
+const cmdNames=['help','whoami','cat resume.txt','cat skills.dat','cat contact.txt','cat .bashrc',
+'cat .vimrc','cat .tmux.conf','cat .gitconfig','ls','ls -la','ls -al','ls arsenal/',
+'ll','tree','cd','pwd','echo','grep','find','which','file','stat','wc',
+'ping linkedin','ping github','ping','nmap','curl','dig','traceroute',
+'ssh','ifconfig','ip addr','netstat','ss',
+'ps','ps aux','top','htop','uptime','free','df','du','kill',
+'uname -a','uname -r','date','cal','hostname',
+'env','printenv','alias','history','clear','reset',
+'neofetch','id','groups','last','w','who','lsof','dmesg','crontab',
+'git status','git log','git branch','git remote -v','git diff',
+'docker ps','docker images','kubectl get pods',
+'python3','node','go','openssl',
+'vim','nano','emacs',
+'terraform','ansible',
+'nmap sumlac.com','nuclei','sqlmap','nikto','msfconsole','hydra','gobuster',
+'man','cowsay','fortune','sl','figlet','cmatrix','matrix','lolcat','yes',
+'exit','logout','bash','hack',
+'systemctl status','service',
+'mkdir','touch','cp','mv','rm','chmod','chown',
+'apt','brew','pip','npm',
+'sudo'];
 
 function execCommand(raw){
   const cmd=raw.trim();
@@ -1121,23 +1614,34 @@ function execCommand(raw){
   /* Add the typed command to output */
   addLine('prompt','visitor@sumlac:~$ ','cmd',cmd);
 
-  if(cmd==='clear'){
+  /* clear / reset */
+  if(cmd==='clear'||cmd==='reset'){
     termBody.innerHTML='';
     addInputLine();
     return;
   }
 
-  /* Check for sudo prefix */
-  if(cmd.startsWith('sudo ')&&!COMMANDS[cmd]&&!easterEggs[cmd]){
-    addLines([{t:'err',v:'[ALERT] This incident has been reported to the SOC.'}]);
-    addInputLine();
-    return;
+  /* sudo prefix → strip and resolve, but warn */
+  let effective=cmd;
+  let isSudo=false;
+  if(cmd.startsWith('sudo ')){
+    effective=cmd.slice(5).trim();
+    isSudo=true;
   }
 
-  let result=null;
-  if(COMMANDS[cmd])result=COMMANDS[cmd]();
-  else if(easterEggs[cmd])result=easterEggs[cmd]();
-  else result=[{t:'err',v:'Command not found: '+cmd+'. Type "help" for available commands.'}];
+  let result=resolveCommand(effective);
+
+  if(result===null){
+    /* unknown command */
+    if(isSudo){
+      result=[{t:'err',v:'[ALERT] This incident has been reported to the SOC.'}];
+    }else{
+      result=[{t:'err',v:cmd.split(/\s/)[0]+': command not found. Type "help" for available commands.'}];
+    }
+  }else if(isSudo&&result.length>0){
+    /* prepend sudo warning to real output */
+    result=[{t:'warn',v:'[sudo] password for visitor: ******* — nice try.'}].concat(result);
+  }
 
   addLines(result);
   addInputLine();
