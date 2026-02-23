@@ -229,6 +229,26 @@ body::after{
   border:1px solid rgba(0,255,65,.2);color:var(--dim);
 }
 .arsenal-tag.lang{color:var(--green);border-color:var(--green)}
+.arsenal-group{
+  grid-column:1/-1;color:var(--green);font-size:14px;font-weight:bold;
+  padding:10px 0 4px;border-bottom:1px solid rgba(0,255,65,.15);
+  margin-top:8px;
+}
+.arsenal-group:first-child{margin-top:0}
+.arsenal-lab{
+  grid-column:1/-1;background:rgba(0,255,65,.04);border:1px solid rgba(0,255,65,.15);
+  border-radius:4px;padding:20px;font-size:13px;line-height:1.9;
+  transition:all .2s;
+}
+.arsenal-lab:hover{border-color:var(--green);box-shadow:0 0 15px rgba(0,255,65,.1)}
+.arsenal-lab .lab-line{display:flex;gap:8px;flex-wrap:wrap}
+.arsenal-lab .lab-key{color:var(--dim);min-width:140px;flex-shrink:0}
+.arsenal-lab .lab-val{color:var(--text)}
+.arsenal-lab .lab-val .hl{color:var(--green)}
+.arsenal-lab .lab-header{color:var(--green);font-weight:bold;margin-bottom:8px;font-size:14px}
+.arsenal-lab .lab-sep{
+  border:none;border-top:1px solid rgba(0,255,65,.1);margin:10px 0;
+}
 
 /* ═══════════════════════════════════════════════════════════════
    CONTACT
@@ -434,7 +454,7 @@ footer{
     <div class="skill-card">Team Building</div>
     <div class="skill-card">Security Culture</div>
     <div class="skill-card">Vendor Risk Mgmt</div>
-    <div class="skill-card">Cyber Insurance</div>
+    <div class="skill-card">Security Transformation</div>
     <div class="skill-card">IPO Readiness</div>
   </div>
 </section>
@@ -445,81 +465,136 @@ footer{
 <section class="section">
   <div class="section-header"><span>// </span>ls -la ~/arsenal/</div>
   <div class="arsenal-grid reveal" id="arsenal">
-    <a class="arsenal-card" href="https://github.com/sumlac/sherlock" target="_blank" rel="noopener">
-      <div class="arsenal-name">sherlock</div>
-      <div class="arsenal-desc">Hunt down social media accounts by username across social networks</div>
-      <div class="arsenal-meta"><span class="arsenal-tag lang">Python</span><span class="arsenal-tag">OSINT</span></div>
+
+    <!-- ── AI Lab ── -->
+    <div class="arsenal-group">// AI Lab &amp; Workflow</div>
+    <div class="arsenal-lab">
+      <div class="lab-header">$ neofetch --cluster</div>
+      <div class="lab-line"><span class="lab-key">hardware</span><span class="lab-val"><span class="hl">4x Mac Studio</span> (M2 Ultra) &mdash; clustered via <span class="hl">exo</span></span></div>
+      <div class="lab-line"><span class="lab-key">memory</span><span class="lab-val"><span class="hl">2TB</span> unified RAM across cluster</span></div>
+      <div class="lab-line"><span class="lab-key">local model</span><span class="lab-val"><span class="hl">Kimi K2.5</span> (full weights) &mdash; ~23 tok/s</span></div>
+      <div class="lab-line"><span class="lab-key">use case</span><span class="lab-val">Large local asks, air-gapped reasoning, long-context analysis</span></div>
+      <hr class="lab-sep">
+      <div class="lab-line"><span class="lab-key">local coding</span><span class="lab-val">Smaller models for fast iteration and offline dev</span></div>
+      <hr class="lab-sep">
+      <div class="lab-header">$ cat pipeline.conf</div>
+      <div class="lab-line"><span class="lab-key">strategy</span><span class="lab-val"><span class="hl">OpenAI</span> + <span class="hl">Anthropic</span> (cloud) &mdash; decisions &amp; PRD generation</span></div>
+      <div class="lab-line"><span class="lab-key">routing</span><span class="lab-val">PRDs auto-populate <span class="hl">Kanban board</span> as task specs</span></div>
+      <div class="lab-line"><span class="lab-key">execution</span><span class="lab-val">Board state changes trigger <span class="hl">Claude Code</span> / <span class="hl">Codex</span> / <span class="hl">Custom Bots</span></span></div>
+      <div class="lab-line"><span class="lab-key">workflow</span><span class="lab-val">Move card &rarr; agent picks up task &rarr; PR lands &rarr; review</span></div>
+    </div>
+
+    <!-- ── AI Security ── -->
+    <div class="arsenal-group">// AI Security &amp; Red Teaming</div>
+    <a class="arsenal-card" href="https://github.com/promptfoo/promptfoo" target="_blank" rel="noopener">
+      <div class="arsenal-name">promptfoo</div>
+      <div class="arsenal-desc">LLM vulnerability scanner with red-teaming and CI/CD integration</div>
+      <div class="arsenal-meta"><span class="arsenal-tag lang">TypeScript</span><span class="arsenal-tag">LLM Security</span></div>
     </a>
-    <a class="arsenal-card" href="https://github.com/sumlac/nmap-vulners" target="_blank" rel="noopener">
-      <div class="arsenal-name">nmap-vulners</div>
-      <div class="arsenal-desc">NSE script using Vulners API for vulnerability scanning</div>
-      <div class="arsenal-meta"><span class="arsenal-tag lang">Lua</span><span class="arsenal-tag">Scanning</span></div>
+    <a class="arsenal-card" href="https://github.com/NVIDIA/garak" target="_blank" rel="noopener">
+      <div class="arsenal-name">garak</div>
+      <div class="arsenal-desc">NVIDIA's LLM vuln scanner testing 100+ attack vectors</div>
+      <div class="arsenal-meta"><span class="arsenal-tag lang">Python</span><span class="arsenal-tag">LLM Security</span></div>
     </a>
-    <a class="arsenal-card" href="https://github.com/sumlac/CloudGoat" target="_blank" rel="noopener">
-      <div class="arsenal-name">CloudGoat</div>
-      <div class="arsenal-desc">"Vulnerable by Design" AWS deployment tool for cloud security CTFs</div>
-      <div class="arsenal-meta"><span class="arsenal-tag lang">Python</span><span class="arsenal-tag">Cloud</span></div>
+    <a class="arsenal-card" href="https://github.com/Azure/PyRIT" target="_blank" rel="noopener">
+      <div class="arsenal-name">PyRIT</div>
+      <div class="arsenal-desc">Microsoft's automation framework for AI red team campaigns</div>
+      <div class="arsenal-meta"><span class="arsenal-tag lang">Python</span><span class="arsenal-tag">AI Red Team</span></div>
     </a>
-    <a class="arsenal-card" href="https://github.com/sumlac/ScoutSuite" target="_blank" rel="noopener">
-      <div class="arsenal-name">ScoutSuite</div>
-      <div class="arsenal-desc">Multi-cloud security auditing tool for AWS, GCP, and Azure</div>
-      <div class="arsenal-meta"><span class="arsenal-tag lang">Python</span><span class="arsenal-tag">Cloud Audit</span></div>
+    <a class="arsenal-card" href="https://github.com/NVIDIA/NeMo-Guardrails" target="_blank" rel="noopener">
+      <div class="arsenal-name">NeMo Guardrails</div>
+      <div class="arsenal-desc">Programmable guardrails toolkit for LLM-based systems</div>
+      <div class="arsenal-meta"><span class="arsenal-tag lang">Python</span><span class="arsenal-tag">Guardrails</span></div>
     </a>
-    <a class="arsenal-card" href="https://github.com/sumlac/prowler" target="_blank" rel="noopener">
-      <div class="arsenal-name">prowler</div>
-      <div class="arsenal-desc">AWS & Azure security best practices assessment and auditing</div>
-      <div class="arsenal-meta"><span class="arsenal-tag lang">Python</span><span class="arsenal-tag">Compliance</span></div>
+    <a class="arsenal-card" href="https://github.com/microsoft/presidio" target="_blank" rel="noopener">
+      <div class="arsenal-name">presidio</div>
+      <div class="arsenal-desc">PII detection and anonymization for text and images via NLP</div>
+      <div class="arsenal-meta"><span class="arsenal-tag lang">Python</span><span class="arsenal-tag">Data Privacy</span></div>
     </a>
-    <a class="arsenal-card" href="https://github.com/sumlac/pacu" target="_blank" rel="noopener">
-      <div class="arsenal-name">pacu</div>
-      <div class="arsenal-desc">Open-source AWS exploitation framework for offensive security</div>
-      <div class="arsenal-meta"><span class="arsenal-tag lang">Python</span><span class="arsenal-tag">Offensive</span></div>
+    <a class="arsenal-card" href="https://github.com/confident-ai/deepteam" target="_blank" rel="noopener">
+      <div class="arsenal-name">deepteam</div>
+      <div class="arsenal-desc">LLM red teaming framework with 40+ vulnerability types</div>
+      <div class="arsenal-meta"><span class="arsenal-tag lang">Python</span><span class="arsenal-tag">AI Red Team</span></div>
     </a>
-    <a class="arsenal-card" href="https://github.com/sumlac/Amass" target="_blank" rel="noopener">
-      <div class="arsenal-name">Amass</div>
-      <div class="arsenal-desc">In-depth attack surface mapping and asset discovery</div>
-      <div class="arsenal-meta"><span class="arsenal-tag lang">Go</span><span class="arsenal-tag">Recon</span></div>
-    </a>
-    <a class="arsenal-card" href="https://github.com/sumlac/ffuf" target="_blank" rel="noopener">
-      <div class="arsenal-name">ffuf</div>
-      <div class="arsenal-desc">Fast web fuzzer written in Go for content discovery and brute-forcing</div>
-      <div class="arsenal-meta"><span class="arsenal-tag lang">Go</span><span class="arsenal-tag">Fuzzing</span></div>
-    </a>
-    <a class="arsenal-card" href="https://github.com/sumlac/nuclei" target="_blank" rel="noopener">
+
+    <!-- ── Bug Bounty & Offensive ── -->
+    <div class="arsenal-group">// Bug Bounty &amp; Offensive Security</div>
+    <a class="arsenal-card" href="https://github.com/projectdiscovery/nuclei" target="_blank" rel="noopener">
       <div class="arsenal-name">nuclei</div>
-      <div class="arsenal-desc">Fast vulnerability scanner based on customizable templates</div>
+      <div class="arsenal-desc">YAML-templated vulnerability scanner for web, DNS, and cloud</div>
       <div class="arsenal-meta"><span class="arsenal-tag lang">Go</span><span class="arsenal-tag">Scanning</span></div>
     </a>
-    <a class="arsenal-card" href="https://github.com/sumlac/trufflehog" target="_blank" rel="noopener">
+    <a class="arsenal-card" href="https://github.com/projectdiscovery/subfinder" target="_blank" rel="noopener">
+      <div class="arsenal-name">subfinder</div>
+      <div class="arsenal-desc">Fast passive subdomain enumeration using 50+ sources</div>
+      <div class="arsenal-meta"><span class="arsenal-tag lang">Go</span><span class="arsenal-tag">Recon</span></div>
+    </a>
+    <a class="arsenal-card" href="https://github.com/projectdiscovery/httpx" target="_blank" rel="noopener">
+      <div class="arsenal-name">httpx</div>
+      <div class="arsenal-desc">Multi-purpose HTTP toolkit for probing live hosts at scale</div>
+      <div class="arsenal-meta"><span class="arsenal-tag lang">Go</span><span class="arsenal-tag">Recon</span></div>
+    </a>
+    <a class="arsenal-card" href="https://github.com/projectdiscovery/katana" target="_blank" rel="noopener">
+      <div class="arsenal-name">katana</div>
+      <div class="arsenal-desc">Next-gen web crawler with JS rendering and scope control</div>
+      <div class="arsenal-meta"><span class="arsenal-tag lang">Go</span><span class="arsenal-tag">Recon</span></div>
+    </a>
+    <a class="arsenal-card" href="https://github.com/ffuf/ffuf" target="_blank" rel="noopener">
+      <div class="arsenal-name">ffuf</div>
+      <div class="arsenal-desc">Fast web fuzzer for directories, vhosts, and parameters</div>
+      <div class="arsenal-meta"><span class="arsenal-tag lang">Go</span><span class="arsenal-tag">Fuzzing</span></div>
+    </a>
+    <a class="arsenal-card" href="https://github.com/epi052/feroxbuster" target="_blank" rel="noopener">
+      <div class="arsenal-name">feroxbuster</div>
+      <div class="arsenal-desc">Recursive async content discovery tool written in Rust</div>
+      <div class="arsenal-meta"><span class="arsenal-tag lang">Rust</span><span class="arsenal-tag">Fuzzing</span></div>
+    </a>
+    <a class="arsenal-card" href="https://github.com/sqlmapproject/sqlmap" target="_blank" rel="noopener">
+      <div class="arsenal-name">sqlmap</div>
+      <div class="arsenal-desc">Automatic SQL injection detection and database exploitation</div>
+      <div class="arsenal-meta"><span class="arsenal-tag lang">Python</span><span class="arsenal-tag">Web Exploit</span></div>
+    </a>
+    <a class="arsenal-card" href="https://github.com/s0md3v/dalfox" target="_blank" rel="noopener">
+      <div class="arsenal-name">dalfox</div>
+      <div class="arsenal-desc">Parameter-aware XSS scanner with automatic POC generation</div>
+      <div class="arsenal-meta"><span class="arsenal-tag lang">Go</span><span class="arsenal-tag">XSS</span></div>
+    </a>
+    <a class="arsenal-card" href="https://github.com/owasp-amass/amass" target="_blank" rel="noopener">
+      <div class="arsenal-name">amass</div>
+      <div class="arsenal-desc">In-depth attack surface mapping via DNS, scraping, and APIs</div>
+      <div class="arsenal-meta"><span class="arsenal-tag lang">Go</span><span class="arsenal-tag">Recon</span></div>
+    </a>
+    <a class="arsenal-card" href="https://github.com/BishopFox/sliver" target="_blank" rel="noopener">
+      <div class="arsenal-name">sliver</div>
+      <div class="arsenal-desc">Cross-platform adversary emulation C2 framework with mTLS</div>
+      <div class="arsenal-meta"><span class="arsenal-tag lang">Go</span><span class="arsenal-tag">Red Team</span></div>
+    </a>
+    <a class="arsenal-card" href="https://github.com/trufflesecurity/trufflehog" target="_blank" rel="noopener">
       <div class="arsenal-name">trufflehog</div>
-      <div class="arsenal-desc">Find leaked credentials in git repos, S3, and more</div>
+      <div class="arsenal-desc">Find and verify leaked credentials across git, S3, and Slack</div>
       <div class="arsenal-meta"><span class="arsenal-tag lang">Go</span><span class="arsenal-tag">Secrets</span></div>
     </a>
-    <a class="arsenal-card" href="https://github.com/sumlac/trivy" target="_blank" rel="noopener">
+    <a class="arsenal-card" href="https://github.com/gitleaks/gitleaks" target="_blank" rel="noopener">
+      <div class="arsenal-name">gitleaks</div>
+      <div class="arsenal-desc">SAST tool for detecting hardcoded secrets in git repos and CI</div>
+      <div class="arsenal-meta"><span class="arsenal-tag lang">Go</span><span class="arsenal-tag">Secrets</span></div>
+    </a>
+    <a class="arsenal-card" href="https://github.com/aquasecurity/trivy" target="_blank" rel="noopener">
       <div class="arsenal-name">trivy</div>
-      <div class="arsenal-desc">Comprehensive vulnerability scanner for containers and IaC</div>
+      <div class="arsenal-desc">All-in-one scanner for containers, IaC, SBOM, and secrets</div>
       <div class="arsenal-meta"><span class="arsenal-tag lang">Go</span><span class="arsenal-tag">Container</span></div>
     </a>
-    <a class="arsenal-card" href="https://github.com/sumlac/bloodhound" target="_blank" rel="noopener">
-      <div class="arsenal-name">bloodhound</div>
-      <div class="arsenal-desc">Active Directory attack path analysis and visualization</div>
-      <div class="arsenal-meta"><span class="arsenal-tag lang">JavaScript</span><span class="arsenal-tag">AD</span></div>
+    <a class="arsenal-card" href="https://github.com/prowler-cloud/prowler" target="_blank" rel="noopener">
+      <div class="arsenal-name">prowler</div>
+      <div class="arsenal-desc">AWS/Azure/GCP security posture and compliance auditing</div>
+      <div class="arsenal-meta"><span class="arsenal-tag lang">Python</span><span class="arsenal-tag">Cloud</span></div>
     </a>
-    <a class="arsenal-card" href="https://github.com/sumlac/CyberChef" target="_blank" rel="noopener">
-      <div class="arsenal-name">CyberChef</div>
-      <div class="arsenal-desc">The Cyber Swiss Army Knife for encoding, encryption, and analysis</div>
-      <div class="arsenal-meta"><span class="arsenal-tag lang">JavaScript</span><span class="arsenal-tag">Utils</span></div>
+    <a class="arsenal-card" href="https://github.com/semgrep/semgrep" target="_blank" rel="noopener">
+      <div class="arsenal-name">semgrep</div>
+      <div class="arsenal-desc">Lightweight static analysis with community rulesets for 30+ languages</div>
+      <div class="arsenal-meta"><span class="arsenal-tag lang">OCaml</span><span class="arsenal-tag">SAST</span></div>
     </a>
-    <a class="arsenal-card" href="https://github.com/sumlac/responder" target="_blank" rel="noopener">
-      <div class="arsenal-name">responder</div>
-      <div class="arsenal-desc">LLMNR/NBT-NS/MDNS poisoner and credential harvesting</div>
-      <div class="arsenal-meta"><span class="arsenal-tag lang">Python</span><span class="arsenal-tag">Network</span></div>
-    </a>
-    <a class="arsenal-card" href="https://github.com/sumlac/sigma" target="_blank" rel="noopener">
-      <div class="arsenal-name">sigma</div>
-      <div class="arsenal-desc">Generic signature format for SIEM detection rules</div>
-      <div class="arsenal-meta"><span class="arsenal-tag lang">YAML</span><span class="arsenal-tag">Detection</span></div>
-    </a>
+
   </div>
 </section>
 
@@ -531,7 +606,7 @@ footer{
   <div class="contact-block reveal">
     <div><span class="label">email</span> : <span class="value">justin [at] sumlac [dot] com</span></div>
     <div><span class="label">github</span> : <a class="value" href="https://github.com/sumlac" target="_blank" rel="noopener">github.com/sumlac</a></div>
-    <div><span class="label">linkedin</span> : <a class="value" href="https://linkedin.com/in/justincalmus" target="_blank" rel="noopener">linkedin.com/in/justincalmus</a></div>
+    <div><span class="label">linkedin</span> : <a class="value" href="https://www.linkedin.com/in/jcalmus" target="_blank" rel="noopener">linkedin.com/in/jcalmus</a></div>
   </div>
 </section>
 
@@ -932,7 +1007,7 @@ const COMMANDS={
       {t:'output',v:''},
       {t:'output',v:'  email     : justin [at] sumlac [dot] com'},
       {t:'output',v:'  github    : github.com/sumlac'},
-      {t:'output',v:'  linkedin  : linkedin.com/in/justincalmus'},
+      {t:'output',v:'  linkedin  : linkedin.com/in/jcalmus'},
     ];
   },
   ls(){
@@ -947,26 +1022,47 @@ const COMMANDS={
   },
   'ls arsenal/'(){
     return[
-      {t:'accent',v:'--- ~/arsenal/ ---'},
-      {t:'output',v:'  sherlock          Python   OSINT'},
-      {t:'output',v:'  nmap-vulners      Lua      Scanning'},
-      {t:'output',v:'  CloudGoat         Python   Cloud CTF'},
-      {t:'output',v:'  ScoutSuite        Python   Cloud Audit'},
-      {t:'output',v:'  prowler           Python   Compliance'},
-      {t:'output',v:'  pacu              Python   Offensive'},
-      {t:'output',v:'  Amass             Go       Recon'},
-      {t:'output',v:'  ffuf              Go       Fuzzing'},
+      {t:'accent',v:'--- ~/arsenal/ai-lab/ ---'},
+      {t:'output',v:'  CLUSTER           4x Mac Studio (M2 Ultra)'},
+      {t:'output',v:'  RUNTIME           exo (distributed inference)'},
+      {t:'output',v:'  RAM               2TB unified across cluster'},
+      {t:'output',v:'  MODEL             Kimi K2.5 ~23 tok/s'},
+      {t:'output',v:'  LOCAL_CODING      various models, fast iteration'},
+      {t:'output',v:''},
+      {t:'accent',v:'--- ~/arsenal/ai-pipeline/ ---'},
+      {t:'output',v:'  STRATEGY          OpenAI + Anthropic (cloud)'},
+      {t:'output',v:'  OUTPUT            PRDs → Kanban board'},
+      {t:'output',v:'  EXECUTION         Claude Code / Codex / Custom Bots'},
+      {t:'output',v:'  TRIGGER           board state change → agent starts'},
+      {t:'output',v:''},
+      {t:'accent',v:'--- ~/arsenal/ai-security/ ---'},
+      {t:'output',v:'  promptfoo         TS       LLM Security'},
+      {t:'output',v:'  garak             Python   LLM Security'},
+      {t:'output',v:'  PyRIT             Python   AI Red Team'},
+      {t:'output',v:'  NeMo-Guardrails   Python   Guardrails'},
+      {t:'output',v:'  presidio          Python   Data Privacy'},
+      {t:'output',v:'  deepteam          Python   AI Red Team'},
+      {t:'output',v:''},
+      {t:'accent',v:'--- ~/arsenal/bug-bounty/ ---'},
       {t:'output',v:'  nuclei            Go       Scanning'},
+      {t:'output',v:'  subfinder         Go       Recon'},
+      {t:'output',v:'  httpx             Go       Recon'},
+      {t:'output',v:'  katana            Go       Recon'},
+      {t:'output',v:'  ffuf              Go       Fuzzing'},
+      {t:'output',v:'  feroxbuster       Rust     Fuzzing'},
+      {t:'output',v:'  sqlmap            Python   Web Exploit'},
+      {t:'output',v:'  dalfox            Go       XSS'},
+      {t:'output',v:'  amass             Go       Recon'},
+      {t:'output',v:'  sliver            Go       Red Team'},
       {t:'output',v:'  trufflehog        Go       Secrets'},
+      {t:'output',v:'  gitleaks          Go       Secrets'},
       {t:'output',v:'  trivy             Go       Container'},
-      {t:'output',v:'  bloodhound        JS       Active Dir'},
-      {t:'output',v:'  CyberChef         JS       Utils'},
-      {t:'output',v:'  responder         Python   Network'},
-      {t:'output',v:'  sigma             YAML     Detection'},
+      {t:'output',v:'  prowler           Python   Cloud'},
+      {t:'output',v:'  semgrep           OCaml    SAST'},
     ];
   },
   'ping linkedin'(){
-    window.open('https://linkedin.com/in/justincalmus','_blank');
+    window.open('https://www.linkedin.com/in/jcalmus','_blank');
     return[{t:'info',v:'PING linkedin.com — Opening profile...'}];
   },
   'ping github'(){
