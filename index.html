@@ -607,7 +607,7 @@ footer{
 </section>
 
 <!-- ═══════════════════════════════════════════════════════════════
-     ARSENAL (GitHub repos)
+     ARSENAL
      ═══════════════════════════════════════════════════════════════ -->
 <section class="section">
   <div class="section-header"><span>// </span>ls -la ~/arsenal/</div>
@@ -752,7 +752,6 @@ footer{
   <div class="section-header"><span>// </span>cat contact.txt</div>
   <div class="contact-block reveal">
     <div><span class="label">email</span> : <span class="value">justin [at] sumlac [dot] com</span></div>
-    <div><span class="label">github</span> : <a class="value" href="https://github.com/sumlac" target="_blank" rel="noopener">github.com/sumlac</a></div>
     <div><span class="label">linkedin</span> : <a class="value" href="https://www.linkedin.com/in/jcalmus" target="_blank" rel="noopener">linkedin.com/in/jcalmus</a></div>
   </div>
 </section>
@@ -1115,7 +1114,6 @@ const STATIC={
   contact:[
     {t:'accent',v:'--- contact.txt ---'},{t:'output',v:''},
     {t:'output',v:'  email     : justin [at] sumlac [dot] com'},
-    {t:'output',v:'  github    : github.com/sumlac'},
     {t:'output',v:'  linkedin  : linkedin.com/in/jcalmus'},
   ],
   whoami:[
@@ -1210,7 +1208,6 @@ function resolveCommand(cmd){
     {t:'output',v:'  ls arsenal/       Security tool arsenal'},
     {t:'output',v:'  cd, pwd, tree     Filesystem navigation'},
     {t:'output',v:'  ping linkedin     Open LinkedIn profile'},
-    {t:'output',v:'  ping github       Open GitHub profile'},
     {t:'output',v:'  nmap, curl, dig   Network recon'},
     {t:'output',v:'  ps, top, uptime   System info'},
     {t:'output',v:'  neofetch          System specs'},
@@ -1393,7 +1390,6 @@ function resolveCommand(cmd){
   /* ── ping ── */
   if(base==='ping'){
     if(lo.includes('linkedin')){window.open('https://www.linkedin.com/in/jcalmus','_blank');return[{t:'info',v:'PING linkedin.com (13.107.42.14): 56 bytes — Opening profile...'}];}
-    if(lo.includes('github')){window.open('https://github.com/sumlac','_blank');return[{t:'info',v:'PING github.com (140.82.121.4): 56 bytes — Opening profile...'}];}
     if(lo.includes('google'))return[{t:'output',v:'PING google.com (142.250.80.46): 64 bytes, time=12ms'},{t:'output',v:'--- google.com ping statistics --- 1 packets transmitted, 1 received'}];
     if(lo.includes('localhost')||lo.includes('127.0'))return[{t:'output',v:'PING 127.0.0.1: 64 bytes, time=0.042ms'}];
     if(lo.includes('sumlac'))return[{t:'output',v:'PING sumlac.com (185.199.108.153): 64 bytes, time=8ms'}];
@@ -1416,7 +1412,7 @@ function resolveCommand(cmd){
   /* ── curl / wget / nc / netcat ── */
   if(base==='curl'){
     if(!args)return[{t:'err',v:'curl: missing URL'}];
-    if(lo.includes('sumlac'))return[{t:'output',v:'HTTP/1.1 200 OK'},{t:'output',v:'Server: GitHub.com'},{t:'output',v:'Content-Type: text/html; charset=utf-8'},{t:'output',v:''},{t:'accent',v:'<!-- You found the source. Try the terminal. -->'}];
+    if(lo.includes('sumlac'))return[{t:'output',v:'HTTP/1.1 200 OK'},{t:'output',v:'Server: sumlac/hardened'},{t:'output',v:'Content-Type: text/html; charset=utf-8'},{t:'output',v:''},{t:'accent',v:'<!-- You found the source. Try the terminal. -->'}];
     if(lo.includes('ifconfig.me')||lo.includes('icanhazip'))return[{t:'output',v:'[REDACTED] — nice try'}];
     return[{t:'output',v:'HTTP/1.1 200 OK'},{t:'output',v:'(response body omitted in restricted shell)'}];
   }
@@ -1579,7 +1575,7 @@ function resolveCommand(cmd){
       {t:'output',v:'Date:   Feb 23 2026'},{t:'output',v:''},{t:'output',v:'    Updated arsenal with latest AI security tools'},
     ];
     if(args==='branch'||args==='branch -a')return[{t:'accent',v:'* main'}];
-    if(args==='remote -v')return[{t:'output',v:'origin\thttps://github.com/sumlac/sumlac.github.io.git (fetch)'},{t:'output',v:'origin\thttps://github.com/sumlac/sumlac.github.io.git (push)'}];
+    if(args==='remote -v')return[{t:'output',v:'origin\tgit@sumlac.com:site.git (fetch)'},{t:'output',v:'origin\tgit@sumlac.com:site.git (push)'}];
     if(args==='diff')return[{t:'output',v:'(no changes)'}];
     if(!args)return[{t:'output',v:'usage: git <command> [<args>]'}];
     return[{t:'output',v:'git: \''+args+'\' is not a git command.'}];
@@ -1652,7 +1648,6 @@ function resolveCommand(cmd){
   /* ── xdg-open / open ── */
   if(base==='open'||base==='xdg-open'){
     if(lo.includes('linkedin')){window.open('https://www.linkedin.com/in/jcalmus','_blank');return[{t:'info',v:'Opening LinkedIn...'}];}
-    if(lo.includes('github')){window.open('https://github.com/sumlac','_blank');return[{t:'info',v:'Opening GitHub...'}];}
     return[{t:'err',v:base+': cannot open — restricted shell'}];
   }
 
@@ -1733,7 +1728,7 @@ function resolveCommand(cmd){
 const cmdNames=['help','whoami','cat resume.txt','cat skills.dat','cat contact.txt','cat .bashrc',
 'cat .vimrc','cat .tmux.conf','cat .gitconfig','ls','ls -la','ls -al','ls arsenal/',
 'll','tree','cd','pwd','echo','grep','find','which','file','stat','wc',
-'ping linkedin','ping github','ping','nmap','curl','dig','traceroute',
+'ping linkedin','ping','nmap','curl','dig','traceroute',
 'ssh','ifconfig','ip addr','netstat','ss',
 'ps','ps aux','top','htop','uptime','free','df','du','kill',
 'uname -a','uname -r','date','cal','hostname',
