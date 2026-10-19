@@ -1,0 +1,119 @@
+/* The portfolio shell. Games keep their own scoped styles. */
+:root{--dim:#65a572;--muted:#a0aaa4;--cyan:#73e5d6;--surface:#101512}
+html{scroll-padding-top:88px}
+[hidden]{display:none!important}
+button,input,textarea,select{font:inherit}
+button,a,input,textarea,select{-webkit-tap-highlight-color:transparent}
+:focus-visible{outline:2px solid var(--cyan);outline-offset:5px}
+.skip-link{position:fixed;top:-100px;left:16px;z-index:10002;background:var(--green);color:#000;padding:12px}
+.skip-link:focus{top:12px}
+.site-nav{height:68px;padding:0 clamp(20px,5vw,72px);display:flex;align-items:center;justify-content:space-between;gap:24px;border-bottom:1px solid #213026;background:rgba(10,10,10,.94);position:absolute;top:0;left:0;right:0;z-index:20}
+.site-brand{color:var(--green);font-weight:bold;font-size:19px;letter-spacing:-1px}
+.site-brand span{color:#899b8e;font-weight:normal}
+.site-nav nav{display:flex;gap:clamp(16px,3vw,36px);align-items:center}
+.site-nav nav a{font-size:12px;color:#c1cdc4;min-height:44px;display:flex;align-items:center}
+.site-nav nav a:hover{color:var(--green)}
+#hero{height:auto;min-height:min(100svh,1100px);padding:130px 20px 100px;background:radial-gradient(ellipse at 50% 48%,rgba(0,255,65,.045),transparent 65%)}
+.hero-content{max-width:1000px;padding:0;width:100%}
+.hero-kicker{font-size:11px;letter-spacing:2px;color:var(--green);margin-bottom:22px;display:flex;align-items:center;justify-content:center;gap:10px}
+.status-dot{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 12px #00ff4166;flex:none}
+.hero-name{font-size:clamp(1.3rem,3.4vw,2.25rem);letter-spacing:7px;text-shadow:none;margin-bottom:4px;line-height:1.4}
+.hero-title{font-size:12px;color:#a7b7ac;min-height:20px;opacity:1}
+.hero-statement{font-size:clamp(2.25rem,6.4vw,4.8rem);line-height:1.13;letter-spacing:-3px;color:#f0f6f1;font-weight:bold;margin:32px 0 24px}
+.hero-statement span{color:var(--green);text-shadow:0 0 30px #00ff4118}
+.hero-description{font-size:14px;line-height:1.8;color:#b5c3b9;max-width:720px;margin:0 auto}
+.hero-actions{display:flex;justify-content:center;gap:16px;flex-wrap:wrap;margin-top:30px}
+.hero-actions a{font-size:11px;letter-spacing:.5px;padding:15px 20px;border-radius:3px;display:inline-flex;align-items:center;justify-content:center;gap:20px;min-height:48px;transition:background .2s,box-shadow .2s}
+.action-primary{background:var(--green);border:1px solid var(--green);color:#001606;font-weight:bold}
+.action-primary:hover{background:#69ff8c;box-shadow:0 0 24px #00ff4125;text-shadow:none}
+.action-secondary{border:1px solid #3a5842;background:#0a100c;color:#c1d2c6}
+.action-secondary:hover{border-color:var(--green);background:#122017}
+.hero-topics{margin-top:30px;display:flex;gap:18px;justify-content:center;flex-wrap:wrap;color:#88a892;font-size:10px;letter-spacing:1px}
+.hero-topics span+span::before{content:'/';margin-right:18px;color:#385742}
+.scroll-hint{font-size:10px;color:#82a38b;white-space:nowrap;bottom:24px;animation:none}
+.section{max-width:1100px;padding:80px 24px}
+.section-header{font-weight:normal;margin-bottom:20px;letter-spacing:-.5px}
+.section-header span{color:#699576}
+.section-intro{color:#a8b8ad;font-size:14px;line-height:1.85;max-width:790px;margin:0 0 30px}
+.focus-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.focus-card{border:1px solid #253b2c;background:linear-gradient(145deg,#101a13,#0b0e0c);padding:26px 22px;position:relative;border-radius:4px}
+.focus-number{font-size:10px;letter-spacing:.5px;color:#7eb48b}
+.focus-card h3{font-size:17px;color:#eef7f0;margin:17px 0 12px;line-height:1.4}
+.focus-card p{font-size:13px;line-height:1.8;color:#aebdb3}
+.focus-tags{font-size:9px;color:#84b291;margin-top:22px;line-height:1.8;letter-spacing:.3px}
+.boundary-note{display:flex;align-items:center;gap:20px;border-left:2px solid var(--cyan);padding:18px 22px;margin-top:24px;background:#0e1715;font-size:12px;color:#9fbbb0;line-height:1.8}
+.boundary-note>span{color:var(--cyan);white-space:nowrap;font-size:16px}
+.boundary-note strong{color:#cce8df;font-weight:normal}
+#terminal-section{padding-top:40px}
+.terminal-intro code{color:var(--green)}
+.terminal-window{max-width:none;border-color:#2e4234}
+.terminal-body{height:300px}
+.terminal-title{color:#a9b7ad}
+.input-line{gap:8px}
+.terminal-body input:focus-visible{outline:none}
+.terminal-window:focus-within{border-color:#6baf7d}
+.lab-section{scroll-margin-top:20px}
+.lab-heading-row{display:flex;align-items:center;gap:24px;border-bottom:1px solid #20412a;margin-bottom:20px}
+.lab-heading-row .section-header{border:0;flex:1;margin-bottom:0;padding-bottom:16px}
+.lab-status{font-size:9px;color:var(--cyan);letter-spacing:1px;white-space:nowrap;padding-bottom:16px}
+.lab-tabs{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+.lab-tab{border:1px solid #304b39;border-radius:4px;background:#0d1410;color:#b2c4b8;padding:18px 22px;font-size:14px;text-align:left;cursor:pointer;line-height:1.6;min-height:78px}
+.lab-tab>span{display:block;font-size:9px;letter-spacing:1px;color:#8ab197;margin-bottom:4px}
+.lab-tab[aria-selected=true]{border-color:var(--green);color:var(--green);background:linear-gradient(100deg,#102b18,#0e1711);box-shadow:inset 3px 0 var(--green)}
+.lab-tab:hover{border-color:#72b783}
+.game-box{background:#090d0a;border:1px solid #2e4937;border-radius:6px;overflow:hidden}
+.game-bar{background:#141d17;padding:10px 18px;display:flex;align-items:center;gap:8px;border-bottom:1px solid #293b2e}
+.game-bar .terminal-dot{width:8px;height:8px;border-radius:50%}
+.game-title{color:#9cbba5;font-size:10px;margin-left:8px;overflow-wrap:anywhere}
+.game-body{padding:clamp(18px,3vw,32px);font-size:13px;min-width:0}
+.lab-footnote{color:#8c9e93;font-size:10px;margin-top:16px;line-height:1.8}
+.reference-links{display:flex;gap:12px;flex-wrap:wrap;margin-top:20px}
+.reference-links a{color:#a5cab1;font-size:11px;border:1px solid #2a4633;border-radius:3px;padding:10px 14px;min-height:40px;display:inline-flex;align-items:center}
+.reference-links a:hover{border-color:var(--green);color:var(--green)}
+.timeline-company{color:#81b28f}
+.arsenal-tag{color:#91bb9c}
+.arsenal-lab .lab-key{color:#86b694}
+.contact-block .label{color:#86b694}
+footer{color:#8b9e91}
+@media(min-width:1600px){#hero{min-height:920px}}
+@media(max-width:768px){
+  .site-nav{padding:0 20px;gap:16px}
+  .site-nav nav{gap:18px}
+  .site-nav nav a{font-size:11px}
+  .site-nav nav a:first-child{display:none}
+  #hero{min-height:850px;padding:130px 24px 90px}
+  .hero-kicker{font-size:9px;letter-spacing:1px}
+  .hero-name{font-size:24px;letter-spacing:4px}
+  .hero-title{font-size:10px}
+  .hero-statement{font-size:clamp(2rem,7.2vw,3.5rem);letter-spacing:-1.8px;margin-top:28px}
+  .hero-description{font-size:12px}
+  .desktop-break{display:none}
+  .hero-topics{gap:10px;font-size:8px;letter-spacing:.4px}
+  .hero-topics span+span::before{margin-right:10px}
+  .section{padding:60px 20px}
+  .focus-grid{grid-template-columns:1fr}
+  .focus-card{padding:24px}
+  .focus-card h3{margin-top:10px}
+  .focus-tags{margin-top:14px}
+  .lab-status{display:none}
+  .lab-tab{padding:14px;font-size:12px}
+  .lab-tab>span{font-size:9px}
+  .terminal-body{font-size:12px}
+  #terminal-input{font-size:16px}
+  .boundary-note{padding:16px;gap:12px}
+}
+@media(max-width:400px){
+  .site-nav{padding:0 16px}
+  .site-nav nav{gap:14px}
+  .site-brand{font-size:16px}
+  .site-nav nav a{font-size:10px}
+  #hero{min-height:810px;padding-left:18px;padding-right:18px}
+  .hero-statement{font-size:32px}
+  .hero-kicker{font-size:8px}
+  .hero-actions{gap:10px}
+  .hero-actions a{width:100%;max-width:300px}
+  .hero-topics{max-width:300px;margin:26px auto 0;gap:8px}
+  .hero-topics span+span::before{margin-right:8px}
+  .game-body{padding:16px}
+}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
