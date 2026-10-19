@@ -5,7 +5,7 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const { spawnSync } = require('node:child_process');
-const { localURL, markdown } = require('../scripts/factory-offense.cjs');
+const { localURL, markdown, inspectReferences } = require('../scripts/factory-offense.cjs');
 
 test('offense browser scope accepts only an explicit loopback HTTP origin', () => {
   assert.equal(localURL('http://127.0.0.1:8000/').origin, 'http://127.0.0.1:8000');
@@ -27,7 +27,7 @@ test('an out-of-scope target produces inconclusive evidence and a nonzero result
   assert.equal(report.checks[0].status, 'inconclusive');
 });
 
-test('a seeded engine run preserves check results and reproducible evidence', t => {
+test('a source run preserves check results and reproducible evidence', t => {
   const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'sumlac-offense-test-'));
   t.after(() => fs.rmSync(directory, { recursive: true, force: true }));
   const output = path.join(directory, 'offense.json');
@@ -39,10 +39,11 @@ test('a seeded engine run preserves check results and reproducible evidence', t 
   assert.equal(report.summary.total, report.checks.length);
   assert.equal(report.summary.failed, 0);
   assert.equal(report.summary.inconclusive, 0);
-  assert.ok(report.checks.length >= 10);
-  assert.ok(report.checks.every(check => check.status === 'passed' && Array.isArray(check.evidence.transcript)));
-  const permissionCheck = report.checks.find(check => check.id === 'engine.permissions');
-  assert.ok(permissionCheck.evidence.transcript.some(entry => entry.command === 'cp -r vault stolen-vault' && entry.code !== 0));
+  assert.equal(report.checks.length, 3);
+  assert.ok(report.checks.every(check => check.status === 'passed' && check.evidence));
+  const referenceCheck = report.checks.find(check => check.id === 'source.local-references');
+  assert.ok(referenceCheck.evidence.references.some(entry => new URL(entry.value, 'https://sumlac.com/').pathname === '/factory.js'));
+  assert.equal(report.checks.find(check => check.id === 'source.script-syntax').evidence.executed, false);
   assert.equal(fs.existsSync(output.replace(/\.json$/, '.md')), true);
 });
 
@@ -56,4 +57,18 @@ test('the human report preserves failures and inconclusive checks without succes
   assert.match(text, /unavailable-browser \| inconclusive/);
   assert.match(text, /fixture command/);
   assert.match(text, /Expected boundary did not hold/);
+});
+
+test('local-reference audit validates cross-document fragments and catches missing assets', async t => {
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'sumlac-reference-test-'));
+  t.after(() => fs.rmSync(directory, { recursive: true, force: true }));
+  fs.mkdirSync(path.join(directory, 'defense-factory'));
+  fs.writeFileSync(path.join(directory, 'index.html'), '<a href="/defense-factory/#thesis">Defense</a><a href="https://example.com/">External</a>');
+  fs.writeFileSync(path.join(directory, 'defense-factory/index.html'), '<h1 id="thesis">Thesis</h1>');
+  const references = await inspectReferences(directory, ['index.html']);
+  assert.equal(references.length, 1);
+  fs.writeFileSync(path.join(directory, 'defense-factory/index.html'), '<h1>No matching anchor</h1>');
+  await assert.rejects(inspectReferences(directory, ['index.html']), /Missing fragment/);
+  fs.writeFileSync(path.join(directory, 'index.html'), '<script src="/removed.js"></script>');
+  await assert.rejects(inspectReferences(directory, ['index.html']), /Missing local reference/);
 });

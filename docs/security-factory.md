@@ -13,7 +13,7 @@ Workflow artifacts record what the repository checks actually executed.
 Use Node 22 or newer, install the exact development dependency versions with
 `npm ci --ignore-scripts`, and run `npm test` for the regression suite.
 
-For the complete attack corpus, install Chromium with
+For the complete factory-page checks, install Chromium with
 `npx playwright install chromium`, serve this checkout on loopback with
 `python3 -m http.server 8000 --bind 127.0.0.1`, and use another terminal:
 
@@ -22,17 +22,18 @@ node scripts/factory-offense.cjs --browser --url http://127.0.0.1:8000 --output 
 node scripts/factory-defense.cjs --browser --offense-report artifacts/factory/offense.json --output artifacts/factory/defense.json
 ```
 
-`npm run factory` runs the engine-only corpus followed by defense; it does not
+`npm run factory` runs the source checks followed by defense; it does not
 include the browser checks. Browser mode blocks requests outside the local test
 origin. It never probes sumlac.com or another public host. There are no model API
 calls, API keys, or production credentials in this initial implementation.
 
 ## Offense and defense
 
-Offense executes a reproducible corpus against the actual terminal engine and,
-when requested, the real browser UI. Cases exercise hostile terminal strings,
-filesystem permissions, tampered persistence, resource budgets, and DOM
-rendering. Each check records passed, failed, or inconclusive, including
+Offense checks the public factory documents for broken local links, missing
+assets, duplicate anchors, and script syntax errors. When requested, the browser
+checks the homepage links and contact path, process-stage keyboard navigation,
+all sample walkthroughs, their labeled JSON downloads, and hostile case-selection
+query values. Each check records passed, failed, or inconclusive, including
 reproduction details for failures. A failed check is evidence for that case;
 a passing corpus is not a claim that the site has no vulnerabilities.
 

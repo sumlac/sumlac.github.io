@@ -35,7 +35,7 @@ jobs:
         run: npm ci --ignore-scripts
       - name: Install local browser runtime
         run: npx playwright install --with-deps chromium
-      - name: Exercise local engine and browser attack corpus
+      - name: Check factory documents and local browser interactions
         shell: bash
         run: |
           mkdir -p artifacts/factory
