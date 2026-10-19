@@ -18,7 +18,7 @@ button,a,input,textarea,select{-webkit-tap-highlight-color:transparent}
 .hero-kicker{font-size:11px;letter-spacing:2px;color:var(--green);margin-bottom:22px;display:flex;align-items:center;justify-content:center;gap:10px}
 .status-dot{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 12px #00ff4166;flex:none}
 .hero-name{font-size:clamp(1.3rem,3.4vw,2.25rem);letter-spacing:7px;text-shadow:none;margin-bottom:4px;line-height:1.4}
-.hero-title{font-size:12px;color:#a7b7ac;min-height:20px;opacity:1}
+.hero-title{font-size:14px;color:#b3c5b9;min-height:22px;opacity:1}
 .hero-statement{font-size:clamp(2.25rem,6.4vw,4.8rem);line-height:1.13;letter-spacing:-3px;color:#f0f6f1;font-weight:bold;margin:32px 0 24px}
 .hero-statement span{color:var(--green);text-shadow:0 0 30px #00ff4118}
 .hero-description{font-size:14px;line-height:1.8;color:#b5c3b9;max-width:720px;margin:0 auto}
@@ -34,6 +34,10 @@ button,a,input,textarea,select{-webkit-tap-highlight-color:transparent}
 .hero-actions .action-defense:hover{background:#122845;border-color:var(--defense);text-shadow:none}
 .hero-topics{margin-top:30px;display:flex;gap:18px;justify-content:center;flex-wrap:wrap;color:#88a892;font-size:10px;letter-spacing:1px}
 .hero-topics span+span::before{content:'/';margin-right:18px;color:#385742}
+.hero-context{display:flex;align-items:center;justify-content:center;gap:6px 14px;flex-wrap:wrap;margin:24px auto 0;max-width:760px;font-size:11px;line-height:1.8;color:#a7b7ac}
+.hero-context>span{font-size:9px;letter-spacing:1px;color:#83a98e}
+.hero-context p{margin:0}
+.hero-context a{color:#c7dbce;text-decoration:underline;text-underline-offset:4px;min-height:32px;display:inline-flex;align-items:center}
 .scroll-hint{font-size:10px;color:#82a38b;white-space:nowrap;bottom:24px;animation:none}
 .section{max-width:1100px;padding:80px 24px}
 .section-header{font-weight:normal;margin-bottom:20px;letter-spacing:-.5px}
@@ -78,6 +82,12 @@ button,a,input,textarea,select{-webkit-tap-highlight-color:transparent}
 .arsenal-tag{color:#91bb9c}
 .arsenal-lab .lab-key{color:#86b694}
 .contact-block .label{color:#86b694}
+.contact-invitation{font:15px/1.75 -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#aebfb4;border-top:1px solid #283c30;padding-top:18px;margin-top:20px}
+#contact .contact-block{max-width:650px;margin-left:0}
+.framework-author{display:flex;align-items:center;justify-content:space-between;gap:24px;border-left:2px solid var(--green);background:#101813;padding:18px 22px;margin:0 0 28px}
+.framework-author p{font:16px/1.75 -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#b3c5b9;max-width:690px}
+.framework-author strong{color:#eef6f1;font-weight:600}
+.framework-author>a{font-size:11px;color:#cce5d5;text-decoration:underline;text-underline-offset:5px;min-height:44px;display:inline-flex;align-items:center;gap:12px;white-space:nowrap}
 .factory-preview{border-top:1px solid #253b2c;border-bottom:1px solid #253b2c;position:relative;overflow:hidden;background:radial-gradient(ellipse at 15% 50%,#224f8b1d,transparent 55%),radial-gradient(ellipse at 85% 60%,#8b242b1d,transparent 55%)}
 .factory-preview-kicker{font-size:10px;color:#94afa0;letter-spacing:1.6px;margin-bottom:20px}
 .factory-preview>h2{font-size:clamp(2.25rem,5vw,3.7rem);letter-spacing:-2px;line-height:1.15;color:#eff8f2;margin-bottom:24px}
@@ -110,7 +120,7 @@ footer{color:#8b9e91}
   #hero{min-height:850px;padding:130px 24px 90px}
   .hero-kicker{font-size:9px;letter-spacing:1px}
   .hero-name{font-size:24px;letter-spacing:4px}
-  .hero-title{font-size:10px}
+  .hero-title{font-size:11px}
   .hero-statement{font-size:clamp(2rem,7.2vw,3.5rem);letter-spacing:-1.8px;margin-top:28px}
   .hero-description{font-size:12px}
   .desktop-break{display:none}
@@ -125,6 +135,8 @@ footer{color:#8b9e91}
   .factory-preview-thesis{align-items:flex-start;flex-direction:column;gap:16px}
   .factory-preview-handoff{justify-content:flex-start;gap:9px;font-size:8px}
   .factory-preview-kicker{font-size:9px;letter-spacing:1px}
+  .framework-author{align-items:flex-start;flex-direction:column;gap:12px;padding:18px}
+  .hero-context{font-size:10px;gap:4px 10px;margin-top:20px}
   .focus-tags{margin-top:14px}
   .lab-status{display:none}
   .lab-tab{padding:14px;font-size:12px}
@@ -156,5 +168,6 @@ footer{color:#8b9e91}
   .hero-actions{margin-top:20px;gap:9px}
   .hero-actions a{padding:12px 16px;min-height:44px}
   .hero-topics{margin-top:20px}
+  .hero-context{margin-top:16px;font-size:9px}
 }
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}

@@ -19,6 +19,12 @@
 <meta name="description" content="Justin Calmus — AI security, adversarial testing, and cybersecurity leadership. Building secure AI systems with GLM-5.3, Mythos, and Daybreak, pursuing the lowest possible latency. SVP Portfolio Cybersecurity at Silver Lake.">
 <meta name="theme-color" content="#0a0a0a">
 <link rel="canonical" href="https://sumlac.com/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Justin Calmus — AI Security &amp; Cybersecurity Leadership">
+<meta property="og:description" content="My frameworks for continuous defense, constant red teaming, and AI systems where every millisecond matters.">
+<meta property="og:url" content="https://sumlac.com/">
+<meta property="og:site_name" content="Justin Calmus">
+<meta name="twitter:card" content="summary">
 <script src="prompt-lab.js" defer></script>
 <script src="incident-game.js" defer></script>
 <script src="terminal-engine.js" defer></script>
@@ -280,7 +286,7 @@ footer{
   .section{padding:60px 16px}
 }
 </style>
-<link rel="stylesheet" href="site.css?v=20261019-red-blue">
+<link rel="stylesheet" href="site.css?v=20261019-authored-frameworks">
 <link rel="stylesheet" href="prompt-lab.css">
 <link rel="stylesheet" href="incident-game.css">
 <link rel="stylesheet" href="terminal.css">
@@ -308,39 +314,40 @@ footer{
     <h1 class="hero-name" id="hero-name">JUSTIN CALMUS</h1>
     <p class="hero-title" id="hero-title">SVP Portfolio Cybersecurity // Silver Lake</p>
     <h2 class="hero-statement">Secure the model.<br>Constrain the agent.<br><span>Protect the data.</span></h2>
-    <p class="hero-description">AI security. Adversarial thinking. Every millisecond matters.<br class="desktop-break"> My vision: a Defense Factory that makes every fix prove itself, and an Offense Factory that keeps finding the edge.</p>
+    <p class="hero-description">My thesis: AI security should learn with every system change.<br class="desktop-break"> Defense proves the controls. Offense challenges the assumptions. Every millisecond matters.</p>
     <div class="hero-actions">
       <a class="action-defense" href="/defense-factory/">DEFENSE FACTORY <span aria-hidden="true">&nearr;</span></a>
       <a class="action-offense" href="/offense-factory/">OFFENSE FACTORY <span aria-hidden="true">&nearr;</span></a>
     </div>
-    <div class="hero-topics" aria-label="Focus areas"><span>AI RED TEAMING</span><span>AGENT SECURITY</span><span>LOW LATENCY AI</span></div>
+    <div class="hero-context" aria-label="Career context"><span>PREVIOUSLY AT</span><p>WeWork &middot; OneLogin &middot; HackerOne &middot; Salesforce &middot; LinkedIn</p><a href="#timeline">Career &nearr;</a></div>
   </div>
   <a class="scroll-hint" href="#factories">[ two factories, one feedback loop &darr; ]</a>
 </section>
 
 <main>
 <section class="section factory-preview" id="factories" aria-labelledby="factories-heading">
-  <div class="factory-preview-kicker">MY THINKING / CONTINUOUS OFFENSE + DEFENSE</div>
+  <div class="factory-preview-kicker">FRAMEWORKS BY JUSTIN CALMUS / CONTINUOUS OFFENSE + DEFENSE</div>
   <h2 id="factories-heading">Two factories.<br><span>One tighter loop.</span></h2>
-  <p class="section-intro">I want security to learn as fast as the systems it protects. My thesis is two connected factories: one constantly challenges the system; the other turns what we learn into controls we can prove. Shared evidence makes the next cycle better.</p>
+  <p class="section-intro">I want security to learn as fast as the systems it protects. These frameworks bring together how I think about adversarial testing, security leadership, and AI systems: two connected factories that share evidence and make the next decision better.</p>
+  <div class="framework-author"><p><strong>My emphasis:</strong> make the security property explicit, preserve the evidence between teams, and put each check where it can enforce the decision.</p><a href="mailto:justin@sumlac.com?subject=Comparing%20AI%20security%20approaches">Compare approaches <span aria-hidden="true">&nearr;</span></a></div>
   <div class="factory-preview-grid">
     <a class="factory-preview-card factory-preview-defense" href="/defense-factory/">
       <span class="factory-preview-label">01 / DEFENSE</span>
       <h3>Defense Factory</h3>
-      <p>My vision for turning a reproducible failure into a verified control. Repair the boundary, prove legitimate work still succeeds, and keep the test that catches a recurrence.</p>
+      <p>My position: verify the boundary that failed, preserve legitimate work, and retain the case that proves the difference. A fix should carry its evidence into the next system change.</p>
       <div class="factory-preview-flow" aria-label="Defense process"><span>REPRODUCE</span><span aria-hidden="true">&rarr;</span><span>REPAIR</span><span aria-hidden="true">&rarr;</span><span>VERIFY</span></div>
       <span class="factory-preview-link">READ MY DEFENSE THESIS <span aria-hidden="true">&nearr;</span></span>
     </a>
     <a class="factory-preview-card factory-preview-offense" href="/offense-factory/">
       <span class="factory-preview-label">02 / OFFENSE</span>
       <h3>Offense Factory</h3>
-      <p>My vision for constant red teaming. Challenge models, retrieval, tools, and permissions as they change. Turn each meaningful failure into evidence the defender can use.</p>
+      <p>My position: a changed model, tool, permission, or retrieval path should create new hypotheses. Measure progress by the assumptions challenged and the failures a defender can reproduce.</p>
       <div class="factory-preview-flow" aria-label="Offense process"><span>HYPOTHESIZE</span><span aria-hidden="true">&rarr;</span><span>PROBE</span><span aria-hidden="true">&rarr;</span><span>RETEST</span></div>
       <span class="factory-preview-link">READ MY OFFENSE THESIS <span aria-hidden="true">&nearr;</span></span>
     </a>
   </div>
   <div class="factory-preview-handoff"><span class="handoff-offense">OFFENSE</span><span aria-hidden="true">&rarr;</span><span>REPRODUCIBLE EVIDENCE</span><span aria-hidden="true">&rarr;</span><span class="handoff-defense">DEFENSE</span><span aria-hidden="true">&rarr;</span><span>REGRESSION TESTS</span><span aria-hidden="true">&rarr;</span><span class="handoff-offense">OFFENSE</span></div>
-  <div class="factory-preview-thesis"><div><span class="factory-preview-label">THE FEEDBACK LOOP IS THE PRODUCT</span><p>I care about the time from discovery to a verified fix, the cost of each cycle, and whether the same failure can happen again. The pages explore how I would build that loop.</p></div><a href="#ai-security">THE TRUST BOUNDARIES <span aria-hidden="true">&darr;</span></a></div>
+  <div class="factory-preview-thesis"><div><span class="factory-preview-label">THE DECISIONS BEHIND THE FRAMEWORKS</span><p>Which checks must happen before an agent acts? What can run asynchronously? What would convince us that a fix holds? Explore my positions, the tradeoffs, and a worked example in each framework.</p></div><a href="#contact">CHALLENGE AN ASSUMPTION <span aria-hidden="true">&darr;</span></a></div>
 </section>
 
 <section id="ai-security" class="section focus-section" aria-labelledby="focus-heading">
@@ -688,11 +695,13 @@ footer{
 <!-- ═══════════════════════════════════════════════════════════════
      CONTACT
      ═══════════════════════════════════════════════════════════════ -->
-<section class="section" id="contact">
-  <h2 class="section-header"><span>// </span>cat contact.txt</h2>
+<section class="section" id="contact" aria-labelledby="contact-heading">
+  <h2 class="section-header" id="contact-heading"><span>// </span>Let’s compare approaches.</h2>
+  <p class="section-intro">For conversations about AI security leadership, continuous red teaming, agent authorization, and the latency of secure systems.</p>
   <div class="contact-block reveal">
-    <div><span class="label">email</span> : <span class="value">justin [at] sumlac [dot] com</span></div>
+    <div><span class="label">email</span> : <a class="value" href="mailto:justin@sumlac.com">justin@sumlac.com</a></div>
     <div><span class="label">linkedin</span> : <a class="value" href="https://www.linkedin.com/in/jcalmus" target="_blank" rel="noopener">linkedin.com/in/jcalmus</a></div>
+    <p class="contact-invitation">Start with the assumption you’re challenging or the decision you’re working through.</p>
   </div>
 </section>
 
