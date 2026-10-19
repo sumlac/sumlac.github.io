@@ -1,11 +1,12 @@
-# Security Factory: current implementation
+# Repository security checks
 
 This repository runs two connected security pipelines against its own source and
 an ephemeral site served on loopback. GitHub Actions runs them on pushes to
 `main`, pull requests, manually, and every six hours at minute 17. Scheduled jobs
-run from the default branch and GitHub may delay them. The public website's
-interactive factory consoles are demonstrations; the workflow artifacts are the
-actual execution evidence.
+run from the default branch and GitHub may delay them. These are maintenance
+checks for this website. The public factory essays describe a broader personal
+vision, with illustrative walkthroughs; they do not display these CI results.
+Workflow artifacts record what the repository checks actually executed.
 
 ## Run locally
 

@@ -61,36 +61,33 @@
     'TEST   Exfiltration, cross-tenant access, unauthorized actions,',
     '       output handling, resource limits, and legitimate workflows.', ''
   ].join('\n');
-  const factoryRuns = 'https://github.com/sumlac/sumlac.github.io/actions/workflows/security-factory.yml';
   const defense = [
-    'DEFENSE FACTORY / PROVE THE FIX', '',
+    'DEFENSE FACTORY / MY THESIS', '',
+    'I want every meaningful failure to make the system harder to break.',
     'Reproduce -> prioritize -> prepare a patch -> verify -> retain the test.',
     'Reproducible findings from offense feed the same evidence loop.', '',
-    'RUNNING TODAY',
-    '  Scope: this repository and its ephemeral local preview.',
-    '  Checks: repository controls, regression tests, offense evidence.',
-    '  Repairs: conservative patch proposals, verified in a temporary copy.',
-    '  Review: patches remain artifacts; no automatic production deployment.',
-    '  Cadence: on changes, every six hours, and manual runs.', '',
-    'The broader model-driven architecture is described on the public page.',
-    'The current workflow does not call GLM-5.3, Mythos, or Daybreak.', '',
+    'HOW I WOULD BUILD IT',
+    '  Evidence first: a minimal case, expected behavior, and actual impact.',
+    '  Fix the boundary: permissions, retrieval, tools, or output handling.',
+    '  Verify independently: block the failure and preserve legitimate work.',
+    '  Keep the lesson: a regression that offense can challenge again.',
+    '  Measure the loop: time to verified fix, cost, and recurrence.', '',
+    'The public page develops this vision with illustrative walkthroughs.', '',
     'Page: https://sumlac.com/defense-factory/',
-    'Runs: ' + factoryRuns,
     'Try: open defense', ''
   ].join('\n');
   const offense = [
-    'OFFENSE FACTORY / KEEP CHALLENGING THE BOUNDARY', '',
+    'OFFENSE FACTORY / MY THESIS', '',
+    'I want red teaming to keep pace with every change to the system.',
     'Scope -> hypothesize -> probe -> reproduce -> hand off -> evolve.', '',
-    'RUNNING TODAY',
-    '  Target: repository code and local test server only.',
-    '  Corpus: deterministic and date-seeded adversarial cases.',
-    '  Surfaces: parsing, files, permissions, resource bounds, DOM rendering.',
-    '  Evidence: exact seed, checks, failure details, and reproduction data.',
-    '  Outcome: pass, fail, or inconclusive; a blocked test is not a pass.',
-    '  Cadence: on changes, every six hours, and manual runs.', '',
-    'Automation runs in repository CI, not in this browser shell.', '',
+    'HOW I WOULD BUILD IT',
+    '  Scope the target: explicit authorization and isolated test fixtures.',
+    '  Challenge the whole system: model, retrieval, tools, and identity.',
+    '  Prove impact: a reproducible boundary failure, not a scary answer.',
+    '  Hand off evidence: the smallest case a defender can replay.',
+    '  Evolve the corpus: retest repairs and explore adjacent failure modes.', '',
+    'The public page develops this vision with illustrative walkthroughs.', '',
     'Page: https://sumlac.com/offense-factory/',
-    'Runs: ' + factoryRuns,
     'Try: open offense', ''
   ].join('\n');
   const readme = [
@@ -169,16 +166,15 @@
   register('ai', 'Current AI stack and security focus', 'ai', () => ok(
     'AI SECURITY / ADVERSARIAL SYSTEMS\n\n' + stack + '\nA prompt is not a security boundary.\nTry: factories | threatmodel | references | lab\n'
   ));
-  register('factories', 'Explore continuous offense and defense', 'factories\nUse defense or offense for the operating model. open defense / open offense opens the public pages.', () => ok(
-    'SECURITY FACTORIES / TWO LOOPS, SHARED EVIDENCE\n\n' +
+  register('factories', 'Read my offense and defense factory vision', 'factories\nUse defense or offense for my thinking. open defense / open offense opens the public pages.', () => ok(
+    'MY SECURITY FACTORY VISION / TWO LOOPS, SHARED EVIDENCE\n\n' +
     '  Defense Factory: reproduce, repair, verify, retain.\n' +
     '  Offense Factory: hypothesize, probe, reproduce, evolve.\n\n' +
     '  Read: defense | offense\n' +
-    '  Browse: open defense | open offense\n' +
-    '  Actual runs and artifacts: ' + factoryRuns + '\n'
+    '  Browse: open defense | open offense\n'
   ));
-  register('defense', 'Read the Defense Factory operating model', 'defense', () => ok(defense));
-  register('offense', 'Read the Offense Factory operating model', 'offense', () => ok(offense));
+  register('defense', 'Read my Defense Factory thesis', 'defense', () => ok(defense));
+  register('offense', 'Read my Offense Factory thesis', 'offense', () => ok(offense));
   register('threatmodel', 'Explore an AI agent attack surface', 'threatmodel', () => ok(threatmodel));
   register('references', 'Primary AI security references', 'references', () => ok(references));
   register('lab', 'Open an interactive AI security game', 'lab [attack|defend]', ctx => {

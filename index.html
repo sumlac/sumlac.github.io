@@ -23,7 +23,7 @@
 <script src="incident-game.js" defer></script>
 <script src="terminal-engine.js" defer></script>
 <script src="terminal-commands.js" defer></script>
-<script src="terminal-ui.js" defer></script>
+<script src="terminal-ui.js?v=20261019-factory-thoughts" defer></script>
 <style>
 /* ═══════════════════════════════════════════════════════════════
    BASE
@@ -280,14 +280,14 @@ footer{
   .section{padding:60px 16px}
 }
 </style>
-<link rel="stylesheet" href="site.css">
+<link rel="stylesheet" href="site.css?v=20261019-factory-thoughts">
 <link rel="stylesheet" href="prompt-lab.css">
 <link rel="stylesheet" href="incident-game.css">
 <link rel="stylesheet" href="terminal.css">
 <noscript><style>.lab-tabs,.game-box,.terminal-window{display:none!important}.timeline-item,.reveal{opacity:1!important;transform:none!important}</style></noscript>
 </head>
 <body>
-<a class="skip-link" href="#ai-security">Skip to content</a>
+<a class="skip-link" href="#factories">Skip to content</a>
 <header class="site-nav">
   <a class="site-brand" href="#hero" aria-label="sumlac home">sumlac<span>.com</span></a>
   <nav aria-label="Main navigation">
@@ -308,17 +308,41 @@ footer{
     <h1 class="hero-name" id="hero-name">JUSTIN CALMUS</h1>
     <p class="hero-title" id="hero-title">SVP Portfolio Cybersecurity // Silver Lake</p>
     <h2 class="hero-statement">Secure the model.<br>Constrain the agent.<br><span>Protect the data.</span></h2>
-    <p class="hero-description">AI security. Adversarial thinking. Every millisecond matters.<br class="desktop-break"> Continuous offense. Continuous defense. Proof that the fix holds.</p>
+    <p class="hero-description">AI security. Adversarial thinking. Every millisecond matters.<br class="desktop-break"> My vision: an Offense Factory that keeps finding the edge, and a Defense Factory that makes every fix prove itself.</p>
     <div class="hero-actions">
-      <a class="action-primary" href="#factories">EXPLORE THE FACTORIES <span aria-hidden="true">&darr;</span></a>
-      <a class="action-secondary" href="#security-lab">PLAY THE SECURITY LAB <span aria-hidden="true">&rarr;</span></a>
+      <a class="action-offense" href="/offense-factory/">OFFENSE FACTORY <span aria-hidden="true">&nearr;</span></a>
+      <a class="action-defense" href="/defense-factory/">DEFENSE FACTORY <span aria-hidden="true">&nearr;</span></a>
     </div>
     <div class="hero-topics" aria-label="Focus areas"><span>AI RED TEAMING</span><span>AGENT SECURITY</span><span>LOW LATENCY AI</span></div>
   </div>
-  <a class="scroll-hint" href="#ai-security">[ explore the attack surface &darr; ]</a>
+  <a class="scroll-hint" href="#factories">[ two factories, one feedback loop &darr; ]</a>
 </section>
 
 <main>
+<section class="section factory-preview" id="factories" aria-labelledby="factories-heading">
+  <div class="factory-preview-kicker">MY THINKING / CONTINUOUS OFFENSE + DEFENSE</div>
+  <h2 id="factories-heading">Two factories.<br><span>One tighter loop.</span></h2>
+  <p class="section-intro">I want security to learn as fast as the systems it protects. My thesis is two connected factories: one constantly challenges the system; the other turns what we learn into controls we can prove. Shared evidence makes the next cycle better.</p>
+  <div class="factory-preview-grid">
+    <a class="factory-preview-card factory-preview-defense" href="/defense-factory/">
+      <span class="factory-preview-label">01 / DEFENSE</span>
+      <h3>Defense Factory</h3>
+      <p>My vision for turning a reproducible failure into a verified control. Repair the boundary, prove legitimate work still succeeds, and keep the test that catches a recurrence.</p>
+      <div class="factory-preview-flow" aria-label="Defense process"><span>REPRODUCE</span><span aria-hidden="true">&rarr;</span><span>REPAIR</span><span aria-hidden="true">&rarr;</span><span>VERIFY</span></div>
+      <span class="factory-preview-link">READ MY DEFENSE THESIS <span aria-hidden="true">&nearr;</span></span>
+    </a>
+    <a class="factory-preview-card factory-preview-offense" href="/offense-factory/">
+      <span class="factory-preview-label">02 / OFFENSE</span>
+      <h3>Offense Factory</h3>
+      <p>My vision for constant red teaming. Challenge models, retrieval, tools, and permissions as they change. Turn each meaningful failure into evidence the defender can use.</p>
+      <div class="factory-preview-flow" aria-label="Offense process"><span>HYPOTHESIZE</span><span aria-hidden="true">&rarr;</span><span>PROBE</span><span aria-hidden="true">&rarr;</span><span>RETEST</span></div>
+      <span class="factory-preview-link">READ MY OFFENSE THESIS <span aria-hidden="true">&nearr;</span></span>
+    </a>
+  </div>
+  <div class="factory-preview-handoff"><span>OFFENSE</span><span aria-hidden="true">&rarr;</span><span>REPRODUCIBLE EVIDENCE</span><span aria-hidden="true">&rarr;</span><span>DEFENSE</span><span aria-hidden="true">&rarr;</span><span>REGRESSION TESTS</span><span aria-hidden="true">&rarr;</span><span>OFFENSE</span></div>
+  <div class="factory-preview-thesis"><div><span class="factory-preview-label">THE FEEDBACK LOOP IS THE PRODUCT</span><p>I care about the time from discovery to a verified fix, the cost of each cycle, and whether the same failure can happen again. The pages explore how I would build that loop.</p></div><a href="#ai-security">THE TRUST BOUNDARIES <span aria-hidden="true">&darr;</span></a></div>
+</section>
+
 <section id="ai-security" class="section focus-section" aria-labelledby="focus-heading">
   <h2 class="section-header" id="focus-heading"><span>// </span>AI changes the attack surface.</h2>
   <p class="section-intro">The interesting question is what happens when a model can read your data, call your tools, and act on your behalf. That is where security has to hold.</p>
@@ -348,30 +372,6 @@ footer{
     <a href="https://atlas.mitre.org/" target="_blank" rel="noopener">MITRE ATLAS &nearr;</a>
     <a href="https://www.nist.gov/itl/ai-risk-management-framework" target="_blank" rel="noopener">NIST AI RMF &nearr;</a>
   </div>
-</section>
-
-<section class="section factory-preview" id="factories" aria-labelledby="factories-heading">
-  <div class="factory-preview-kicker">SECURITY OPERATIONS / CONTINUOUS BY DESIGN</div>
-  <h2 id="factories-heading">Two factories.<br><span>One tighter loop.</span></h2>
-  <p class="section-intro">Keep testing the assumptions. Keep proving the fixes. My approach connects adversarial discovery and verified remediation through shared evidence and repeatable tests.</p>
-  <div class="factory-preview-grid">
-    <a class="factory-preview-card factory-preview-defense" href="/defense-factory/">
-      <span class="factory-preview-label">01 / DEFENSE</span>
-      <h3>Defense Factory</h3>
-      <p>Turn reproducible findings into reviewable fixes. Retest the boundary, preserve the evidence, and carry the lesson into the next run.</p>
-      <div class="factory-preview-flow" aria-label="Defense process"><span>REPRODUCE</span><span aria-hidden="true">&rarr;</span><span>REPAIR</span><span aria-hidden="true">&rarr;</span><span>VERIFY</span></div>
-      <span class="factory-preview-link">EXPLORE DEFENSE <span aria-hidden="true">&nearr;</span></span>
-    </a>
-    <a class="factory-preview-card factory-preview-offense" href="/offense-factory/">
-      <span class="factory-preview-label">02 / OFFENSE</span>
-      <h3>Offense Factory</h3>
-      <p>Continuously challenge the system with adversarial cases. Make failures reproducible, test the blast radius, and turn new attack paths into lasting checks.</p>
-      <div class="factory-preview-flow" aria-label="Offense process"><span>HYPOTHESIZE</span><span aria-hidden="true">&rarr;</span><span>PROBE</span><span aria-hidden="true">&rarr;</span><span>RETEST</span></div>
-      <span class="factory-preview-link">EXPLORE OFFENSE <span aria-hidden="true">&nearr;</span></span>
-    </a>
-  </div>
-  <div class="factory-preview-handoff"><span>OFFENSE</span><span aria-hidden="true">&rarr;</span><span>REPRODUCIBLE EVIDENCE</span><span aria-hidden="true">&rarr;</span><span>DEFENSE</span><span aria-hidden="true">&rarr;</span><span>REGRESSION TESTS</span><span aria-hidden="true">&rarr;</span><span>OFFENSE</span></div>
-  <div class="factory-preview-running"><div><span class="factory-preview-label">RUNNING IN THIS REPOSITORY</span><p>On changes, every six hours, and on demand. Local test targets, preserved reports, and patch proposals for review.</p></div><a href="https://github.com/sumlac/sumlac.github.io/actions/workflows/security-factory.yml" target="_blank" rel="noopener">VIEW RUNS &amp; EVIDENCE <span aria-hidden="true">&nearr;</span></a></div>
 </section>
 
 <!-- ═══════════════════════════════════════════════════════════════
