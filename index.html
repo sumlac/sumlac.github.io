@@ -56,38 +56,6 @@ body::after{
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   BOOT SEQUENCE
-   ═══════════════════════════════════════════════════════════════ */
-#boot-overlay{
-  position:fixed;top:0;left:0;width:100%;height:100%;
-  background:#000;z-index:10000;display:flex;flex-direction:column;
-  justify-content:center;align-items:center;
-}
-#boot-canvas{position:absolute;top:0;left:0;width:100%;height:100%;opacity:.3}
-#boot-text{
-  position:relative;z-index:1;font-size:14px;color:var(--green);
-  max-width:600px;width:90%;white-space:pre-wrap;line-height:1.8;
-}
-#boot-skip{
-  position:absolute;bottom:40px;right:40px;z-index:1;
-  background:transparent;border:1px solid var(--green);color:var(--green);
-  padding:8px 20px;font-family:var(--font);font-size:13px;cursor:pointer;
-  opacity:.6;transition:opacity .2s;
-}
-#boot-skip:hover{opacity:1}
-
-/* Glitch effect */
-@keyframes glitch{
-  0%{clip-path:inset(40% 0 61% 0);transform:translate(-2px,2px)}
-  20%{clip-path:inset(92% 0 1% 0);transform:translate(2px,-2px)}
-  40%{clip-path:inset(43% 0 1% 0);transform:translate(-1px,3px)}
-  60%{clip-path:inset(25% 0 58% 0);transform:translate(3px,1px)}
-  80%{clip-path:inset(54% 0 7% 0);transform:translate(-3px,-2px)}
-  100%{clip-path:inset(58% 0 43% 0);transform:translate(2px,2px)}
-}
-.glitch{animation:glitch .3s linear infinite;text-shadow:2px 0 #ff0040,-2px 0 #00ffff}
-
-/* ═══════════════════════════════════════════════════════════════
    HERO
    ═══════════════════════════════════════════════════════════════ */
 #hero{
@@ -289,7 +257,6 @@ footer{
     animation-duration:0.01ms!important;animation-iteration-count:1!important;
     transition-duration:0.01ms!important;
   }
-  #boot-overlay{display:none!important}
   .hero-title{opacity:1!important}
   .timeline-item,.reveal{opacity:1!important;transform:none!important}
   body::after{display:none}
@@ -306,7 +273,6 @@ footer{
   .skills-grid{grid-template-columns:repeat(2,1fr)}
   .arsenal-grid{grid-template-columns:1fr}
   .terminal-body{height:300px;font-size:13px}
-  #boot-skip{bottom:20px;right:20px}
 }
 @media(max-width:480px){
   .skills-grid{grid-template-columns:repeat(2,1fr)}
@@ -318,7 +284,7 @@ footer{
 <link rel="stylesheet" href="prompt-lab.css">
 <link rel="stylesheet" href="incident-game.css">
 <link rel="stylesheet" href="terminal.css">
-<noscript><style>#boot-overlay,.lab-tabs,.game-box,.terminal-window{display:none!important}.timeline-item,.reveal{opacity:1!important;transform:none!important}</style></noscript>
+<noscript><style>.lab-tabs,.game-box,.terminal-window{display:none!important}.timeline-item,.reveal{opacity:1!important;transform:none!important}</style></noscript>
 </head>
 <body>
 <a class="skip-link" href="#ai-security">Skip to content</a>
@@ -331,15 +297,6 @@ footer{
     <a href="#contact">Contact</a>
   </nav>
 </header>
-
-<!-- ═══════════════════════════════════════════════════════════════
-     BOOT SEQUENCE OVERLAY
-     ═══════════════════════════════════════════════════════════════ -->
-<div id="boot-overlay">
-  <canvas id="boot-canvas"></canvas>
-  <div id="boot-text"></div>
-  <button id="boot-skip" onclick="skipBoot()">SKIP [ESC]</button>
-</div>
 
 <!-- ═══════════════════════════════════════════════════════════════
      HERO SECTION
@@ -771,7 +728,7 @@ const reducedMotion=window.matchMedia('(prefers-reduced-motion:reduce)').matches
 const isMobile=window.innerWidth<768;
 
 /* ═══════════════════════════════════════════════════════════════
-   MATRIX RAIN (boot + konami)
+   MATRIX RAIN (konami)
    ═══════════════════════════════════════════════════════════════ */
 function createMatrixRain(canvas){
   const ctx=canvas.getContext('2d');
@@ -798,76 +755,6 @@ function createMatrixRain(canvas){
   draw();
   return{stop(){running=false},canvas};
 }
-
-/* ═══════════════════════════════════════════════════════════════
-   BOOT SEQUENCE
-   ═══════════════════════════════════════════════════════════════ */
-const bootOverlay=document.getElementById('boot-overlay');
-const bootText=document.getElementById('boot-text');
-const bootCanvas=document.getElementById('boot-canvas');
-let bootDone=false;
-let matrixRain;
-
-const bootLines=[
-  {text:'[BIOS] SECURE BOOT v4.2.1 .......... OK',delay:60},
-  {text:'[BIOS] Memory Test: 32768 MB ........ OK',delay:40},
-  {text:'[INIT] Loading kernel modules ........ OK',delay:50},
-  {text:'[NET]  Establishing secure tunnel .... OK',delay:70},
-  {text:'[AUTH] Verifying clearance level ..... TOP SECRET',delay:80},
-  {text:'[CRYPT] AES-256-GCM initialized ..... OK',delay:40},
-  {text:'[SYS]  Loading sumlac.com ........... OK',delay:50},
-  {text:'',delay:200},
-  {text:'ACCESS GRANTED',delay:0,glitch:true},
-];
-
-function endBoot(){
-  if(bootDone)return;
-  bootDone=true;
-  bootOverlay.style.transition='opacity .5s';
-  bootOverlay.style.opacity='0';
-  setTimeout(()=>{
-    bootOverlay.remove();
-    if(matrixRain)matrixRain.stop();
-    startHero();
-  },500);
-}
-
-window.skipBoot=endBoot;
-document.addEventListener('keydown',function(e){
-  if(e.key==='Escape'&&!bootDone)endBoot();
-});
-
-if(reducedMotion){
-  bootOverlay.remove();
-  startHero();
-}else{
-  matrixRain=createMatrixRain(bootCanvas);
-  (async function(){
-    for(const line of bootLines){
-      if(bootDone)return;
-      const el=document.createElement('div');
-      bootText.appendChild(el);
-      if(line.glitch){
-        el.textContent=line.text;
-        el.classList.add('glitch');
-        el.style.fontSize='24px';
-        el.style.fontWeight='bold';
-        el.style.marginTop='10px';
-        await sleep(1200);
-        endBoot();
-        return;
-      }
-      for(let i=0;i<line.text.length;i++){
-        if(bootDone)return;
-        el.textContent+=line.text[i];
-        await sleep(isMobile?8:15);
-      }
-      await sleep(line.delay);
-    }
-  })();
-}
-
-function sleep(ms){return new Promise(r=>setTimeout(r,ms))}
 
 /* ═══════════════════════════════════════════════════════════════
    PARTICLE NETWORK
@@ -980,7 +867,6 @@ function startHero(){
   if(!reducedMotion){
     resizeParticles();
     initParticles();
-    drawParticles();
     window.addEventListener('resize',()=>{resizeParticles();initParticles()});
   }
   animateHeroName();
@@ -995,6 +881,8 @@ if(!reducedMotion){
   },{threshold:0});
   pObserver.observe(heroEl);
 }
+
+startHero();
 
 /* ═══════════════════════════════════════════════════════════════
    HERO NAME SCRAMBLE + SUBTITLE TYPING
