@@ -16,7 +16,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Justin Calmus // AI Security &amp; Cybersecurity Leadership</title>
-<meta name="description" content="Justin Calmus — AI security, adversarial testing, and cybersecurity leadership. Explore agent security, prompt injection, and interactive AI security labs. SVP Portfolio Cybersecurity at Silver Lake.">
+<meta name="description" content="Justin Calmus — AI security, adversarial testing, and cybersecurity leadership. Building secure AI systems with GLM-5.3, Mythos, and Daybreak, pursuing the lowest possible latency. SVP Portfolio Cybersecurity at Silver Lake.">
 <meta name="theme-color" content="#0a0a0a">
 <link rel="canonical" href="https://sumlac.com/">
 <script src="prompt-lab.js" defer></script>
@@ -347,12 +347,12 @@ footer{
     <h1 class="hero-name" id="hero-name">JUSTIN CALMUS</h1>
     <p class="hero-title" id="hero-title">SVP Portfolio Cybersecurity // Silver Lake</p>
     <h2 class="hero-statement">Secure the model.<br>Constrain the agent.<br><span>Protect the data.</span></h2>
-    <p class="hero-description">Security leadership meets an offensive mindset.<br class="desktop-break"> Exploring the trust boundaries of models, agents, and the systems they can reach.</p>
+    <p class="hero-description">AI security. Adversarial thinking. Every millisecond matters.<br class="desktop-break"> Building secure AI systems for a new era of competition.</p>
     <div class="hero-actions">
       <a class="action-primary" href="#security-lab">ENTER THE SECURITY LAB <span aria-hidden="true">&darr;</span></a>
       <a class="action-secondary" href="#ai-security">EXPLORE MY FOCUS <span aria-hidden="true">&rarr;</span></a>
     </div>
-    <div class="hero-topics" aria-label="Focus areas"><span>AI RED TEAMING</span><span>AGENT SECURITY</span><span>SECURITY LEADERSHIP</span></div>
+    <div class="hero-topics" aria-label="Focus areas"><span>AI RED TEAMING</span><span>AGENT SECURITY</span><span>LOW LATENCY AI</span></div>
   </div>
   <a class="scroll-hint" href="#ai-security">[ explore the attack surface &darr; ]</a>
 </section>
@@ -560,16 +560,21 @@ footer{
     <!-- ── AI Lab ── -->
     <div class="arsenal-group">// AI Lab &amp; Workflow</div>
     <div class="arsenal-lab">
+      <div class="lab-header">$ cat ai-stack.conf</div>
+      <div class="lab-line"><span class="lab-key">current stack</span><span class="lab-val"><span class="hl">GLM-5.3</span> / <span class="hl">Mythos</span> / <span class="hl">Daybreak</span></span></div>
+      <div class="lab-line"><span class="lab-key">mission</span><span class="lab-val">Build secure AI systems that can compete in the next era.</span></div>
+      <div class="lab-line"><span class="lab-key">latency goal</span><span class="lab-val"><span class="hl">The lowest possible end-to-end response time.</span> Every millisecond matters.</span></div>
+      <div class="lab-line"><span class="lab-key">optimization</span><span class="lab-val">Model response, agent orchestration, and tool execution &mdash; with security at every boundary.</span></div>
+      <hr class="lab-sep">
       <div class="lab-header">$ neofetch --cluster</div>
       <div class="lab-line"><span class="lab-key">hardware</span><span class="lab-val"><span class="hl">4x Mac Studio</span> (M2 Ultra) &mdash; clustered via <span class="hl">exo</span></span></div>
       <div class="lab-line"><span class="lab-key">memory</span><span class="lab-val"><span class="hl">2TB</span> unified RAM across cluster</span></div>
-      <div class="lab-line"><span class="lab-key">local model</span><span class="lab-val"><span class="hl">Kimi K2.5</span> (full weights) &mdash; ~23 tok/s</span></div>
       <div class="lab-line"><span class="lab-key">use case</span><span class="lab-val">Local inference, long-context analysis, and offline experimentation</span></div>
       <hr class="lab-sep">
       <div class="lab-line"><span class="lab-key">local coding</span><span class="lab-val">Smaller models for fast iteration and offline dev</span></div>
       <hr class="lab-sep">
       <div class="lab-header">$ cat pipeline.conf</div>
-      <div class="lab-line"><span class="lab-key">strategy</span><span class="lab-val"><span class="hl">OpenAI</span> + <span class="hl">Anthropic</span> (cloud) &mdash; decisions &amp; PRD generation</span></div>
+      <div class="lab-line"><span class="lab-key">strategy</span><span class="lab-val">Model selection and orchestration tuned for <span class="hl">latency</span>, task quality, and security.</span></div>
       <div class="lab-line"><span class="lab-key">routing</span><span class="lab-val">PRDs auto-populate <span class="hl">Kanban board</span> as task specs</span></div>
       <div class="lab-line"><span class="lab-key">execution</span><span class="lab-val">Board state changes trigger <span class="hl">Claude Code</span> / <span class="hl">Codex</span> / <span class="hl">Custom Bots</span></span></div>
       <div class="lab-line"><span class="lab-key">workflow</span><span class="lab-val">Move card &rarr; agent picks up task &rarr; PR lands &rarr; review</span></div>
@@ -1095,7 +1100,8 @@ const STATIC={
     {t:'accent',v:'║  JUSTIN CALMUS                                  ║'},
     {t:'accent',v:'╚══════════════════════════════════════════════════╝'},
     {t:'output',v:''},{t:'output',v:'  SVP Portfolio Cybersecurity @ Silver Lake'},
-    {t:'output',v:'  AI security. Adversarial thinking. Security leadership.'},
+    {t:'output',v:'  AI security. Adversarial thinking. Every millisecond matters.'},
+    {t:'output',v:'  Building secure AI systems for a new era of competition.'},
     {t:'output',v:'  20+ years in cybersecurity.'},{t:'output',v:''},
     {t:'output',v:'  Former CISO @ WeWork | CSO @ OneLogin, Zenefits'},
     {t:'output',v:'  VP Security Research @ HackerOne'},
@@ -1104,14 +1110,19 @@ const STATIC={
     {t:'info',v:'  "Break it to protect it."'},
   ],
   arsenal:[
+    {t:'accent',v:'--- ~/arsenal/ai-stack.conf ---'},
+    {t:'output',v:'  MODELS            GLM-5.3 / Mythos / Daybreak'},
+    {t:'output',v:'  MISSION           secure AI for the next era of competition'},
+    {t:'output',v:'  LATENCY_GOAL      lowest possible end-to-end response time'},
+    {t:'output',v:'  OPTIMIZATION      model response, orchestration, tool execution'},
+    {t:'output',v:'  SECURITY          controls at every trust boundary'},{t:'output',v:''},
     {t:'accent',v:'--- ~/arsenal/ai-lab/ ---'},
     {t:'output',v:'  CLUSTER           4x Mac Studio (M2 Ultra)'},
     {t:'output',v:'  RUNTIME           exo (distributed inference)'},
     {t:'output',v:'  RAM               2TB unified across cluster'},
-    {t:'output',v:'  MODEL             Kimi K2.5 ~23 tok/s'},
     {t:'output',v:'  LOCAL_CODING      various models, fast iteration'},{t:'output',v:''},
     {t:'accent',v:'--- ~/arsenal/ai-pipeline/ ---'},
-    {t:'output',v:'  STRATEGY          OpenAI + Anthropic (cloud)'},
+    {t:'output',v:'  STRATEGY          latency, task quality, and security'},
     {t:'output',v:'  OUTPUT            PRDs → Kanban board'},
     {t:'output',v:'  EXECUTION         Claude Code / Codex / Custom Bots'},
     {t:'output',v:'  TRIGGER           board state change → agent starts'},{t:'output',v:''},
@@ -1202,6 +1213,9 @@ function resolveCommand(cmd){
   if(lo==='about')return STATIC.whoami;
   if(lo==='ai')return[
     {t:'accent',v:'AI SECURITY // ADVERSARIAL SYSTEMS'},
+    {t:'output',v:'  Current stack: GLM-5.3 / Mythos / Daybreak.'},
+    {t:'output',v:'  Building toward the lowest possible end-to-end latency.'},
+    {t:'output',v:''},
     {t:'output',v:'  Red team: direct / indirect injection and data leakage.'},
     {t:'output',v:'  Agents: scoped tools, explicit approvals, least privilege.'},
     {t:'output',v:'  Retrieval: tenant isolation and per-request authorization.'},
@@ -1472,7 +1486,7 @@ function resolveCommand(cmd){
     {t:'output',v:' 1337 pts/0    00:00:00 bash'},
     {t:'output',v:' 1338 pts/0    00:00:00 sumlac-web'},
     {t:'output',v:' 1339 pts/0    00:00:01 exo-cluster'},
-    {t:'output',v:' 1340 pts/0    00:00:00 kimi-k2.5'},
+    {t:'output',v:' 1340 pts/0    00:00:00 ai-orchestrator'},
     {t:'output',v:' 1341 pts/0    00:00:00 nuclei --watch'},
     {t:'output',v:' 1342 pts/0    00:00:00 ps'},
   ];
@@ -1482,7 +1496,7 @@ function resolveCommand(cmd){
     {t:'output',v:'%Cpu(s):  4.2 us,  1.1 sy,  0.0 ni, 94.7 id'},
     {t:'output',v:'MiB Mem : 2097152 total, 1048576 free, 524288 used, 524288 buff/cache'},
     {t:'output',v:''},{t:'output',v:'  PID USER      %CPU %MEM    COMMAND'},
-    {t:'output',v:' 1340 jcalmus   12.3  25.0  kimi-k2.5'},
+    {t:'output',v:' 1340 jcalmus   12.3  25.0  ai-orchestrator'},
     {t:'output',v:' 1339 jcalmus    8.1  12.0  exo-cluster'},
     {t:'output',v:' 1341 jcalmus    2.4   1.2  nuclei --watch'},
     {t:'output',v:' 1338 jcalmus    0.3   0.5  sumlac-web'},
@@ -1513,7 +1527,8 @@ function resolveCommand(cmd){
     {t:'output',v:'PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin'},
     {t:'output',v:'EDITOR=vim'},{t:'output',v:'GPG_TTY=/dev/pts/0'},
     {t:'output',v:'CLUSTER_NODES=4'},{t:'output',v:'CLUSTER_RAM=2TB'},
-    {t:'output',v:'AI_MODEL=kimi-k2.5'},{t:'output',v:'SECURITY_LEVEL=paranoid'},
+    {t:'output',v:'AI_MODELS=GLM-5.3,Mythos,Daybreak'},
+    {t:'output',v:'LATENCY_GOAL=lowest-possible'},{t:'output',v:'SECURITY_LEVEL=paranoid'},
   ];
   if(base==='export'||base==='set'||base==='unset')return[{t:'err',v:base+': Read-only shell environment'}];
 
@@ -1550,7 +1565,8 @@ function resolveCommand(cmd){
     {t:'output',v:'  Memory:   524288 MiB / 2097152 MiB (25%)'},
     {t:'output',v:'  CPU:      Apple M2 Ultra x4'},
     {t:'output',v:'  GPU:      76-core x4 (304 total)'},
-    {t:'output',v:'  AI Model: Kimi K2.5 (~23 tok/s)'},
+    {t:'output',v:'  AI Stack: GLM-5.3 / Mythos / Daybreak'},
+    {t:'output',v:'  Goal:     lowest possible end-to-end latency'},
   ];
 
   /* ── history ── */
