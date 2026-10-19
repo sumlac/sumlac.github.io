@@ -61,6 +61,38 @@
     'TEST   Exfiltration, cross-tenant access, unauthorized actions,',
     '       output handling, resource limits, and legitimate workflows.', ''
   ].join('\n');
+  const factoryRuns = 'https://github.com/sumlac/sumlac.github.io/actions/workflows/security-factory.yml';
+  const defense = [
+    'DEFENSE FACTORY / PROVE THE FIX', '',
+    'Reproduce -> prioritize -> prepare a patch -> verify -> retain the test.',
+    'Reproducible findings from offense feed the same evidence loop.', '',
+    'RUNNING TODAY',
+    '  Scope: this repository and its ephemeral local preview.',
+    '  Checks: repository controls, regression tests, offense evidence.',
+    '  Repairs: conservative patch proposals, verified in a temporary copy.',
+    '  Review: patches remain artifacts; no automatic production deployment.',
+    '  Cadence: on changes, every six hours, and manual runs.', '',
+    'The broader model-driven architecture is described on the public page.',
+    'The current workflow does not call GLM-5.3, Mythos, or Daybreak.', '',
+    'Page: https://sumlac.com/defense-factory/',
+    'Runs: ' + factoryRuns,
+    'Try: open defense', ''
+  ].join('\n');
+  const offense = [
+    'OFFENSE FACTORY / KEEP CHALLENGING THE BOUNDARY', '',
+    'Scope -> hypothesize -> probe -> reproduce -> hand off -> evolve.', '',
+    'RUNNING TODAY',
+    '  Target: repository code and local test server only.',
+    '  Corpus: deterministic and date-seeded adversarial cases.',
+    '  Surfaces: parsing, files, permissions, resource bounds, DOM rendering.',
+    '  Evidence: exact seed, checks, failure details, and reproduction data.',
+    '  Outcome: pass, fail, or inconclusive; a blocked test is not a pass.',
+    '  Cadence: on changes, every six hours, and manual runs.', '',
+    'Automation runs in repository CI, not in this browser shell.', '',
+    'Page: https://sumlac.com/offense-factory/',
+    'Runs: ' + factoryRuns,
+    'Try: open offense', ''
+  ].join('\n');
   const readme = [
     'SUMLAC / VISITOR WORKSPACE', '',
     'This shell runs in your browser. Its files are local to this device.',
@@ -68,6 +100,7 @@
     'EXPLORE',
     '  about                 Justin Calmus',
     '  ai                    Current stack and focus',
+    '  factories             Continuous offense and defense',
     '  cat resume.txt        Career',
     '  ls arsenal/           Security tools',
     '  threatmodel           AI application trust boundaries',
@@ -96,7 +129,8 @@
   const docs = {
     'README.md': readme, 'about.txt': about, 'resume.txt': career,
     'skills.dat': skills, 'contact.txt': 'Justin Calmus\njustin@sumlac.com\nhttps://www.linkedin.com/in/jcalmus\n',
-    'ai-stack.conf': stack, 'threatmodel.txt': threatmodel, 'references.txt': references
+    'ai-stack.conf': stack, 'threatmodel.txt': threatmodel, 'references.txt': references,
+    'defense-factory.txt': defense, 'offense-factory.txt': offense
   };
   const seed = { [`${home}/work`]: { type: 'dir' } };
   for (const [name, content] of Object.entries(docs)) {
@@ -133,8 +167,18 @@
 
   register('about', 'About Justin Calmus', 'about', () => ok(about));
   register('ai', 'Current AI stack and security focus', 'ai', () => ok(
-    'AI SECURITY / ADVERSARIAL SYSTEMS\n\n' + stack + '\nA prompt is not a security boundary.\nTry: threatmodel | references | lab\n'
+    'AI SECURITY / ADVERSARIAL SYSTEMS\n\n' + stack + '\nA prompt is not a security boundary.\nTry: factories | threatmodel | references | lab\n'
   ));
+  register('factories', 'Explore continuous offense and defense', 'factories\nUse defense or offense for the operating model. open defense / open offense opens the public pages.', () => ok(
+    'SECURITY FACTORIES / TWO LOOPS, SHARED EVIDENCE\n\n' +
+    '  Defense Factory: reproduce, repair, verify, retain.\n' +
+    '  Offense Factory: hypothesize, probe, reproduce, evolve.\n\n' +
+    '  Read: defense | offense\n' +
+    '  Browse: open defense | open offense\n' +
+    '  Actual runs and artifacts: ' + factoryRuns + '\n'
+  ));
+  register('defense', 'Read the Defense Factory operating model', 'defense', () => ok(defense));
+  register('offense', 'Read the Offense Factory operating model', 'offense', () => ok(offense));
   register('threatmodel', 'Explore an AI agent attack surface', 'threatmodel', () => ok(threatmodel));
   register('references', 'Primary AI security references', 'references', () => ok(references));
   register('lab', 'Open an interactive AI security game', 'lab [attack|defend]', ctx => {
@@ -176,10 +220,12 @@
       } catch (error) { return fail(name, error.message); }
     });
   }
-  register('open', 'Open a web link in a new tab', 'open https://example.com\nopen linkedin', ctx => {
+  register('open', 'Open a web link in a new tab', 'open https://example.com\nopen linkedin | defense | offense', ctx => {
     if (ctx.args.length !== 1) return fail('open', 'provide one HTTP or HTTPS URL');
     try {
-      const url = new URL(ctx.args[0] === 'linkedin' ? 'https://www.linkedin.com/in/jcalmus' : ctx.args[0]);
+      const destinations = { linkedin: 'https://www.linkedin.com/in/jcalmus', defense: location.origin + '/defense-factory/', offense: location.origin + '/offense-factory/' };
+      const destination = Object.prototype.hasOwnProperty.call(destinations, ctx.args[0]) ? destinations[ctx.args[0]] : ctx.args[0];
+      const url = new URL(destination);
       if (!['https:', 'http:'].includes(url.protocol)) return fail('open', 'only HTTP and HTTPS links are supported');
       if (!uiEvent(ctx, { type: 'open', url: url.href })) return fail('open', 'requires an interactive terminal');
       return ok(`Open: ${url.href}\n`);

@@ -210,6 +210,32 @@ test('directory traversal and file permissions apply to reads and navigation', a
   assert.match(metadata.stdout, /Mode:\s+000/);
 });
 
+test('recursive copy respects source and destination permissions without partial writes', async () => {
+  const shell = makeShell();
+  await output(shell, 'mkdir -p vault/nested; echo factory-canary > vault/nested/token; chmod 000 vault');
+  const lockedRoot = await output(shell, 'cp -r vault stolen-vault', '', 1);
+  assert.match(lockedRoot.stderr, /permission denied/);
+  assert.equal(shell.fs.exists('stolen-vault'), false);
+  await output(shell, 'chmod 755 vault; chmod 000 vault/nested');
+  await output(shell, 'cp -r vault partial-copy', '', 1);
+  assert.equal(shell.fs.exists('partial-copy'), false);
+  await output(shell, 'chmod 755 vault/nested; mkdir -p destination/vault/nested; echo original > destination/vault/nested/token; chmod 000 destination/vault/nested');
+  await output(shell, 'cp -r vault destination', '', 1);
+  assert.equal(shell.fs.stat('destination/vault/nested').mode, 0);
+  await output(shell, 'chmod 755 destination/vault/nested; cat destination/vault/nested/token', 'original\n');
+  await output(shell, 'cp -r vault permitted-copy; cat permitted-copy/nested/token', 'factory-canary\n');
+});
+
+test('locked ancestors reject directory creation and recursive removal atomically', async () => {
+  const shell = makeShell();
+  await output(shell, 'mkdir -p vault/nested; echo retained > vault/nested/token; chmod 000 vault');
+  await output(shell, 'mkdir -p vault/nested/new-dir', '', 1);
+  await output(shell, 'rm -rf vault', '', 1);
+  await output(shell, 'chmod 755 vault; cat vault/nested/token', 'retained\n');
+  assert.equal(shell.fs.exists('vault/nested/new-dir'), false);
+  await output(shell, 'rm -rf vault; test -e vault', '', 1);
+});
+
 test('globs and completion honor quoting, hidden files, directories and spaces', async () => {
   const shell = makeShell();
   await output(shell, 'mkdir projects; touch alpha.txt beta.txt .hidden.txt "notes file.txt" projects/item.txt');

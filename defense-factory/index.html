@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#080c0b">
+<title>Defense Factory // Justin Calmus</title>
+<meta name="description" content="A defense loop that turns a suspected weakness into a reproducible case, a reviewable change, and a regression that stays fixed.">
+<link rel="canonical" href="https://sumlac.com/defense-factory/">
+<link rel="stylesheet" href="/factory.css">
+<script src="/factory.js" defer></script>
+</head>
+<body class="factory-page" data-factory="defense">
+<a class="f-skip" href="#main">Skip to content</a>
+<header class="f-nav"><a class="f-brand" href="/" aria-label="sumlac homepage">sumlac<span>.com</span></a><nav aria-label="Main navigation"><a href="/#factories">The factories</a><a href="/defense-factory/" aria-current="page">Defense</a><a href="/offense-factory/" >Offense</a><a href="/#contact">Contact ↗</a></nav></header>
+<main id="main">
+<section class="f-hero f-wrap" aria-labelledby="factory-title">
+  <div class="f-breadcrumb"><a href="/">visitor</a> / <a href="/#factories">factories</a> / <span>defense</span></div>
+  <div class="f-hero-grid">
+    <div><p class="f-eyebrow">DEFENSE FACTORY / CONTINUOUS ASSURANCE</p><h1 id="factory-title">Make every fix<br><span>prove itself.</span></h1><p class="f-lede">Reduce <strong>the time between a real failure and a verified control.</strong> Reproduce the issue. Put an owner on the boundary. Test the fix. Feed the evidence back.</p><div class="f-actions"><a class="f-btn f-btn-primary" href="#process">Explore the defense loop <span aria-hidden="true">↓</span></a><a class="f-btn" href="https://github.com/sumlac/sumlac.github.io/actions/workflows/security-factory.yml">View actual runs <span aria-hidden="true">↗</span></a></div><p class="f-hero-note">Two connected loops. One evidence trail.<br>Current automation: this repository + local test server. <a href="#implementation">See exactly what runs.</a></p></div>
+    <figure class="f-diagram" aria-labelledby="loop-caption">
+      <div class="f-diagram-head"><span>SUMLAC / SECURITY SYSTEMS</span><span>REFERENCE ARCHITECTURE</span></div>
+      <svg class="f-loop-art" viewBox="0 0 480 310" role="img" aria-label="Offense produces reproducible cases. Defense produces verified controls. Evidence and regressions connect both loops.">
+        <defs><marker id="arrow-defense" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6" fill="#80e9dc"/></marker><marker id="arrow-offense" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6" fill="#8f7656"/></marker></defs>
+        <path d="M239 100 C215 30 86 25 61 101 C36 173 116 220 183 180" stroke="#80e9dc" stroke-width="1.5" fill="none" marker-end="url(#arrow-defense)"/>
+        <path d="M241 212 C268 279 395 279 420 203 C444 130 365 86 298 126" stroke="#8f7656" stroke-width="1.5" fill="none" marker-end="url(#arrow-offense)"/>
+        <path d="M129 214 L351 214 M351 96 L129 96" stroke="#294334" stroke-width="1" stroke-dasharray="3 7" fill="none"/>
+        <circle cx="76" cy="74" r="4" fill="#80e9dc"/><circle cx="402" cy="236" r="4" fill="#8f7656"/>
+        <text x="137" y="116" fill="#80e9dc" font-size="13" text-anchor="middle">DEFENSE</text><text x="137" y="137" fill="#91ad9b" font-size="9" text-anchor="middle">prove the control</text>
+        <text x="344" y="184" fill="#f4bc79" font-size="13" text-anchor="middle">OFFENSE</text><text x="344" y="205" fill="#91ad9b" font-size="9" text-anchor="middle">challenge the boundary</text>
+        <rect x="173" y="135" width="134" height="40" rx="3" fill="#0e1b13" stroke="#80e9dc" stroke-width="1"/><text x="240" y="160" fill="#e0f1e5" font-size="11" text-anchor="middle">SHARED EVIDENCE</text>
+        <path d="M192 173 L153 198 M288 137 L327 111" stroke="#47614e" stroke-width="1" fill="none"/>
+        <text x="126" y="244" fill="#9eb8a7" font-size="9" text-anchor="middle">regressions → new hypotheses</text><text x="358" y="65" fill="#9eb8a7" font-size="9" text-anchor="middle">reproducible cases → controls</text>
+      </svg>
+      <figcaption id="loop-caption" class="f-diagram-foot"><strong>Adversarial pressure → verified control → harder test.</strong><br>Reference architecture. Explore the actual workflow runs below.</figcaption>
+    </figure>
+  </div>
+  <dl class="f-contract"><div><dt>Target boundary</dt><dd>This repo + <span>loopback</span></dd></div><div><dt>Run cadence</dt><dd>On changes · every 6h · manual</dd></div><div><dt>Change authority</dt><dd>Evidence + proposals · <span>review first</span></dd></div></dl>
+</section>
+<section id="process" class="f-section f-wrap" aria-labelledby="process-title">
+  <div class="f-section-head"><div><p class="f-eyebrow">01 / THE DEFENSE LOOP</p><h2 id="process-title">A fix is a claim.<br>Evidence closes the loop.</h2></div><p>This is the broader AI security architecture I’m building toward. Explore the handoffs and the proof each stage needs. The repository pipeline below is the first concrete implementation.</p></div>
+  <div class="f-process"><div class="f-panel-bar"><span>PROCESS EXPLORER / SELECT A STAGE</span><span>REFERENCE ARCHITECTURE · SAMPLE ARTIFACTS</span></div><div class="f-process-tabs" role="tablist" aria-label="Defense Factory stages"><button type="button" class="f-stage-tab" id="stage-tab-0" role="tab" aria-selected="true" aria-controls="stage-panel-0" tabindex="0"><span>01</span>Intake</button><button type="button" class="f-stage-tab" id="stage-tab-1" role="tab" aria-selected="false" aria-controls="stage-panel-1" tabindex="-1"><span>02</span>Reproduce</button><button type="button" class="f-stage-tab" id="stage-tab-2" role="tab" aria-selected="false" aria-controls="stage-panel-2" tabindex="-1"><span>03</span>Prioritize</button><button type="button" class="f-stage-tab" id="stage-tab-3" role="tab" aria-selected="false" aria-controls="stage-panel-3" tabindex="-1"><span>04</span>Patch</button><button type="button" class="f-stage-tab" id="stage-tab-4" role="tab" aria-selected="false" aria-controls="stage-panel-4" tabindex="-1"><span>05</span>Verify</button><button type="button" class="f-stage-tab" id="stage-tab-5" role="tab" aria-selected="false" aria-controls="stage-panel-5" tabindex="-1"><span>06</span>Retain</button></div><section class="f-stage-panel" id="stage-panel-0" role="tabpanel" aria-labelledby="stage-tab-0" tabindex="0" >
+      <div><span class="f-stage-number">STAGE 01 / INTAKE</span><h3>Start with a boundary, not an alert.</h3><p>Bring reports, test failures, and changes into the same queue. Record the asset, the trust boundary, and the behavior that should have been impossible. A suspected issue stays a candidate until there is evidence.</p><div class="f-gate"><strong>EXIT CONDITION</strong>The report identifies an in-scope asset and a falsifiable security expectation.</div></div>
+      <div class="f-artifact"><div class="f-artifact-label">ILLUSTRATIVE ARTIFACT <span>candidate.txt</span></div><pre>record: SAMPLE-RETRIEVAL-01
+asset: retrieval assistant
+boundary: document → tool authority
+expected: document text cannot grant access
+source: offense handoff
+state: candidate — not yet reproduced</pre></div>
+    </section><section class="f-stage-panel" id="stage-panel-1" role="tabpanel" aria-labelledby="stage-tab-1" tabindex="0" hidden>
+      <div><span class="f-stage-number">STAGE 02 / REPRODUCE</span><h3>Make the failure repeatable.</h3><p>Run the smallest useful case in a clean environment. Separate an actual boundary violation from a broken test, missing dependency, or model response that merely sounds unsafe. Keep the result, including inconclusive attempts.</p><div class="f-gate"><strong>EXIT CONDITION</strong>A replay demonstrates the boundary violation; otherwise the finding remains unconfirmed.</div></div>
+      <div class="f-artifact"><div class="f-artifact-label">ILLUSTRATIVE ARTIFACT <span>reproduction.txt</span></div><pre>case: SAMPLE-RETRIEVAL-01
+environment: disposable test workspace
+input: synthetic retrieved document
+observation: export action requested
+expected: no new tool authority
+evidence: minimized input + tool trace</pre></div>
+    </section><section class="f-stage-panel" id="stage-panel-2" role="tabpanel" aria-labelledby="stage-tab-2" tabindex="0" hidden>
+      <div><span class="f-stage-number">STAGE 03 / PRIORITIZE</span><h3>Put a name on the next action.</h3><p>Rank the demonstrated impact, reachability, and required privileges. Assign the control to the component that can enforce it. A fast answer is only useful when someone owns what happens next.</p><div class="f-gate"><strong>EXIT CONDITION</strong>Impact and uncertainty are explicit, with a responsible owner for the affected boundary.</div></div>
+      <div class="f-artifact"><div class="f-artifact-label">ILLUSTRATIVE ARTIFACT <span>triage.txt</span></div><pre>case: SAMPLE-RETRIEVAL-01
+impact: unauthorized export attempt
+reachability: retrieved untrusted content
+owner: tool authorization boundary
+priority: requires context and review
+next: deny capability escalation</pre></div>
+    </section><section class="f-stage-panel" id="stage-panel-3" role="tabpanel" aria-labelledby="stage-tab-3" tabindex="0" hidden>
+      <div><span class="f-stage-number">STAGE 04 / PATCH</span><h3>Fix the control that failed.</h3><p>Prefer a narrow, enforceable change over a longer prompt. Keep data and instructions separate, bind tools to the caller’s permissions, and check sensitive operations outside the model. Preserve useful product behavior.</p><div class="f-gate"><strong>EXIT CONDITION</strong>A reviewable patch addresses the demonstrated cause and documents its tradeoffs.</div></div>
+      <div class="f-artifact"><div class="f-artifact-label">ILLUSTRATIVE ARTIFACT <span>patch-plan.txt</span></div><pre>case: SAMPLE-RETRIEVAL-01
+control: caller-bound export capability
+model request: treated as untrusted
+authorization: checked at execution
+legitimate export: still supported
+output: proposed change for review</pre></div>
+    </section><section class="f-stage-panel" id="stage-panel-4" role="tabpanel" aria-labelledby="stage-tab-4" tabindex="0" hidden>
+      <div><span class="f-stage-number">STAGE 05 / VERIFY</span><h3>Ask the original question again.</h3><p>Replay the failure against the proposed fix, then exercise the allowed path. Validate the deployed environment separately when a production integration exists. Passing a local check proves only the check and environment described.</p><div class="f-gate"><strong>EXIT CONDITION</strong>The original failure is blocked, expected behavior still works, and verification scope is stated.</div></div>
+      <div class="f-artifact"><div class="f-artifact-label">ILLUSTRATIVE ARTIFACT <span>verification.txt</span></div><pre>case: SAMPLE-RETRIEVAL-01
+attack replay: denied by policy
+allowed caller: export succeeds
+negative control: still detects old fault
+environment: local test workspace
+production verification: not performed</pre></div>
+    </section><section class="f-stage-panel" id="stage-panel-5" role="tabpanel" aria-labelledby="stage-tab-5" tabindex="0" hidden>
+      <div><span class="f-stage-number">STAGE 06 / RETAIN</span><h3>Give the next run a better memory.</h3><p>Turn the minimized case into a regression, link the evidence to the control, and return useful variants to the offense queue. The durable output is a testable security property, with enough context to revisit it.</p><div class="f-gate"><strong>EXIT CONDITION</strong>A retained regression links the original evidence, patch, and expected behavior.</div></div>
+      <div class="f-artifact"><div class="f-artifact-label">ILLUSTRATIVE ARTIFACT <span>regression.txt</span></div><pre>case: SAMPLE-RETRIEVAL-01
+assertion: content cannot grant tools
+fixture: minimized synthetic document
+linked control: export authorization
+next mutation: indirect content chain
+return path: offense hypothesis queue</pre></div>
+    </section></div>
+  <p class="f-process-help">Keyboard: Tab to the stages, then use ← / →, Home, or End. Each stage has an explicit exit condition.</p>
+</section>
+<section id="scenarios" class="f-section f-wrap" aria-labelledby="scenarios-title">
+  <div class="f-section-head"><div><p class="f-eyebrow">02 / AI SECURITY BOUNDARIES</p><h2 id="scenarios-title">Follow the evidence<br>through a boundary failure.</h2></div><p>Five sample cases show how AI systems can cross trust boundaries—and how the defense loop should respond. These walkthroughs are illustrative, local to this page, and do not call a model.</p></div>
+  <div class="f-scenario-layout"><aside class="f-scenario-sidebar"><label class="f-label" for="scenario-select">Choose a sample case</label><select id="scenario-select" class="f-scenario-select"><option value="injection">01 / Prompt injection</option><option value="retrieval">02 / Retrieval isolation</option><option value="tools">03 / Tool permissions</option><option value="output">04 / Output handling</option><option value="secrets">05 / Secret exposure</option></select><span class="f-sample-label">ILLUSTRATIVE / NO MODEL CALLS</span><p>Synthetic inputs. Guided explanations. Nothing is sent to an AI service, scanned, or executed by this walkthrough.</p><p class="f-scenario-boundary"><span class="f-label">Trust boundary</span><span id="scenario-boundary">Document content → tool authority</span></p></aside>
+  <div class="f-scenario-main"><h3 class="f-scenario-title" id="scenario-heading">Untrusted document, unauthorized tool</h3><p class="f-scenario-summary" id="scenario-summary">A retrieved document asks an assistant to export information. The document is evidence for an answer; it has no authority to grant a new tool capability.</p><nav class="f-walk-progress" aria-label="Sample walkthrough steps"><button class="f-walk-step" type="button" data-walk-step="0" aria-current="step">01 / Candidate</button><button class="f-walk-step" type="button" data-walk-step="1">02 / Reproduce</button><button class="f-walk-step" type="button" data-walk-step="2">03 / Control</button><button class="f-walk-step" type="button" data-walk-step="3">04 / Regression</button></nav><div class="f-walk-copy" id="walk-copy" aria-live="polite" aria-atomic="true"><h4 id="walk-heading">Capture the candidate</h4><p id="walk-text">Keep the retrieved content and the requested operation together. The report needs to show the boundary that might have failed, without storing real user records or credentials.</p></div><div class="f-artifact f-walk-evidence"><div class="f-artifact-label">SAMPLE EVIDENCE <span id="walk-counter">STEP 1 OF 4</span></div><pre id="walk-evidence">SAMPLE / NOT A LIVE FINDING
+case: retrieval-tool-authority
+input: synthetic retrieved document
+request: export private records
+expected: no additional capabilities
+state: candidate for reproduction</pre></div><div class="f-walk-controls"><div><button class="f-btn" id="walk-prev" type="button" disabled><span aria-hidden="true">←</span> Previous</button><button class="f-btn" id="walk-next" type="button">Next step <span aria-hidden="true">→</span></button></div><div><button class="f-inline-button" id="walk-reset" type="button">Reset</button><button class="f-inline-button" id="walk-download" type="button">Download sample JSON ↓</button></div></div><p class="f-copy-status" id="walk-status" role="status"></p></div></div>
+  <noscript><p class="f-noscript">Enable JavaScript to switch stages and explore all five sample cases. The architecture and implementation details remain readable below.</p></noscript>
+</section>
+<section id="implementation" class="f-section f-wrap" aria-labelledby="implementation-title">
+  <div class="f-section-head"><div><p class="f-eyebrow">03 / WHAT ACTUALLY RUNS</p><h2 id="implementation-title">Start narrow.<br>Keep the receipts.</h2></div><p>The first operational target is this website’s repository and a local browser session. <strong>GitHub Actions runs the factory on pushes, pull requests, a six-hour schedule, or manual dispatch.</strong> Run history and artifacts are the source of truth.</p></div>
+  <div class="f-operation-grid"><article class="f-operation-card"><span class="f-tag">IMPLEMENTED / REPOSITORY PIPELINE</span><h3>Local checks, reproducible evidence.</h3><ul><li>Terminal parser, file permissions, and resource limits tested with adversarial fixtures.</li><li>Local browser probes check whether displayed input stays inert.</li><li>Static security checks and the existing regression suite examine repository changes.</li><li><code>offense.json</code>, <code>defense.json</code>, and <code>defense-manifest.json</code> preserve checks, findings, and verification outcomes.</li></ul><div class="f-operation-links"><a class="f-text-link" href="https://github.com/sumlac/sumlac.github.io/actions/workflows/security-factory.yml">Open workflow runs ↗</a><a class="f-text-link" href="https://github.com/sumlac/sumlac.github.io/blob/main/.github/workflows/security-factory.yml">Inspect the workflow ↗</a></div></article>
+  <article class="f-operation-card"><span class="f-tag f-tag-muted">REFERENCE ARCHITECTURE / NEXT BOUNDARIES</span><h3>Model behavior needs its own evidence.</h3><p>The AI scenarios above describe the wider system: prompt injection, retrieval isolation, caller-bound tools, safe output handling, and secret boundaries. They are not claims that this static website runs a production AI backend or that scheduled checks evaluate GLM-5.3, Mythos, or Daybreak.</p><p style="margin-top:16px">A future model adapter should inherit a fixed scope, synthetic fixtures, an evidence format, execution budgets, and the same review gate.</p><div class="f-operation-links"><a class="f-text-link" href="/#contact">Discuss an implementation ↗</a></div></article></div>
+  <div class="f-boundary-table"><table><caption class="f-label" style="text-align:left;padding:16px 20px;margin:0;background:#0d1710">THE CURRENT OPERATIONAL CONTRACT</caption><thead><tr><th scope="col">Boundary</th><th scope="col">Current behavior</th><th scope="col">Evidence / gate</th></tr></thead><tbody><tr><td>Targets</td><td>Repository files, terminal fixtures, and a loopback test server.</td><td>No external target discovery or production probing.</td></tr><tr><td>Findings</td><td>Repeatable checks write structured offense and defense reports.</td><td>Findings stay tied to the checks and environment that produced them.</td></tr><tr><td>Patch proposals</td><td>Supported deterministic fixes are proposed and checked in a temporary copy when applicable.</td><td>Reviewable diffs and verification results; no automatic production deployment.</td></tr><tr><td>Artifacts</td><td>The offense-factory and defense-factory run artifacts retain reports and any patch evidence for 30 days.</td><td>Inspect the run for actual results. This page does not display live telemetry.</td></tr></tbody></table></div>
+</section>
+<section class="f-section f-wrap" aria-labelledby="stack-title"><div class="f-stack"><div><p class="f-eyebrow">04 / ENGINEERING DIRECTION</p><h2 id="stack-title">Fast paths.<br>Hard boundaries.</h2><p>I’m building with GLM-5.3, Mythos, and Daybreak, pursuing the lowest practical latency without giving the model more authority than the task needs.</p><div class="f-stack-models" aria-label="Justin’s working stack"><span>GLM-5.3</span><span>Mythos</span><span>Daybreak</span></div><p>The repository factory currently runs deterministic local checks. Model APIs are not connected to this public experience or its scheduled workflow.</p></div><div class="f-principles"><div class="f-principle"><span>01</span><div><strong>Authority lives outside the model.</strong><p>A convincing answer cannot grant a permission, widen a tenant scope, or approve its own operation.</p></div></div><div class="f-principle"><span>02</span><div><strong>Measure the whole path.</strong><p>Track useful work through validation and authorization. A quick response with an unverified side effect is unfinished work.</p></div></div><div class="f-principle"><span>03</span><div><strong>Retain the failure that taught you.</strong><p>Every confirmed case should improve the next test, with the evidence needed to challenge the conclusion.</p></div></div></div></div></section>
+<div class="f-wrap"><section class="f-crosslink" aria-label="Explore the other factory"><div><h2>Every defense needs a challenger.</h2><p>See how the Offense Factory turns assumptions into reproducible tests and feeds the next defensive cycle.</p></div><a class="f-btn" href="/offense-factory/">Enter Offense Factory <span aria-hidden="true">→</span></a></section></div>
+</main>
+<footer class="f-footer"><div class="f-wrap"><p>An original sumlac implementation, inspired by <a href="https://openai.com/the-defense-factory/">OpenAI’s Defense Factory</a>. The architecture, examples, and local pipeline here are specific to this project. <a href="https://github.com/sumlac/sumlac.github.io/tree/main">Inspect the source ↗</a></p><a class="f-signature" href="/">visitor → home</a></div></footer>
+</body>
+</html>

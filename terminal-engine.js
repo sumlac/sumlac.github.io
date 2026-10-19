@@ -119,15 +119,16 @@
       parts.forEach((part, index) => {
         const parent = current || '/';
         current += '/' + part;
+        const parentNode = next.get(parent);
+        if (!parentNode || parentNode.type !== 'dir') throw error('ENOTDIR', parent + ': not a directory');
+        if (!(parentNode.mode & 0o100)) throw error('EACCES', parent + ': permission denied');
         const node = next.get(current);
         if (node) {
           if (node.type !== 'dir') throw error('ENOTDIR', current + ': not a directory');
           return;
         }
         if (!options.recursive && index !== parts.length - 1) throw error('ENOENT', current + ': no such file or directory');
-        const parentNode = next.get(parent);
-        if (!parentNode || parentNode.type !== 'dir') throw error('ENOTDIR', parent + ': not a directory');
-        if (!(parentNode.mode & 0o200) || !(parentNode.mode & 0o100)) throw error('EACCES', parent + ': permission denied');
+        if (!(parentNode.mode & 0o200)) throw error('EACCES', parent + ': permission denied');
         next.set(current, this.node('dir'));
       });
       this._commit(next);
@@ -142,8 +143,14 @@
       this._directory(dirname(path), true);
       const node = this.nodes.get(path);
       if (node.type === 'dir' && !options.recursive) throw error('EISDIR', path + ': is a directory (use -r)');
+      const entries = Array.from(this.nodes.keys()).filter(entry => entry === path || entry.startsWith(path + '/'));
+      for (const entry of entries) {
+        const child = this._get(entry);
+        this._directory(dirname(entry), true);
+        if (child.type === 'dir' && entries.some(candidate => candidate.startsWith(entry + '/')) && !(child.mode & 0o400)) throw error('EACCES', entry + ': permission denied');
+      }
       const next = new Map(this.nodes);
-      for (const entry of next.keys()) if (entry === path || entry.startsWith(path + '/')) next.delete(entry);
+      for (const entry of entries) next.delete(entry);
       this._commit(next);
     }
     copy(source, destination, options = {}, cwd) {
@@ -160,8 +167,15 @@
       const next = new Map(this.nodes);
       const entries = Array.from(this.nodes).filter(([entry]) => entry === source || entry.startsWith(source + '/'));
       for (const [entry, node] of entries) {
-        if (node.type === 'file' && !(node.mode & 0o400)) throw error('EACCES', entry + ': permission denied');
-        next.set(destination + entry.slice(source.length), Object.assign({}, node, { mtime: Date.now(), ctime: Date.now() }));
+        this._get(entry);
+        if (!(node.mode & 0o400) || (node.type === 'dir' && !(node.mode & 0o100))) throw error('EACCES', entry + ': permission denied');
+        const target = destination + entry.slice(source.length);
+        const previous = this.nodes.get(target);
+        if (previous && previous.type !== node.type) throw error(previous.type === 'dir' ? 'EISDIR' : 'ENOTDIR', target + ': incompatible destination');
+        if (this.nodes.has(dirname(target))) this._directory(dirname(target), true);
+        if (previous && node.type === 'dir') this._directory(target, true);
+        if (previous && node.type === 'file' && !(previous.mode & 0o200)) throw error('EACCES', target + ': permission denied');
+        next.set(target, Object.assign({}, node, { mtime: Date.now(), ctime: Date.now() }));
       }
       this._commit(next);
     }

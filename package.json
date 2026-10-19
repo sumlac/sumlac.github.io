@@ -1,0 +1,17 @@
+{
+  "name": "sumlac-security-factory",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Local-only security checks and reviewed patch proposals for sumlac.com",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "test": "node --test tests/*.test.cjs",
+    "factory:offense": "node scripts/factory-offense.cjs",
+    "factory:defense": "node scripts/factory-defense.cjs",
+    "factory": "node scripts/factory-run.cjs"
+  },
+  "devDependencies": {
+    "parse5": "8.0.1",
+    "playwright": "1.64.1"
+  }
+}
